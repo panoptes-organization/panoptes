@@ -17,3 +17,5 @@ grade_venv/
 bin/
 *.iml
 vzflow_venv/
+
+snakemake
