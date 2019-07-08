@@ -59,7 +59,7 @@ def structure_snakemake_logs(logs):
 
         if 'rule' in log['message']:
 
-            print(log['message'])
+            print(log["message"])
 
             try:
                 rule = re.search(r'rule (\w+):', log['message']).group(1)
@@ -69,38 +69,48 @@ def structure_snakemake_logs(logs):
             try:
                 input = re.search(r'input:\s(.*)', log['message']).group(1).split(",")
             except Exception as e:
-                input = []
+                input = None
 
             try:
                 output = re.search(r'output:\s(.*)', log['message']).group(1).split(",")
             except:
-                output = []
+                output = None
 
             try:
-                log = re.search(r'log:\s(.*)', log['message']).group(1)
+                log_c = re.search(r'log:\s(.*)', log['message']).group(1)
             except:
-                log = None
+                log_c = None
 
             try:
-                wildcards = re.search(r'wildcards:\s(.*)', log['message']).group(1)
+                wildcards = re.search(r'wildcards:\s(.*)', log['message']).group(1).split(",")
             except Exception as e:
-                wildcards = []
+                wildcards = None
+
+            try:
+                jobid = re.search(r'jobid:\s(\d+)', log['message']).group(1)
+            except Exception as e:
+                jobid = None
 
             snakemake_log_objects.append({"job_type": 'submitted',
-                                          # "jobid": jobid,
+                                          "job_id": jobid,
                                           "rule": rule,
                                           "input": input,
                                           "output": output,
-                                          "log": log,
-                                          # "wildcards": wildcards
+                                          "log": log_c,
+                                          "wildcards": wildcards
                                           })
 
         elif "Finished job" in log['message']:
-            job_id = re.search(r'Finished job (\d+)\.', log['message']).group(1)
-            progress = re.search(r'(\d+) of (\d+) steps \((\d+%)\) done', log['message']).group(1,2,3)
-            current_job = int(progress[0])
-            total_jobs = int(progress[1])
-            percent = progress[2]
+            try:
+                job_id = re.search(r'Finished job (\d+)\.', log['message']).group(1)
+                progress = re.search(r'(\d+) of (\d+) steps \((\d+%)\) done', log['message']).group(1,2,3)
+                current_job = progress[0]
+                total_jobs = progress[1]
+                percent = progress[2]
+            except Exception as e:
+                current_job = None
+                total_jobs = None
+                percent = None
 
             snakemake_log_objects.append({"job_type": 'finished',
                                           "job_id": job_id,
@@ -129,7 +139,7 @@ def main():
     with open(import_file) as f:
         parced_logs = list(generate_dicts(f))
 
-    # pprint(parced_logs)
+    pprint(parced_logs)
 
     print(structure_snakemake_logs(parced_logs))
 
