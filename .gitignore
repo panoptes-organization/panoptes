@@ -19,3 +19,5 @@ bin/
 vzflow_venv/
 
 snakemake
+
+__pycache__/

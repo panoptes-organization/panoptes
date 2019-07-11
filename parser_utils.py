@@ -35,20 +35,99 @@ def generate_dicts(log_fh):
                             MESSAGE: ''}
         else:
             if DATE in current_dict:
-                current_dict[MESSAGE] += line[:-1]
+                current_dict[MESSAGE] += line[:]
             else:
                 pass
 
     yield current_dict
 
 
+def structure_snakemake_logs(logs):
+    """
+    Takes as input a parced log dictionary.
+    Returns a structured object for each entry.
+    Two types of entries exist:
+    - Submitted rules/jobs
+    - Finished rules/jobs
+
+    Returns list of structured entries
+    """
+
+    snakemake_log_objects = []
+
+    for log in logs:
+
+        if 'rule' in log['message']:
+
+            print(log["message"])
+
+            try:
+                rule = re.search(r'rule (\w+):', log['message']).group(1)
+            except:
+                rule = None
+
+            try:
+                input = re.search(r'input:\s(.*)', log['message']).group(1).split(",")
+            except Exception as e:
+                input = None
+
+            try:
+                output = re.search(r'output:\s(.*)', log['message']).group(1).split(",")
+            except:
+                output = None
+
+            try:
+                log_c = re.search(r'log:\s(.*)', log['message']).group(1)
+            except:
+                log_c = None
+
+            try:
+                wildcards = re.search(r'wildcards:\s(.*)', log['message']).group(1).split(",")
+            except Exception as e:
+                wildcards = None
+
+            try:
+                jobid = re.search(r'jobid:\s(\d+)', log['message']).group(1)
+            except Exception as e:
+                jobid = None
+
+            snakemake_log_objects.append({"job_type": 'submitted',
+                                          "job_id": jobid,
+                                          "rule": rule,
+                                          "input": input,
+                                          "output": output,
+                                          "log": log_c,
+                                          "wildcards": wildcards
+                                          })
+
+        elif "Finished job" in log['message']:
+            try:
+                job_id = re.search(r'Finished job (\d+)\.', log['message']).group(1)
+                progress = re.search(r'(\d+) of (\d+) steps \((\d+%)\) done', log['message']).group(1,2,3)
+                current_job = progress[0]
+                total_jobs = progress[1]
+                percent = progress[2]
+            except Exception as e:
+                current_job = None
+                total_jobs = None
+                percent = None
+
+            snakemake_log_objects.append({"job_type": 'finished',
+                                          "job_id": job_id,
+                                          "current_job": current_job,
+                                          "total_jobs": total_jobs,
+                                          "percent": percent
+                                          })
+
+    return snakemake_log_objects
+
 def main():
     """
-        -import_file "/home/giorgos/PycharmProjects/vzflow/example_files/example.log"
-        -export_csv_file "/home/gkost/Documents/logs/exported_tabular.csv"
+        -import_file "example_files/example.log"
+        -export_csv_file "exported_tabular.csv"
 
        :return:
-       """
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('-import_file', metavar='import_file', type=str,
                         help='Path to import the simulation json.')
@@ -61,6 +140,8 @@ def main():
         parced_logs = list(generate_dicts(f))
 
     pprint(parced_logs)
+
+    print(structure_snakemake_logs(parced_logs))
 
     #data = parced_logs.jason_normalize()
     #data.to_csv('exported.csv')
