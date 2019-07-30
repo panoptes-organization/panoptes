@@ -11,4 +11,4 @@ vzflow is a service that can be used by:
 
 # Contribute
 
-Please see the [Contributing intructions](CONTRIBUTING.md).
+Please see the [Contributing intsructions](CONTRIBUTING.md).
