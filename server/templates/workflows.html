@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+
+{% block workflows %}
+<b> Available workflows </b>
+    {% for wf in workflows %}
+       <a href='wf.id'> {{ wf.name }} </a>
+    {% endfor %}
+
+
+ {% endblock %}

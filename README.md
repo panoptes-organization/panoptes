@@ -9,6 +9,58 @@ vzflow is a service that can be used by:
 
 **Note:** vzflow is in early development stage and the first proof of concept server will support only workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
 
+# Installation
+
+## Development installation
+
+### Install Mongo DB
+
+Install [Mongo DB](https://docs.mongodb.com/manual/installation/)
+
+- [Mac](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+- [Linux](https://docs.mongodb.com/manual/administration/install-on-linux/)
+
+Server should run on: http://127.0.0.1:27017/
+
+### Install Postman
+
+Install [Postman](https://www.getpostman.com/) to send mock json requests to the server.
+
+### Install Flask server
+
+Create virtual environment
+```bash
+virtualenv -p `which python3` venv
+```
+
+Create virtual environment
+```bash
+source venv/bin/activate
+```
+
+Create virtual environment
+```bash
+pip install -r requirements.txt
+```
+
+Install requirements
+```bash
+pip install -r requirements.txt
+```
+
+EXPORT FLASK_APP
+```bash
+export FLASK_APP=server/app.py
+export FLASK_ENV=development
+```
+
+Run server
+```bash
+python -m flask run
+```
+
+Server should run on: http://127.0.0.1:5000/
+
 # Contribute
 
 Please see the [Contributing instructions](CONTRIBUTING.md).
