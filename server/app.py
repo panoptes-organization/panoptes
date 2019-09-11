@@ -3,6 +3,7 @@ from server.database import init_db, db_session
 import traceback
 from server.models import Workflows, WorkflowMessages
 from server.schema_forms import SnakemakeUpdateForm
+import json
 
 app = Flask(__name__, template_folder="templates")
 init_db()
@@ -39,16 +40,20 @@ def get_status(id):
         return f"<html>No workflow currently running with id= {id}!!!</html>"
 
 
-@app.route('/update_workflow_status', methods=['POST', 'GET'])
+@app.route('/update_workflow_status', methods=['POST'])
 def update_status():
     update_form = SnakemakeUpdateForm()
     errors = update_form.validate(request.form)
+    
     if errors:
         abort(404, str(errors))
+    else:
+        r = update_form.load(request.form)
     # now all required fields exist and are the right type
     # business requirements aren't necessarily satisfied (length, time bounds, etc)
 
-    w = WorkflowMessages(update_form)
+    message = eval(r['msg'])
+    w = WorkflowMessages(r["timestamp"])
     db_session.add(w)
     db_session.commit()
 

@@ -40,7 +40,8 @@ class WorkflowMessages(Base):
 
     wf = relationship("Workflows", foreign_keys=[wf_id])
 
-    def __init__(self, name=None, status=None):
+    def __init__(self, name=None, status=None, wf_id=1):
+        self.wf_id = wf_id
         self.name = name
         self.status = status
 
