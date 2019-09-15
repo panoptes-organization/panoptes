@@ -23,7 +23,6 @@ def index():
 @app.route('/workflows')
 def index2():
     workflows = Workflows.query.all()
-    print(workflows)
     return render_template('workflows.html', workflows=workflows)
 
 
@@ -78,7 +77,7 @@ def update_status():
     # business requirements aren't necessarily satisfied (length, time bounds, etc)
 
     message = eval(r['msg'])
-    w = WorkflowMessages(r["msg"], wf_id=r["id"])
+    w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
     db_session.add(w)
     db_session.commit()
 

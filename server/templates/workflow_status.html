@@ -3,7 +3,6 @@
 {% block workflows %}
 <b> Workflow {{workflow.id}} </b>
     {% for message in w_msg %}
- {% for message in w_msg %}
       <br/> <a> {{ message.done }} </a><a> {{ message.total }} </a>
     {% endfor %}
 
