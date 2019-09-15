@@ -31,8 +31,18 @@ def index2():
 def get_status(id):
     try:
         workflow = Workflows.query.filter(Workflows.id == id).first()
+        w_msg = WorkflowMessages.query.filter(WorkflowMessages.wf_id == id).all()
+        l = []
+        for i in w_msg:
+            msg = eval(i.msg)
+            if "level" in msg.keys():
+                if msg["level"] == 'progress':
+                    l.append({'level': msg["level"],
+                              'done': msg["done"],
+                              'total': msg["total"]})
+
         if workflow:
-            return str(workflow.name)
+            return render_template('workflow_status.html', workflow=workflow, w_msg=l)
         else:
             return f"<html>No workflow currently running with id= {id}!!!</html>"
 
@@ -68,7 +78,7 @@ def update_status():
     # business requirements aren't necessarily satisfied (length, time bounds, etc)
 
     message = eval(r['msg'])
-    w = WorkflowMessages(r["timestamp"], id=r["id"])
+    w = WorkflowMessages(r["msg"], wf_id=r["id"])
     db_session.add(w)
     db_session.commit()
 
