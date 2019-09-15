@@ -68,7 +68,7 @@ def update_status():
     # business requirements aren't necessarily satisfied (length, time bounds, etc)
 
     message = eval(r['msg'])
-    w = WorkflowMessages(r["timestamp"])
+    w = WorkflowMessages(r["timestamp"], id=r["id"])
     db_session.add(w)
     db_session.commit()
 
