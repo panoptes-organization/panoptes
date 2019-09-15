@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from server.database import Base
 from sqlalchemy.orm import relationship
-
+from datetime import  datetime
 
 class User(Base):
     __tablename__ = 'users'
@@ -22,13 +22,19 @@ class Workflows(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     status = Column(String(30), unique=False)
+    date = Column(DateTime)
 
     def __init__(self, name=None, status=None):
         self.name = name
         self.status = status
+        self.date = datetime.now()
 
     def __repr__(self):
         return '<Workflow %r>' % (self.name)
+
+    def get_workflow(self):
+        return {"id": self.id,
+                "name":self.name}
 
 
 class WorkflowMessages(Base):

@@ -4,6 +4,7 @@ import traceback
 from server.models import Workflows, WorkflowMessages
 from server.schema_forms import SnakemakeUpdateForm
 import json
+import uuid
 
 app = Flask(__name__, template_folder="templates")
 init_db()
@@ -19,7 +20,7 @@ def index():
              To check the status of the workflow go to the following route: <a href=\"/workflow_status\">/workflow_status</a> <br> \
              </html>"
 
-@app.route('/test')
+@app.route('/workflows')
 def index2():
     workflows = Workflows.query.all()
     print(workflows)
@@ -35,6 +36,20 @@ def get_status(id):
         else:
             return f"<html>No workflow currently running with id= {id}!!!</html>"
 
+    except:
+        traceback.print_exc()
+        return f"<html>No workflow currently running with id= {id}!!!</html>"\
+
+
+
+@app.route('/create_workflow', methods=['GET'])
+def create_workflow():
+    try:
+        w = Workflows(str(uuid.uuid4()), "Initialized")
+        db_session.add(w)
+        db_session.commit()
+
+        return w.get_workflow()
     except:
         traceback.print_exc()
         return f"<html>No workflow currently running with id= {id}!!!</html>"
