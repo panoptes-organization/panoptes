@@ -13,18 +13,9 @@ vzflow is a service that can be used by:
 
 ## Development installation
 
-### Install Mongo DB
+### Install sqlite3
 
-Install [Mongo DB](https://docs.mongodb.com/manual/installation/)
-
-- [Mac](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
-- [Linux](https://docs.mongodb.com/manual/administration/install-on-linux/)
-
-Server should run on: http://127.0.0.1:27017/
-
-### Install Postman
-
-Install [Postman](https://www.getpostman.com/) to send mock json requests to the server.
+Install [sqlite3](https://www.sqlite.org/download.html)
 
 ### Install Flask server
 
@@ -36,11 +27,6 @@ virtualenv -p `which python3` venv
 Create virtual environment
 ```bash
 source venv/bin/activate
-```
-
-Create virtual environment
-```bash
-pip install -r requirements.txt
 ```
 
 Install requirements
