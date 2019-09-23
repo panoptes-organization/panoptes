@@ -13,11 +13,26 @@ vzflow is a service that can be used by:
 
 ## Development installation
 
+### Requirements
+
+- Python>=3.6
+- sqlite3
+
 ### Install sqlite3
 
 Install [sqlite3](https://www.sqlite.org/download.html)
 
-### Install Flask server
+### Install server
+
+Clone repo
+```bash
+git clone -b feature/Snakemake-schema https://github.com/fgypas/vzflow.git
+```
+
+Enter repo
+```bash
+cd https://github.com/fgypas/vzflow.git
+```
 
 Create virtual environment
 ```bash
