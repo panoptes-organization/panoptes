@@ -15,9 +15,7 @@ def index():
 
     return f"<html> \
              <h1>Welcome to the development server of vzflow. </h1> <br> \
-             If you can see this message then your DB is set properly <br> \
-             DB info: {Workflows.query.all()}. <br> \
-             To check the status of the workflow go to the following route: <a href=\"/workflow_status\">/workflow_status</a> <br> \
+             To see all workflows please go to the following route: <a href=\"/workflows\">/workflows</a> <br> \
              </html>"
 
 @app.route('/workflows')
