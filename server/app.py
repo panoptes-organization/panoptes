@@ -39,7 +39,7 @@ def get_status(id):
                               'total': msg["total"]})
 
         if workflow:
-            return render_template('workflow_status.html', workflow=workflow, w_msg=l)
+            return render_template('workflow_status.html', workflow=workflow, w_msg=l[-1:])
         else:
             return f"<html>No workflow currently running with id= {id}!!!</html>"
 
@@ -73,7 +73,6 @@ def update_status():
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
     # business requirements aren't necessarily satisfied (length, time bounds, etc)
-
     message = eval(r['msg'])
     w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
     db_session.add(w)
