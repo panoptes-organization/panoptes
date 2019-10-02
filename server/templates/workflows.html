@@ -3,7 +3,7 @@
 {% block workflows %}
 <b> Available workflows </b>
     {% for wf in workflows %}
-       <a href='wf.id'> {{ wf.name }} </a>
+      <br/> <a href= '/workflow_status/{{ wf.id }}'> {{ wf.name }} </a><a> {{ wf.date }} </a>
     {% endfor %}
 
 
