@@ -1,0 +1,13 @@
+{% extends "index.html" %}
+
+{% block main_info %}
+
+  <div class="card">
+      <div class="card-header">Workflows</div>
+      <b> Workflow {{workflow.id}} </b>
+      {% for message in w_msg %}
+        <br/> <a> {{ message.done }}/{{ message.total }} steps done</a>
+      {% endfor %}
+  </div>
+
+ {% endblock %}

@@ -1,0 +1,153 @@
+<html lang="en">
+  
+  <head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
+    <title>CoreUI Free Bootstrap Admin Template</title>
+    <!-- Icons-->
+    <link rel="icon" type="image/ico" href="./img/favicon.ico" sizes="any" />
+    <link href="node_modules/@coreui/icons/css/coreui-icons.min.css" rel="stylesheet">
+    <link href="node_modules/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="node_modules/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+    <!-- Main styles for this application-->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="vendors/pace-progress/css/pace.min.css" rel="stylesheet">
+  </head>
+  
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    
+      <header class="app-header navbar">
+        <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/">
+          <img class="navbar-brand-full" src="img/brand/logo.png" width="50" height="50" alt="CoreUI Logo">
+        </a>
+        <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <ul class="nav navbar-nav d-md-down-none">
+          <li class="nav-item px-3">
+            <a class="nav-link" href="#"></a>
+          </li>
+          <li class="nav-item px-3">
+            <a class="nav-link" href="#"></a>
+          </li>
+          <li class="nav-item px-3">
+            <a class="nav-link" href="#"></a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav ml-auto">
+          <li class="nav-item d-md-down-none">
+            <a class="nav-link" href="#">
+              <i class="icon-list"></i>
+            </a>
+          </li>
+          <li class="nav-item d-md-down-none">
+            <a class="nav-link" href="#">
+              <i class="icon-location-pin"></i>
+            </a>
+          </li>
+
+        </ul>
+        <button class="navbar-toggler aside-menu-toggler d-md-down-none" type="button" data-toggle="aside-menu-lg-show">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <button class="navbar-toggler aside-menu-toggler d-lg-none" type="button" data-toggle="aside-menu-show">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </header>
+      <div class="app-body">
+        <div class="sidebar">
+          <nav class="sidebar-nav">
+            <ul class="nav">
+              <!-- <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                  <i class="nav-icon icon-speedometer"></i> Dashboard
+                  <span class="badge badge-primary">NEW</span>
+                </a>
+              </li> -->
+              <li class="nav-title">Workflows</li>
+              <li class="nav-item">
+                <a class="nav-link" href="/workflows">
+                  <i class="nav-icon icon-drop"></i> Show all Workflows</a>
+              </li>
+              <!-- <li class="divider"></li> -->
+            </ul>
+          </nav>
+        </div>
+        <main class="main">
+          <div class="container-fluid">
+            <div class="animated fadeIn">
+
+              <!-- /.row-->
+              <div class="row">
+                <div class="col-md-12">
+                  <br>
+                  
+                    <div id="main_info">
+                      {% block main_info %}
+                      <div class="card" align="center">
+                          <h1>Welcome to vzflow</h1>
+                          <p>Please take a look on the options on the left menu bar</p>
+                      </div>
+                      {% endblock %}
+                    </div>
+                  </div> 
+                </div>
+                <!-- /.col-->
+              </div>
+              <!-- /.row-->
+            </div>
+          </div>
+        </main>
+        <aside class="aside-menu">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#timeline" role="tab">
+                <i class="icon-list"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#messages" role="tab">
+                <i class="icon-speech"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#settings" role="tab">
+                <i class="icon-settings"></i>
+              </a>
+            </li>
+          </ul>
+        </aside>
+      </div>
+
+
+      <footer class="app-footer">
+        <div class="ml-auto">
+          <span>Powered by</span>
+          <a href="https://palletsprojects.com/p/flask/">Flask</a>
+          and
+          <a href="https://coreui.io">CoreUI</a>
+        </div>
+      </footer>
+      <!-- CoreUI and necessary plugins-->
+      <script src="node_modules/jquery/dist/jquery.min.js"></script>
+      <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
+      <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+      <script src="node_modules/pace-progress/pace.min.js"></script>
+      <script src="node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+      <script src="node_modules/@coreui/coreui/dist/js/coreui.min.js"></script>
+      <!-- Plugins and scripts required by this view-->
+      <!-- <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+      <script src="node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js"></script>
+      <script src="js/main.js"></script> -->
+
+  </body>
+</html>

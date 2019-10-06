@@ -6,22 +6,17 @@ from server.schema_forms import SnakemakeUpdateForm
 import json
 import uuid
 
-app = Flask(__name__, template_folder="../coreui/src")
+app = Flask(__name__, template_folder="static/src/")
 init_db()
 
 @app.route('/')
 def index():
     return render_template("index.html")
-    # return f"<html> \
-    #          <h1>Welcome to the development server of vzflow. </h1> <br> \
-    #          To see all workflows please go to the following route: <a href=\"/workflows\">/workflows</a> <br> \
-    #          </html>"
 
 @app.route('/workflows')
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
-
 
 @app.route('/workflow_status/<id>', methods=['GET'])
 def get_status(id):
@@ -46,8 +41,6 @@ def get_status(id):
         traceback.print_exc()
         return f"<html>No workflow currently running with id= {id}!!!</html>"\
 
-
-
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
@@ -59,7 +52,6 @@ def create_workflow():
     except:
         traceback.print_exc()
         return f"<html>No workflow currently running with id= {id}!!!</html>"
-
 
 @app.route('/update_workflow_status', methods=['POST'])
 def update_status():
@@ -83,13 +75,15 @@ def update_status():
 
 @app.route('/vendor/<path:path>')
 def send_vendor(path):
-    return send_from_directory('../coreui/vendor', path)
+    return send_from_directory('static/vendor', path)
+
+@app.route('/node_modules/chart.js/<path:path>')
+def send_node_modules_charts(path):
+    return send_from_directory('node_modules/chart.js', path)
 
 @app.route('/<path:path>')
 def send_js(path):
-    return send_from_directory('../coreui/src', path)
-
-
+    return send_from_directory('static/src', path)
 
 if __name__ == '__main__':
     app.run()

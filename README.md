@@ -52,13 +52,13 @@ pip install -r requirements.txt
 
 Enter coreui directory and install javascipt dependencies
 ```bash
-cd coreui
+cd server/static
 npm install
 ```
 
 Go to the root directory
 ```bash
-cd ../
+cd ../../
 ```
 
 EXPORT FLASK_APP
