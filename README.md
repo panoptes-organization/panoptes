@@ -27,7 +27,7 @@ Install [sqlite3](https://www.sqlite.org/download.html)
 
 Clone repo
 ```bash
-git clone -b feature/Snakemake-schema https://github.com/fgypas/vzflow.git
+git clone -b develop https://github.com/fgypas/vzflow.git
 ```
 
 Enter repo
