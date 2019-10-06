@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, abort
+from flask import Flask, request, render_template, abort, send_from_directory
 from server.database import init_db, db_session
 import traceback
 from server.models import Workflows, WorkflowMessages
@@ -6,17 +6,15 @@ from server.schema_forms import SnakemakeUpdateForm
 import json
 import uuid
 
-app = Flask(__name__, template_folder="templates")
+
+app = Flask(__name__, template_folder="static/src/")
 init_db()
 
 
 @app.route('/')
 def index():
+    return render_template("index.html")
 
-    return f"<html> \
-             <h1>Welcome to the development server of vzflow. </h1> <br> \
-             To see all workflows please go to the following route: <a href=\"/workflows\">/workflows</a> <br> \
-             </html>"
 
 @app.route('/workflows')
 def index2():
@@ -48,7 +46,6 @@ def get_status(id):
         return f"<html>No workflow currently running with id= {id}!!!</html>"\
 
 
-
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
@@ -61,7 +58,6 @@ def create_workflow():
         traceback.print_exc()
         return f"<html>No workflow currently running with id= {id}!!!</html>"
 
-
 @app.route('/update_workflow_status', methods=['POST'])
 def update_status():
     update_form = SnakemakeUpdateForm()
@@ -72,7 +68,6 @@ def update_status():
     else:
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
-    # business requirements aren't necessarily satisfied (length, time bounds, etc)
     message = eval(r['msg'])
     w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
     db_session.add(w)
@@ -81,6 +76,21 @@ def update_status():
     print('New update from snakemake {}'.format(id))
 
     return "ok"
+
+
+@app.route('/vendor/<path:path>')
+def send_vendor(path):
+    return send_from_directory('static/vendor', path)
+
+
+@app.route('/node_modules/chart.js/<path:path>')
+def send_node_modules_charts(path):
+    return send_from_directory('node_modules/chart.js', path)
+
+
+@app.route('/<path:path>')
+def send_js(path):
+    return send_from_directory('static/src', path)
 
 
 if __name__ == '__main__':

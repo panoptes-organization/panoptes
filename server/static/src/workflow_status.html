@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+
+{% block main_info %}
+
+  <div class="card">
+      <div class="card-header">Workflow status/progress</div>
+      <table class="table table-responsive-sm table-hover table-outline mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th>Workflow id</th>
+              <th>Workflow name</th>
+              <th class="text-center">Date</th>
+              <th class="text-center">Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                  <tr>
+                    <td>
+                      {{ workflow.id }}
+                    </td>
+                    <td>
+                      {{ workflow.name }}
+                    </td>
+                    <td>
+                      <a> {{ workflow.date }} </a>
+                    </td>
+                    <td>
+                      {% for message in w_msg %}
+                        <a> {{ message.done }}/{{ message.total }} steps done</a>
+                      {% endfor %}
+                      </td>
+                  </tr>
+            </tr>
+          </tbody>
+        </table>
+
+  </div>
+
+ {% endblock %}

@@ -17,6 +17,7 @@ vzflow is a service that can be used by:
 
 - Python>=3.6
 - sqlite3
+- npm
 
 ### Install sqlite3
 
@@ -31,7 +32,7 @@ git clone -b feature/Snakemake-schema https://github.com/fgypas/vzflow.git
 
 Enter repo
 ```bash
-cd https://github.com/fgypas/vzflow.git
+cd vzflow
 ```
 
 Create virtual environment
@@ -47,6 +48,17 @@ source venv/bin/activate
 Install requirements
 ```bash
 pip install -r requirements.txt
+```
+
+Enter coreui directory and install javascipt dependencies
+```bash
+cd server/static
+npm install
+```
+
+Go to the root directory
+```bash
+cd ../../
 ```
 
 EXPORT FLASK_APP
