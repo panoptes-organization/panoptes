@@ -27,7 +27,7 @@ Install [sqlite3](https://www.sqlite.org/download.html)
 
 Clone repo
 ```bash
-git clone -b develop https://github.com/fgypas/panoptes.git
+git clone -b develop https://github.com/panoptes-organization/panoptes.git
 ```
 
 Enter repo
@@ -78,6 +78,10 @@ Server should run on: http://127.0.0.1:5000/'
 ### Run an example workflow
 
 In order to run an example workflow please follow the instructions [here](https://github.com/panoptes-organization/snakemake_example_workflow)
+
+#### panoptes in action
+
+[![Watch the video](https://img.youtube.com/vi/Expb3odk0GQ/hqdefault.jpg)](https://www.youtube.com/watch?v=Expb3odk0GQ)
 
 
 # Contribute
