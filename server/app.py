@@ -83,9 +83,9 @@ def send_vendor(path):
     return send_from_directory('static/vendor', path)
 
 
-@app.route('/node_modules/chart.js/<path:path>')
+@app.route('/node_modules/<path:path>')
 def send_node_modules_charts(path):
-    return send_from_directory('node_modules/chart.js', path)
+    return send_from_directory('static/node_modules', path)
 
 
 @app.route('/<path:path>')
