@@ -1,13 +1,18 @@
-from flask import Flask, request, render_template, abort, send_from_directory
-from server.database import init_db, db_session
-import traceback
-from server.models import Workflows, WorkflowMessages
-from server.schema_forms import SnakemakeUpdateForm
 import json
 import uuid
+import traceback
+
+from server.server_utilities.db_queries import maintain_jobs
+from server.database import init_db, db_session
+from server.models import Workflows, WorkflowMessages
+from server.schema_forms import SnakemakeUpdateForm
+from server.routes import *
+from flask import Flask, request, render_template, abort, send_from_directory
 
 
 app = Flask(__name__, template_folder="static/src/")
+app.register_blueprint(routes)
+
 init_db()
 
 
@@ -16,7 +21,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/workflows')
+@app.route('/workflows/',)
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
@@ -43,7 +48,7 @@ def get_status(id):
 
     except:
         traceback.print_exc()
-        return f"<html>No workflow currently running with id= {id}!!!</html>"\
+        return f"<html>No workflow currently running with id= {id}!!!</html>"
 
 
 @app.route('/create_workflow', methods=['GET'])
@@ -58,6 +63,7 @@ def create_workflow():
         traceback.print_exc()
         return f"<html>No workflow currently running with id= {id}!!!</html>"
 
+
 @app.route('/update_workflow_status', methods=['POST'])
 def update_status():
     update_form = SnakemakeUpdateForm()
@@ -68,13 +74,7 @@ def update_status():
     else:
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
-    message = eval(r['msg'])
-    w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
-    db_session.add(w)
-    db_session.commit()
-
-    print('New update from snakemake {}'.format(id))
-
+    maintain_jobs(msg=r["msg"], wf_id=r["id"])
     return "ok"
 
 
