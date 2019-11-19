@@ -2,6 +2,7 @@ import json
 import uuid
 import traceback
 
+from server.server_utilities.db_queries import maintain_jobs
 from server.database import init_db, db_session
 from server.models import Workflows, WorkflowMessages
 from server.schema_forms import SnakemakeUpdateForm
@@ -73,10 +74,12 @@ def update_status():
     else:
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
-    message = eval(r['msg'])
-    w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
-    db_session.add(w)
-    db_session.commit()
+    if not maintain_jobs(msg=r["msg"], wf_id=r["id"]):
+
+        w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
+        db_session.add(w)
+        db_session.commit()
+
 
     print('New update from snakemake {}'.format(id))
 
