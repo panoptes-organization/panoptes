@@ -44,4 +44,4 @@ def get_db_jobs(workflow_id):
 
 
 def get_db_job_by_id(workflow_id, job_id):
-    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id and WorkflowJobs.jobid == job_id).first()
+    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).filter(WorkflowJobs.jobid == job_id).first()
