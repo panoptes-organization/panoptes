@@ -21,7 +21,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/workflows/',)
+@app.route('/workflows/')
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
