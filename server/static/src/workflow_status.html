@@ -46,7 +46,6 @@
       </div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-header">jobs</div>
       <table class="table table-responsive-sm table-hover table-outline mb-0">
@@ -55,14 +54,13 @@
               <th class="text-center">id</th>
               <th class="text-center">name</th>
               <th class="text-center">status</th>
-              <th class="text-center">date</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-                  <tr>
+           {% for job in get_jobs(workflow.id) %}
+                       <tr>
                     <td>
-                      {{ job.id }}
+                      {{ job.jobid }}
                     </td>
                     <td>
                       {{ job.name }}
@@ -70,10 +68,8 @@
                     <td>
                       <a> {{ job.status }} </a>
                     </td>
-                    <td>
-                      <a> {{ job.date }} </a>
-                      </td>
-                  </tr>
+           {% endfor %}
+
           </tbody>
         </table>
   </div>
