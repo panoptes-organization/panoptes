@@ -26,7 +26,7 @@ def maintain_jobs(msg, wf_id):
             return True
 
         if msg_json["level"] == 'job_finished':
-            WorkflowJobs.update().where(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).values(status='Done')
+            WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).update({WorkflowJobs.status: 'Done'})
             return True
     return False
     #if msg_json["level"] == 'shellcmd':
