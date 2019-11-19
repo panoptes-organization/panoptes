@@ -68,7 +68,7 @@ class WorkflowMessages(Base):
 class WorkflowJobs(Base):
     __tablename__ = 'workflow_jobs'
     id = Column(Integer, primary_key=True)
-    jobid = Column(Integer, unique=True)
+    jobid = Column(Integer, unique=False)
     wf_id = Column(Integer, ForeignKey('workflows.id'))
     msg = Column(String(100), unique=False)
     name = Column(String(30), unique=False)
