@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from server.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs
+from server.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id
 from . import routes
 
 '''
@@ -28,14 +28,25 @@ def get_workflow_by_id(workflow_id):
 def get_jobs_of_workflow(workflow_id):
     workflows = get_db_workflows_by_id(workflow_id)
     if workflows:
-        jobs = [j.get_job_json() for j in get_db_jobs()]
+        job = get_db_job_by_id(workflows.id)
+        if job:
+            return jsonify({'jobs': job.get_job_json})
+        else:
+            return jsonify({'msg': 'Job not found'})
+    else:
+        return jsonify({'msg': 'Workflow not found',
+                        'jobs': [],
+                        'count': 0})
 
-    return jsonify({'jobs': jobs,
-                    'count': len(jobs)})
 
-'''
 @routes.route('/api/workflow/<workflow_id>/<job_id>', methods=['GET'])
 def get_job_of_workflow(workflow_id, job_id):
-    # Do some stuff
-    return jsonify({'tasks': tasks})
-'''
+    workflows = get_db_workflows_by_id(workflow_id)
+    if workflows:
+        jobs = [j.get_job_json() for j in get_db_jobs(workflows.id)]
+        return jsonify({'jobs': jobs,
+                        'count': len(jobs)})
+    else:
+        return jsonify({'msg': 'Workflow not found',
+                        'jobs': [],
+                        'count': 0})

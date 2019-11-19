@@ -34,4 +34,8 @@ def maintain_jobs(msg, wf_id):
 
 
 def get_db_jobs(workflow_id):
-    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).first()
+    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id)
+
+
+def get_db_job_by_id(workflow_id, job_id):
+    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id and WorkflowJobs.id == job_id).first()
