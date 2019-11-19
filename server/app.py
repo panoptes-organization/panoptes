@@ -1,12 +1,18 @@
-from flask import Flask, request, render_template, abort, send_from_directory
-from server.database import init_db, db_session
-import traceback
-from server.models import Workflows, WorkflowMessages
-from server.schema_forms import SnakemakeUpdateForm
 import json
 import uuid
+import traceback
+
+from server.server_utilities.db_queries import maintain_jobs
+from server.database import init_db, db_session
+from server.models import Workflows, WorkflowMessages
+from server.schema_forms import SnakemakeUpdateForm
+from server.routes import *
+from flask import Flask, request, render_template, abort, send_from_directory
+
 
 app = Flask(__name__, template_folder="static/src/")
+app.register_blueprint(routes)
+
 init_db()
 
 
@@ -15,7 +21,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/workflows')
+@app.route('/workflows/',)
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
@@ -55,30 +61,6 @@ def get_status(id):
         return f"<html>No workflow currently running with id= {id}!!!</html>"
 
 
-# @app.route('/job_status/<id>', methods=['GET'])
-# def get_status(id):
-#     try:
-#         jobs = Workflows.query.filter(Workflows.id == id).first()
-#         w_msg = WorkflowMessages.query.filter(WorkflowMessages.wf_id == id).all()
-#         l = []
-#         for i in w_msg:
-#             msg = eval(i.msg)
-#             if "level" in msg.keys():
-#                 if msg["level"] == 'progress':
-#                     l.append({'level': msg["level"],
-#                               'done': msg["done"],
-#                               'total': msg["total"]})
-#
-#         if workflow:
-#             return render_template('workflow_status.html', workflow=workflow, w_msg=l[-1:])
-#         else:
-#             return f"<html>No workflow currently running with id= {id}!!!</html>"
-#
-#     except:
-#         traceback.print_exc()
-#         return f"<html>No workflow currently running with id= {id}!!!</html>"
-
-
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
@@ -102,10 +84,12 @@ def update_status():
     else:
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
-    message = eval(r['msg'])
-    w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
-    db_session.add(w)
-    db_session.commit()
+    if not maintain_jobs(msg=r["msg"], wf_id=r["id"]):
+
+        w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
+        db_session.add(w)
+        db_session.commit()
+
 
     print('New update from snakemake {}'.format(id))
 
