@@ -65,7 +65,7 @@ def get_status(id):
 
 @app.route('/workflow/<wf_id>/job/<job_id>', methods=['GET'])
 def get_job_status(wf_id, job_id):
-    return render_template('job.html', wf_id=wf_id, job_id=job_id)
+    return render_template('job.html', job=get_job(wf_id, job_id))
 
 
 @app.route('/create_workflow', methods=['GET'])
