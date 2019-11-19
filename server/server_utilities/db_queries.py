@@ -26,10 +26,17 @@ def maintain_jobs(msg, wf_id):
             return True
 
         if msg_json["level"] == 'job_finished':
-            WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).update({WorkflowJobs.status: 'Done'})
+            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"])
+            job.status = "Done"
+            db_session.commit()
             return True
+
+    if msg_json["level"] in ['shellcmd', 'progress']:
+        w = WorkflowMessages(msg, wf_id)
+        db_session.add(w)
+        db_session.commit()
+        return True
     return False
-    #if msg_json["level"] == 'shellcmd':
 
 
 def get_db_jobs(workflow_id):

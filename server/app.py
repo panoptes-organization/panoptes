@@ -74,12 +74,7 @@ def update_status():
     else:
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
-    if not maintain_jobs(msg=r["msg"], wf_id=r["id"]):
-
-        w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
-        db_session.add(w)
-        db_session.commit()
-
+    maintain_jobs(msg=r["msg"], wf_id=r["id"])
     return "ok"
 
 
