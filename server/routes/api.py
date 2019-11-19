@@ -28,11 +28,9 @@ def get_workflow_by_id(workflow_id):
 def get_jobs_of_workflow(workflow_id):
     workflows = get_db_workflows_by_id(workflow_id)
     if workflows:
-        job = get_db_job_by_id(workflows.id)
-        if job:
-            return jsonify({'jobs': job.get_job_json})
-        else:
-            return jsonify({'msg': 'Job not found'})
+        jobs = [j.get_job_json() for j in get_db_jobs(workflows.id)]
+        return jsonify({'jobs': jobs,
+                        'count': len(jobs)})
     else:
         return jsonify({'msg': 'Workflow not found',
                         'jobs': [],
@@ -41,11 +39,14 @@ def get_jobs_of_workflow(workflow_id):
 
 @routes.route('/api/workflow/<workflow_id>/<job_id>', methods=['GET'])
 def get_job_of_workflow(workflow_id, job_id):
+
     workflows = get_db_workflows_by_id(workflow_id)
     if workflows:
-        jobs = [j.get_job_json() for j in get_db_jobs(workflows.id)]
-        return jsonify({'jobs': jobs,
-                        'count': len(jobs)})
+        job = get_db_job_by_id(workflows.id, job_id)
+        if job:
+            return jsonify({'jobs': job.get_job_json})
+        else:
+            return jsonify({'msg': 'Job not found'})
     else:
         return jsonify({'msg': 'Workflow not found',
                         'jobs': [],
