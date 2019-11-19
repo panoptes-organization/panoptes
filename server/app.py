@@ -90,9 +90,6 @@ def update_status():
         db_session.add(w)
         db_session.commit()
 
-
-    print('New update from snakemake {}'.format(id))
-
     return "ok"
 
 

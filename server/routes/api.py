@@ -20,8 +20,10 @@ def get_workflows():
 @routes.route('/api/workflow/<workflow_id>', methods=['GET'])
 def get_workflow_by_id(workflow_id):
     workflows = get_db_workflows_by_id(workflow_id)
-
-    return jsonify({'workflow': workflows.get_workflow()})
+    if workflows:
+        return jsonify({'workflow': workflows.get_workflow()})
+    else:
+        return jsonify({'msg': "Workflow not found"})
 
 
 @routes.route('/api/workflow/<workflow_id>/jobs', methods=['GET'])
@@ -44,7 +46,7 @@ def get_job_of_workflow(workflow_id, job_id):
     if workflows:
         job = get_db_job_by_id(workflows.id, job_id)
         if job:
-            return jsonify({'jobs': job.get_job_json})
+            return jsonify({'jobs': job.get_job_json()})
         else:
             return jsonify({'msg': 'Job not found'})
     else:

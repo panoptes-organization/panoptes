@@ -2,6 +2,7 @@ import traceback
 
 from server.database import init_db, db_session
 from server.models import Workflows, WorkflowMessages, WorkflowJobs
+from sqlalchemy import update
 
 
 def get_db_workflows():
@@ -18,16 +19,14 @@ def maintain_jobs(msg, wf_id):
     if "jobid" in msg_json.keys():
         if msg_json["level"] == 'job_info':
             job = WorkflowJobs(msg_json['jobid'], wf_id, msg_json['msg'], msg_json['name'], repr(msg_json['input']),
-                               repr(msg_json['output']), repr(msg_json['log']),repr(msg_json['wildcards']),
+                               repr(msg_json['output']), repr(msg_json['log']), repr(msg_json['wildcards']),
                                msg_json['is_checkpoint'])
             db_session.add(job)
             db_session.commit()
             return True
 
         if msg_json["level"] == 'job_finished':
-            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).first()
-            job.status = "Done"
-            db_session.commit()
+            WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).update({WorkflowJobs.status: 'Done'})
             return True
     return False
     #if msg_json["level"] == 'shellcmd':
@@ -38,4 +37,4 @@ def get_db_jobs(workflow_id):
 
 
 def get_db_job_by_id(workflow_id, job_id):
-    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id and WorkflowJobs.id == job_id).first()
+    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id and WorkflowJobs.jobid == job_id).first()
