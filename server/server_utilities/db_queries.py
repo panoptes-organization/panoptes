@@ -1,8 +1,7 @@
 import traceback
 
-from server.database import init_db, db_session
+from server.database import db_session
 from server.models import Workflows, WorkflowMessages, WorkflowJobs
-from sqlalchemy import update
 
 
 def get_db_workflows():
