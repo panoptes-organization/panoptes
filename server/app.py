@@ -21,20 +21,10 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/workflows/')
+@app.route('/workflows/',)
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-
-@app.route('/contribute')
-def contribute():
-    return render_template('contribute.html')
 
 
 @app.route('/workflow_status/<id>', methods=['GET'])
@@ -78,18 +68,13 @@ def create_workflow():
 def update_status():
     update_form = SnakemakeUpdateForm()
     errors = update_form.validate(request.form)
-
+    
     if errors:
         abort(404, str(errors))
     else:
         r = update_form.load(request.form)
     # now all required fields exist and are the right type
-    if not maintain_jobs(msg=r["msg"], wf_id=r["id"]):
-
-        w = WorkflowMessages(msg=r["msg"], wf_id=r["id"])
-        db_session.add(w)
-        db_session.commit()
-
+    maintain_jobs(msg=r["msg"], wf_id=r["id"])
     return "ok"
 
 

@@ -39,7 +39,7 @@ def get_jobs_of_workflow(workflow_id):
                         'count': 0})
 
 
-@routes.route('/api/workflow/<workflow_id>/<job_id>', methods=['GET'])
+@routes.route('/api/workflow/<workflow_id>/job/<job_id>', methods=['GET'])
 def get_job_of_workflow(workflow_id, job_id):
 
     workflows = get_db_workflows_by_id(workflow_id)
