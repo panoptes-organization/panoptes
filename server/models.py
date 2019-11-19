@@ -76,12 +76,12 @@ class WorkflowJobs(Base):
     log = Column(String(100), unique=False)
     wildcards = Column(String(100), unique=False)
     is_checkpoint = Column(Boolean, unique=False)
-    shel_command = Column(String(100), unique=False)
+    shell_command = Column(String(100), unique=False)
     status = Column(String(30), unique=False)
 
     wf = relationship("Workflows", foreign_keys=[wf_id])
 
-    def __init__(self, ids, wf_id, msg, name, input, output, log, wildcards, is_checkpoint, shel_command=None,
+    def __init__(self, ids, wf_id, msg, name, input, output, log, wildcards, is_checkpoint, shell_command=None,
                  status=None):
         self.id = ids
         self.wf_id = wf_id
@@ -92,7 +92,7 @@ class WorkflowJobs(Base):
         self.log = log
         self.wildcards = wildcards
         self.is_checkpoint = is_checkpoint
-        self.shel_command = shel_command
+        self.shell_command = shell_command
         self.status = status
 
     def __repr__(self):
@@ -108,7 +108,7 @@ class WorkflowJobs(Base):
                 "log": eval(self.log),
                 "wildcards": eval(self.wildcards),
                 "is_checkpoint":  self.is_checkpoint,
-                "shel_command": self.shel_command,
+                "shell_command": self.shell_command,
                 "status": self.status
                 }
 

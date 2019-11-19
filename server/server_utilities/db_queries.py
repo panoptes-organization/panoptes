@@ -2,6 +2,7 @@ import traceback
 
 from server.database import init_db, db_session
 from server.models import Workflows, WorkflowMessages, WorkflowJobs
+from sqlalchemy import update
 
 
 def get_db_workflows():
@@ -25,9 +26,7 @@ def maintain_jobs(msg, wf_id):
             return True
 
         if msg_json["level"] == 'job_finished':
-            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).first()
-            job.status = "Done"
-            db_session.commit()
+            WorkflowJobs.update().where(WorkflowJobs.wf_id == wf_id and WorkflowJobs.id == msg_json["jobid"]).values(status='Done')
             return True
     return False
     #if msg_json["level"] == 'shellcmd':
