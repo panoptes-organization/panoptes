@@ -1,13 +1,17 @@
-from flask import Flask, request, render_template, abort, send_from_directory
-from server.database import init_db, db_session
-import traceback
-from server.models import Workflows, WorkflowMessages
-from server.schema_forms import SnakemakeUpdateForm
 import json
 import uuid
+import traceback
+
+from server.database import init_db, db_session
+from server.models import Workflows, WorkflowMessages
+from server.schema_forms import SnakemakeUpdateForm
+from server.routes import *
+from flask import Flask, request, render_template, abort, send_from_directory
 
 
 app = Flask(__name__, template_folder="static/src/")
+app.register_blueprint(routes)
+
 init_db()
 
 
@@ -16,7 +20,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/workflows')
+@app.route('/workflows/',)
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
@@ -43,7 +47,7 @@ def get_status(id):
 
     except:
         traceback.print_exc()
-        return f"<html>No workflow currently running with id= {id}!!!</html>"\
+        return f"<html>No workflow currently running with id= {id}!!!</html>"
 
 
 @app.route('/create_workflow', methods=['GET'])
@@ -57,6 +61,7 @@ def create_workflow():
     except:
         traceback.print_exc()
         return f"<html>No workflow currently running with id= {id}!!!</html>"
+
 
 @app.route('/update_workflow_status', methods=['POST'])
 def update_status():
