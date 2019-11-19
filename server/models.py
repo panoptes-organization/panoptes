@@ -68,6 +68,7 @@ class WorkflowMessages(Base):
 class WorkflowJobs(Base):
     __tablename__ = 'workflow_jobs'
     id = Column(Integer, primary_key=True)
+    jobid = Column(Integer, unique=True)
     wf_id = Column(Integer, ForeignKey('workflows.id'))
     msg = Column(String(100), unique=False)
     name = Column(String(30), unique=False)
@@ -81,9 +82,9 @@ class WorkflowJobs(Base):
 
     wf = relationship("Workflows", foreign_keys=[wf_id])
 
-    def __init__(self, ids, wf_id, msg, name, input, output, log, wildcards, is_checkpoint, shell_command=None,
+    def __init__(self, jobid, wf_id, msg, name, input, output, log, wildcards, is_checkpoint, shell_command=None,
                  status=None):
-        self.id = ids
+        self.jobid = jobid
         self.wf_id = wf_id
         self.msg = msg
         self.name = name
@@ -99,7 +100,7 @@ class WorkflowJobs(Base):
         return self
 
     def get_job_json(self):
-        return {"id": self.id,
+        return {"jobid": self.jobid,
                 "workflow_id": self.wf_id,
                 "msg": self.msg,
                 "name": self.name,

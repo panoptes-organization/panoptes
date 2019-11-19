@@ -19,7 +19,7 @@ def maintain_jobs(msg, wf_id):
     if "jobid" in msg_json.keys():
         if msg_json["level"] == 'job_info':
             job = WorkflowJobs(msg_json['jobid'], wf_id, msg_json['msg'], msg_json['name'], repr(msg_json['input']),
-                               repr(msg_json['output']), repr(msg_json['log']),repr(msg_json['wildcards']),
+                               repr(msg_json['output']), repr(msg_json['log']), repr(msg_json['wildcards']),
                                msg_json['is_checkpoint'])
             db_session.add(job)
             db_session.commit()
@@ -37,4 +37,4 @@ def get_db_jobs(workflow_id):
 
 
 def get_db_job_by_id(workflow_id, job_id):
-    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id and WorkflowJobs.id == job_id).first()
+    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id and WorkflowJobs.jobid == job_id).first()
