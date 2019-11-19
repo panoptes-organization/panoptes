@@ -2,36 +2,48 @@
 
 {% block main_info %}
 
-  <div class="card">
-      <div class="card-header">Workflows</div>
-      <div class="card-body">
-        <table class="table table-responsive-sm table-hover table-outline mb-0">
-          <thead class="thead-light">
-            <tr>
-              <th>Workflow id</th>
-              <th>Workflow name</th>
-              <th class="text-center">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                {% for wf in workflows %}
-                  <tr>
-                    <td>
-                      <a href= '/workflow_status/{{ wf.id }}'> {{ wf.id }} </a>
-                    </td>
-                    <td>
-                        <a href= '/workflow_status/{{ wf.id }}'> {{ wf.name }} </a>
-                      </td>
-                    <td>
-                      <a> {{ wf.date }} </a>
-                    </td>
-                  </tr>
-                {% endfor %}
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<div class="card">
+  <div class="card-body">
+    <table class="table table-responsive-sm table-hover table-outline mb-0">
+      <thead class="thead-light">
+      <tr>
+        <th class="text-center">id</th>
+        <th class="text-center">name
+          <button type="button" class="btn btn-default">
+            <span class="nav-icon icon-pencil" aria-hidden="true" aria-label="edit"></span>
+          </button>
+        </th>
+        <th class="text-center">status</th>
+        <th class="text-center">date</th>
+        <th class="text-center">current jobs</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        {% for wf in workflows %}
+      <tr>
+        <td>
+          <a href='/workflow/{{ wf.id }}'> {{ wf.id }} </a>
+        </td>
+        <td>
+          <a href='/workflow/{{ wf.id }}'> {{ wf.name }} </a>
+        </td>
+        <td>
+          <a> {{ wf.status }} </a>
+        </td>
+        <td>
+          <a> {{ wf.date }} </a>
+        </td>
+        <td>
+<!--          {% for job in jobs %}-->
+<!--          <a> {{ message.done }}/{{ message.total }} </a>-->
+<!--          {% endfor %}-->
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
+</div>
 
- {% endblock %}
+{% endblock %}
