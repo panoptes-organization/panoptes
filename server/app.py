@@ -1,4 +1,3 @@
-import json
 import uuid
 import traceback
 
@@ -8,7 +7,6 @@ from server.models import Workflows, WorkflowMessages
 from server.schema_forms import SnakemakeUpdateForm
 from server.routes import *
 from flask import Flask, request, render_template, abort, send_from_directory
-
 
 app = Flask(__name__, template_folder="static/src/")
 app.register_blueprint(routes)
@@ -25,6 +23,16 @@ def index():
 def index2():
     workflows = Workflows.query.all()
     return render_template('workflows.html', workflows=workflows)
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/contribute')
+def contribute():
+    return render_template('contribute.html')
 
 
 @app.route('/workflow_status/<id>', methods=['GET'])
@@ -51,6 +59,30 @@ def get_status(id):
         return f"<html>No workflow currently running with id= {id}!!!</html>"
 
 
+# @app.route('/job_status/<id>', methods=['GET'])
+# def get_status(id):
+#     try:
+#         jobs = Workflows.query.filter(Workflows.id == id).first()
+#         w_msg = WorkflowMessages.query.filter(WorkflowMessages.wf_id == id).all()
+#         l = []
+#         for i in w_msg:
+#             msg = eval(i.msg)
+#             if "level" in msg.keys():
+#                 if msg["level"] == 'progress':
+#                     l.append({'level': msg["level"],
+#                               'done': msg["done"],
+#                               'total': msg["total"]})
+#
+#         if workflow:
+#             return render_template('workflow_status.html', workflow=workflow, w_msg=l[-1:])
+#         else:
+#             return f"<html>No workflow currently running with id= {id}!!!</html>"
+#
+#     except:
+#         traceback.print_exc()
+#         return f"<html>No workflow currently running with id= {id}!!!</html>"
+
+
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
@@ -68,7 +100,7 @@ def create_workflow():
 def update_status():
     update_form = SnakemakeUpdateForm()
     errors = update_form.validate(request.form)
-    
+
     if errors:
         abort(404, str(errors))
     else:
