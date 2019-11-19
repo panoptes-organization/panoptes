@@ -98,10 +98,17 @@ class WorkflowJobs(Base):
     def __repr__(self):
         return self
 
-    def get_workflow_json(self):
+    def get_job_json(self):
         return {"id": self.id,
-                "workflow": self.name,
-                "date": self.date,
+                "workflow_id": self.wf_id,
+                "msg": self.msg,
+                "name": self.name,
+                "input": eval(self.input),
+                "output": eval(self.output),
+                "log": eval(self.log),
+                "wildcards": eval(self.wildcards),
+                "is_checkpoint":  self.is_checkpoint,
+                "shel_command": self.shel_command,
                 "status": self.status
                 }
 

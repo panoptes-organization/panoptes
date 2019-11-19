@@ -33,3 +33,5 @@ def maintain_jobs(msg, wf_id):
     #if msg_json["level"] == 'shellcmd':
 
 
+def get_db_jobs(workflow_id):
+    return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).first()
