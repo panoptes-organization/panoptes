@@ -38,6 +38,8 @@ def get_jobs_of_workflow(workflow_id):
                         'jobs': [],
                         'count': 0})
 
+def get_jobs(wf_id):
+    return [j.get_job_json() for j in get_db_jobs(wf_id)]
 
 @routes.route('/api/workflow/<workflow_id>/job/<job_id>', methods=['GET'])
 def get_job_of_workflow(workflow_id, job_id):
