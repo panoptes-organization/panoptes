@@ -1,4 +1,6 @@
 language: python
+os:
+  - linux
 branches:
   only:
     - master
@@ -7,5 +9,5 @@ python:
   - 3.6
 # command to install dependencies test
 install: python setup.py install
-#script:
-#  - pytest
+script:
+  - pytest
