@@ -48,19 +48,9 @@ source venv/bin/activate
 
 Install requirements
 ```bash
-pip install -r requirements.txt
+python setup.py npm_install
 ```
 
-Enter coreui directory and install javascipt dependencies
-```bash
-cd server/static
-npm install
-```
-
-Go to the root directory
-```bash
-cd ../../
-```
 
 EXPORT FLASK_APP
 ```bash
