@@ -19,7 +19,14 @@ init_db()
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    wf = [w.get_workflow() for w in get_db_workflows()]
+    info = {
+        'workflows': len(wf),
+        'completed': sum([1 if w['status']=='Done' else 0 for w in wf]),
+        'jobs_done': sum([w['jobs_done'] if w['jobs_done'] else 0 for w in wf]),
+        'jobs_total': sum([w['jobs_total'] if w['jobs_total'] else 0 for w in wf]),
+    }
+    return render_template("index.html", info=info)
 
 
 @app.route('/workflows/')
@@ -99,6 +106,13 @@ def send_node_modules_charts(path):
 def send_js(path):
     return send_from_directory('static/src', path)
 
+
+@app.template_filter('formatdatetime')
+def format_datetime(value, format="%d %b %Y %I:%M %p"):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+    return value.strftime(format)
 
 if __name__ == '__main__':
     app.run()

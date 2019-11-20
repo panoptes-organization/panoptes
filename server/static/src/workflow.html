@@ -23,7 +23,7 @@
         {{ workflow.name }}
       </td>
       <td>
-        <a> {{ workflow.date }} </a>
+        <a> {{ workflow.date|formatdatetime }} </a>
       </td>
       <td>
         <a> {{ workflow.jobs_done }}/{{ workflow.jobs_total }} </a>
@@ -46,31 +46,33 @@
 </div>
 
 <div class="card">
-  <div class="card-header">jobs</div>
-  <table class="table table-responsive-sm table-hover table-outline mb-0">
-    <thead class="thead-light">
-    <tr>
-      <th class="text-center">id</th>
-      <th class="text-center">name</th>
-      <th class="text-center">status</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for job in get_jobs(workflow.id) %}
-    <tr>
-      <td>
-        <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.jobid }} </a>
-      </td>
-      <td>
-        <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.name }} </a>
-      </td>
-      <td>
-        <a> {{ job.status }} </a>
-      </td>
+  <div class="card-header"> Workflow Jobs</div>
+  <div class="card-body">
+    <table class="table table-responsive-sm table-bordered table-striped table-sm">
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for job in get_jobs(workflow.id) %}
+      <tr>
+        <td>
+          <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.jobid }} </a>
+        </td>
+        <td>
+          <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.name }} </a>
+        </td>
+        <td><span class="badge badge-{{ 'success' if job.status=='Done' else 'warning' }}"> {{ job.status }} </span></td>
+      </tr>
       {% endfor %}
 
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 </div>
+
 
 {% endblock %}

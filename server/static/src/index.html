@@ -91,6 +91,62 @@
                 <h1><img class="navbar-brand-full" src="img/brand/panoptes_eye.png" alt="panoptes"></h1>
                 <p>TRACK WORK FLOWS IN REAL TIME</p>
               </div>
+
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+            <div class="row">
+              <div class="col-sm-6 col-lg-3">
+                <div class="card text-white bg-primary">
+                  <div class="card-body pb-0">
+                    <div class="text-value">{{ info.completed }}</div>
+                    <div>Workflows executed</div>
+                  </div>
+                  <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
+                    <canvas class="chart" id="card-chart1" height="70"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!-- /.col-->
+              <div class="col-sm-6 col-lg-3">
+                <div class="card text-white bg-info">
+                  <div class="card-body pb-0">
+                    <div class="text-value">{{ info.workflows-info.completed  }}</div>
+                    <div>Workflows now running</div>
+                  </div>
+                  <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
+                    <canvas class="chart" id="card-chart2" height="70"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!-- /.col-->
+              <div class="col-sm-6 col-lg-3">
+                <div class="card text-white bg-warning">
+                  <div class="card-body pb-0">
+                    <div class="text-value">{{ info.jobs_done }}</div>
+                    <div>Jobs executed </div>
+                  </div>
+                  <div class="chart-wrapper mt-3" style="height:70px;">
+                    <canvas class="chart" id="card-chart3" height="70"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!-- /.col-->
+              <div class="col-sm-6 col-lg-3">
+                <div class="card text-white bg-danger">
+                  <div class="card-body pb-0">
+                    <div class="text-value">{{ info.jobs_total }}</div>
+                    <div>Total Jobs</div>
+                  </div>
+                  <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
+                    <canvas class="chart" id="card-chart4" height="70"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!-- /.col-->
+            </div>
+          </div>
+        </div>
+
               {% endblock %}
             </div>
           </div>

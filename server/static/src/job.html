@@ -21,7 +21,7 @@
         {{ job.name }}
       </td>
       <td>
-        {{ job.status }}
+        <span class="badge badge-{{ 'success' if job.status=='Done' else 'warning' }}"> {{ job.status }} </span>
       </td>
     </tr>
     </tbody>
@@ -32,11 +32,13 @@
   <div class="card-header">input</div>
   <table class="table table-responsive-sm table-hover table-outline mb-0">
     <tbody>
+    {% for in in job.input %}
     <tr>
       <td>
-        {{ job.input }}
+        {{ in }}
       </td>
     </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
@@ -46,11 +48,13 @@
   <div class="card-header">output</div>
   <table class="table table-responsive-sm table-hover table-outline mb-0">
     <tbody>
+    {% for out in job.output %}
     <tr>
       <td>
-        {{ job.output }}
+        {{ out }}
       </td>
     </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
@@ -59,11 +63,13 @@
   <div class="card-header">log path</div>
   <table class="table table-responsive-sm table-hover table-outline mb-0">
     <tbody>
+    {% for logs in job.log %}
     <tr>
       <td>
-        {{ job.log }}
+        {{ logs }}
       </td>
     </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
