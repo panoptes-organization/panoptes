@@ -24,7 +24,7 @@ def index():
 
 @app.route('/workflows/')
 def workflows_page():
-    workflows = Workflows.query.all()
+    workflows = [w.get_workflow() for w in get_db_workflows()]
     return render_template('workflows.html', workflows=workflows)
 
 
@@ -42,7 +42,7 @@ def contribute():
 def get_status(id):
     try:
         workflow = get_db_workflows_by_id(id).get_workflow()
-
+        
         if workflow:
             return render_template('workflow.html', workflow=workflow)
         else:
