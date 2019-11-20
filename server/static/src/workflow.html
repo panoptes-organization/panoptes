@@ -23,7 +23,7 @@
         {{ workflow.name }}
       </td>
       <td>
-        <a> {{ workflow.date|formatdatetime }} </a>
+        <a> {{ workflow.started_at|formatdatetime }} </a>
       </td>
       <td>
         <a> {{ workflow.jobs_done }}/{{ workflow.jobs_total }} </a>
