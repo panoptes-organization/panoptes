@@ -22,6 +22,8 @@ class Workflows(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     status = Column(String(30), unique=False)
+    done = Column(Integer, unique=False)
+    total = Column(Integer, unique=False)
     date = Column(DateTime)
 
     def __init__(self, name=None, status=None):
@@ -36,8 +38,16 @@ class Workflows(Base):
         return {"id": self.id,
                 "name": self.name,
                 "date": self.date,
+                "jobs_done": self.done,
+                "jobs_total": self.total,
                 "status": self.status
                 }
+
+    def edit_workflow(self, done, total):
+        self.done = done
+        self.total = total
+        if done == total:
+            self.status = 'Done'
 
 
 class WorkflowMessages(Base):
@@ -83,7 +93,7 @@ class WorkflowJobs(Base):
     wf = relationship("Workflows", foreign_keys=[wf_id])
 
     def __init__(self, jobid, wf_id, msg, name, input, output, log, wildcards, is_checkpoint, shell_command=None,
-                 status=None):
+                 status="Running"):
         self.jobid = jobid
         self.wf_id = wf_id
         self.msg = msg

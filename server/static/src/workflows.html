@@ -35,9 +35,7 @@
           <a> {{ wf.date }} </a>
         </td>
         <td>
-<!--          {% for job in jobs %}-->
-<!--          <a> {{ message.done }}/{{ message.total }} </a>-->
-<!--          {% endfor %}-->
+          <a> {{ wf.jobs_done }}/{{ wf.jobs_total }} </a>
         </td>
       </tr>
       {% endfor %}

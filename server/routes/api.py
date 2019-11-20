@@ -6,7 +6,7 @@ from . import routes
 /api/workflows
 /api/workflow/<workflow_id>
 /api/workflow/<workflow_id>/jobs
-/api/workflow<workflow_id>/<job_id>
+/api/workflow<workflow_id>/job/<job_id>
 '''
 
 
