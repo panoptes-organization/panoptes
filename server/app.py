@@ -42,9 +42,9 @@ def contribute():
 def get_status(id):
     try:
         workflow = get_db_workflows_by_id(id).get_workflow()
-
         w_msg = WorkflowMessages.query.filter(WorkflowMessages.wf_id == id).all()
         l = []
+        
         for i in w_msg:
             msg = eval(i.msg)
             if "level" in msg.keys():
@@ -71,7 +71,7 @@ def get_job_status(wf_id, job_id):
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
-        w = Workflows(str(uuid.uuid4()), "Initialized")
+        w = Workflows(str(uuid.uuid4()), "Running")
         db_session.add(w)
         db_session.commit()
 
