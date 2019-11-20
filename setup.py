@@ -9,7 +9,6 @@ class NPMInstall(build_py):
         subprocess.check_call("pip install -r requirements.txt", shell=True)
         subprocess.check_call("nodeenv -p", shell=True)
         subprocess.check_call(["npm --prefix ./server/static install ./server/static"], shell=True)
-        # self.run_command("npm --prefix ./server/static install ./server/static")
         build_py.run(self)
 
 
