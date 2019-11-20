@@ -12,7 +12,57 @@ panoptes is a service that can be used by:
 
 # Installation
 
-## Development installation
+## End Users installation process
+
+### Requirements
+
+- Python>=3.6
+- sqlite3 (tested with 3.27.2)
+
+### Install sqlite3
+
+Install [sqlite3](https://www.sqlite.org/download.html)
+
+### Install and run server
+
+Clone repo
+```bash
+git clone -b develop https://github.com/panoptes-organization/panoptes.git
+```
+
+Enter repo
+```bash
+cd panoptes
+```
+
+Create virtual environment
+```bash
+virtualenv -p `which python3` venv
+```
+
+Activate virtual environment
+```bash
+source venv/bin/activate
+```
+
+Install all requirements
+```bash
+python setup.py npm_install
+```
+
+Export variables
+```bash
+export FLASK_APP=server/app.py
+export FLASK_ENV=development
+```
+
+Run server
+```bash
+python -m flask run
+```
+Server should run on: http://127.0.0.1:5000/'
+
+## Contributors installation process
 
 ### Requirements
 
@@ -41,18 +91,28 @@ Create virtual environment
 virtualenv -p `which python3` venv
 ```
 
-Create virtual environment
+Activate virtual environment
 ```bash
 source venv/bin/activate
 ```
 
-Install requirements
+Install pip requirements
 ```bash
-python setup.py npm_install
+pip install -r requirements.txt
 ```
 
+Enter coreui directory and install javascipt dependencies
+```bash
+cd server/static
+npm install
+```
 
-EXPORT FLASK_APP
+Go to the root directory
+```bash
+cd ../../
+```
+
+Export variables
 ```bash
 export FLASK_APP=server/app.py
 export FLASK_ENV=development
@@ -62,9 +122,7 @@ Run server
 ```bash
 python -m flask run
 ```
-
 Server should run on: http://127.0.0.1:5000/'
-
 
 ### Run an example workflow
 
