@@ -1,4 +1,4 @@
-version: '3.6'
+version: '0.1'
 services:
   panoptes:
     build:
@@ -7,4 +7,4 @@ services:
     restart: unless-stopped
     command: python /panoptes/run.py
     ports:
-      - 1234:4000
+      - 8000:1234

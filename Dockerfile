@@ -29,10 +29,9 @@ RUN curl -sL https://deb.nodesource.com/setup_13.x | /bin/bash - \
   && apt-get install -y nodejs
 
 RUN git clone -b feature/dockerfile https://github.com/panoptes-organization/panoptes.git \
-  && cd panoptes \ 
-  && pip install -r requirements.txt \
+  && cd panoptes && pip install -r requirements.txt \
   && cd server/static \
   && npm install \
   && cd ../../
 
-CMD ["python3", "run.py"]
+CMD ["python3", "/panoptes/run.py"]
