@@ -42,19 +42,9 @@ def contribute():
 def get_status(id):
     try:
         workflow = get_db_workflows_by_id(id).get_workflow()
-        w_msg = WorkflowMessages.query.filter(WorkflowMessages.wf_id == id).all()
-        l = []
-        
-        for i in w_msg:
-            msg = eval(i.msg)
-            if "level" in msg.keys():
-                if msg["level"] == 'progress':
-                    l.append({'level': msg["level"],
-                              'done': msg["done"],
-                              'total': msg["total"]})
 
         if workflow:
-            return render_template('workflow.html', workflow=workflow, w_msg=l[-1:])
+            return render_template('workflow.html', workflow=workflow)
         else:
             return f"<html>No workflow currently running with id= {id}!!!</html>"
 

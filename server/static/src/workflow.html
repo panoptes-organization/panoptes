@@ -26,9 +26,7 @@
         <a> {{ workflow.date }} </a>
       </td>
       <td>
-        {% for message in w_msg %}
-        <a> {{ message.done }}/{{ message.total }} </a>
-        {% endfor %}
+        <a> {{ workflow.job_done }}/{{ workflow.job_total }} </a>
       </td>
     </tr>
     </tbody>
@@ -39,12 +37,10 @@
   <div class="card-header">progress</div>
   <div class="card-body">
     <div class="progress">
-      {% for message in w_msg %}
-      {% set progress_percent = "%.2f"|format((message.done|float)/(message.total|float)*100)|string %}
+      {% set progress_percent = "%.2f"|format((workflow.jobs_done|float)/(workflow.jobs_total|float)*100)|string %}
       <div class="progress-bar" role="progressbar" style="width: {{ progress_percent }}%;" aria-valuenow="75"
            aria-valuemin="0" aria-valuemax="100">{{ progress_percent }}%
       </div>
-      {% endfor %}
     </div>
   </div>
 </div>
