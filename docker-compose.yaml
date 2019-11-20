@@ -1,0 +1,10 @@
+version: '3.6'
+services:
+  panoptes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: python run.py
+    ports:
+      - 5000:5000
