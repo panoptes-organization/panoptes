@@ -23,8 +23,8 @@ def index():
     info = {
         'workflows': len(wf),
         'completed': sum([1 if w['status']=='Done' else 0 for w in wf]),
-        'jobs_done': sum([w['jobs_done'] for w in wf]),
-        'jobs_total': sum([w['jobs_total']for w in wf]),
+        'jobs_done': sum([w['jobs_done'] if w['jobs_done'] else 0 for w in wf]),
+        'jobs_total': sum([w['jobs_total'] if w['jobs_total'] else 0 for w in wf]),
     }
     return render_template("index.html", info=info)
 
