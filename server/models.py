@@ -30,7 +30,9 @@ class Workflows(Base):
     def __init__(self, name=None, status=None):
         self.name = name
         self.status = status
-        self.date = datetime.now()
+        self.done = 0
+        self.total = 1
+        self.started_at = datetime.now()
 
     def __repr__(self):
         return self
