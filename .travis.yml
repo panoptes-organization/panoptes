@@ -1,0 +1,11 @@
+language: python
+branches:
+  only:
+    - master
+    - develop
+python:
+  - 3.6
+# command to install dependencies
+install: python setup.py install
+#script:
+#  - pytest
