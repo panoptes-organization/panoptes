@@ -132,6 +132,9 @@ In order to run an example workflow please follow the instructions [here](https:
 
 [![Watch the video](https://img.youtube.com/vi/Expb3odk0GQ/hqdefault.jpg)](https://www.youtube.com/watch?v=Expb3odk0GQ)
 
+#### CI server
+
+Changes in develop or master trigger a [Travis](https://travis-ci.com/panoptes-organization/panoptes) build (and soon tests)
 
 # Contribute
 
