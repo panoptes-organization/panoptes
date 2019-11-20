@@ -107,5 +107,12 @@ def send_js(path):
     return send_from_directory('static/src', path)
 
 
+@app.template_filter('formatdatetime')
+def format_datetime(value, format="%d %b %Y %I:%M %p"):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+    return value.strftime(format)
+
 if __name__ == '__main__':
     app.run()
