@@ -34,4 +34,4 @@ RUN git clone -b feature/dockerfile https://github.com/panoptes-organization/pan
   && npm install \
   && cd ../../
 
-CMD ["python3", "/panoptes/run.py"]
+CMD ["python3", "/panoptes/panoptes.py"]
