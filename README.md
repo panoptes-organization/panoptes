@@ -47,12 +47,6 @@ Install all requirements
 python setup.py npm_install
 ```
 
-Export variables
-```bash
-export FLASK_APP=server/app.py
-export FLASK_ENV=development
-```
-
 Run server
 ```bash
 python panoptes.py
@@ -104,12 +98,6 @@ npm install
 Go to the root directory
 ```bash
 cd ../../
-```
-
-Export variables
-```bash
-export FLASK_APP=server/app.py
-export FLASK_ENV=development
 ```
 
 Run server
