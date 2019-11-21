@@ -55,7 +55,7 @@ export FLASK_ENV=development
 
 Run server
 ```bash
-python -m flask run
+python panoptes.py
 ```
 Server should run on: http://127.0.0.1:5000/'
 
