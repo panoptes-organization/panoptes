@@ -16,11 +16,6 @@ LABEL maintainer.organisation=""
 LABEL maintainer.location=""
 LABEL maintainer.license="MIT"
 
-##### VARIABLES #####
-# Use variables for convenient updates/re-usability
-ENV FLASK_APP=server/app.py
-ENV FLASK_ENV=development
-
 ##### INSTALL #####
 RUN apt-get update \
   && apt-get install -y git-core curl build-essential openssl libssl-dev
