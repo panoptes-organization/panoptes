@@ -124,5 +124,9 @@ def format_delta(value):
     return humanfriendly.format_timespan(value)
 
 
+@app.errorhandler(Exception)
+def handle_bad_request(e):
+    return render_template('404.html')
+
 if __name__ == '__main__':
     app.run()
