@@ -24,15 +24,18 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 
-before_script:
-  - docker-compose up -d --build
+#before_script:
+#  - docker-compose up -d --build
 
 # command to install dependencies test
-install: python setup.py install
+install: docker-compose up -d --build
 
 
 script:
-  - pytest
+  - virtualenv -p `which python3` venv_test
+  - source venv_test/bin/activate
+  - pip install -U 'requests==2.22.0' 'pytest'
+  - python -m pytest
 
 after_script:
   - docker-compose down
