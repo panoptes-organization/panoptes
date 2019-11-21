@@ -12,6 +12,8 @@ branches:
   only:
     - master
     - develop
+#TO BE DELETED
+    - feature/docker_to_travis
 
 python:
   - 3.6
