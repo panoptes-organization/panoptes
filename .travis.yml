@@ -1,13 +1,35 @@
+sudo: required
+
 language: python
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.24.1
+
 os:
   - linux
+
 branches:
   only:
     - master
     - develop
+
 python:
   - 3.6
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
 # command to install dependencies test
 install: python setup.py install
+
+before_script:
+  - docker-compose up -d --build
+
 script:
   - pytest
+
+after_script:
+  - docker-compose down
