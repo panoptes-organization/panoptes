@@ -1,5 +1,6 @@
 import uuid
 import traceback
+import humanfriendly
 
 from server.server_utilities.db_queries import maintain_jobs, get_db_workflows_by_id
 from server.database import init_db, db_session
@@ -112,7 +113,16 @@ def format_datetime(value, format="%d %b %Y %I:%M %p"):
     """Format a date time to (Default): d Mon YYYY HH:MM P"""
     if value is None:
         return ""
-    return value.strftime(format)
+    return value.strftime(format)\
+
+@app.template_filter('formatdelta')
+def format_delta(value):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+
+    return humanfriendly.format_timespan(value)
+
 
 if __name__ == '__main__':
     app.run()

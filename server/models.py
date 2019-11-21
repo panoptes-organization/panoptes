@@ -24,12 +24,15 @@ class Workflows(Base):
     status = Column(String(30), unique=False)
     done = Column(Integer, unique=False)
     total = Column(Integer, unique=False)
-    date = Column(DateTime)
+    started_at = Column(DateTime)
+    completed_at = Column(DateTime)
 
     def __init__(self, name=None, status=None):
         self.name = name
         self.status = status
-        self.date = datetime.now()
+        self.done = 0
+        self.total = 1
+        self.started_at = datetime.now()
 
     def __repr__(self):
         return self
@@ -37,17 +40,19 @@ class Workflows(Base):
     def get_workflow(self):
         return {"id": self.id,
                 "name": self.name,
-                "date": self.date,
                 "jobs_done": self.done,
                 "jobs_total": self.total,
-                "status": self.status
-                }
+                "status": self.status,
+                "started_at": self.started_at,
+                "completed_at": self.completed_at,
+        }
 
     def edit_workflow(self, done, total):
         self.done = done
         self.total = total
         if done == total:
             self.status = 'Done'
+            self.completed_at = datetime.now()
 
 
 class WorkflowMessages(Base):
@@ -89,6 +94,8 @@ class WorkflowJobs(Base):
     is_checkpoint = Column(Boolean, unique=False)
     shell_command = Column(String(100), unique=False)
     status = Column(String(30), unique=False)
+    started_at = Column(DateTime)
+    completed_at = Column(DateTime)
 
     wf = relationship("Workflows", foreign_keys=[wf_id])
 
@@ -105,6 +112,8 @@ class WorkflowJobs(Base):
         self.is_checkpoint = is_checkpoint
         self.shell_command = shell_command
         self.status = status
+        self.started_at = datetime.now()
+        self.completed_at = None
 
     def __repr__(self):
         return self
@@ -120,7 +129,11 @@ class WorkflowJobs(Base):
                 "wildcards": eval(self.wildcards),
                 "is_checkpoint":  self.is_checkpoint,
                 "shell_command": self.shell_command,
-                "status": self.status
+                "status": self.status,
+                "started_at": self.started_at,
+                "completed_at": self.completed_at,
                 }
 
-
+    def job_done(self):
+        self.status = "Done"
+        self.completed_at = datetime.now()

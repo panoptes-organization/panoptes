@@ -10,18 +10,22 @@
       <th class="text-center">id</th>
       <th class="text-center">name</th>
       <th class="text-center">status</th>
+      <th class="text-center">duration</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-      <td>
+      <td class="text-center">
       {{ job.jobid }}
       </td>
-      <td>
+      <td class="text-center">
         {{ job.name }}
       </td>
-      <td>
+      <td class="text-center">
         <span class="badge badge-{{ 'success' if job.status=='Done' else 'warning' }}"> {{ job.status }} </span>
+      </td>
+      <td class="text-center">
+        {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}
       </td>
     </tr>
     </tbody>
