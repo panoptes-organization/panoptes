@@ -54,11 +54,11 @@ def get_status(id):
         if workflow:
             return render_template('workflow.html', workflow=workflow)
         else:
-            return f"<html>No workflow currently running with id= {id}!!!</html>"
+            return render_template('404.html')
 
     except:
         traceback.print_exc()
-        return f"<html>No workflow currently running with id= {id}!!!</html>"
+        return render_template('404.html')
 
 
 @app.route('/workflow/<wf_id>/job/<job_id>', methods=['GET'])
@@ -76,7 +76,7 @@ def create_workflow():
         return w.get_workflow()
     except:
         traceback.print_exc()
-        return f"<html>No workflow currently running with id= {id}!!!</html>"
+        return render_template('404.html')
 
 
 @app.route('/update_workflow_status', methods=['POST'])
@@ -123,6 +123,10 @@ def format_delta(value):
 
     return humanfriendly.format_timespan(value)
 
+
+@app.errorhandler(Exception)
+def handle_bad_request(e):
+    return render_template('404.html')
 
 if __name__ == '__main__':
     app.run()
