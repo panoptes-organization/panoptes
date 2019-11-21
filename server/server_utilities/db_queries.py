@@ -1,5 +1,3 @@
-import traceback
-
 from server.database import db_session
 from server.models import Workflows, WorkflowMessages, WorkflowJobs
 
@@ -25,7 +23,8 @@ def maintain_jobs(msg, wf_id):
                     repr(msg_json['output']),
                     repr(msg_json['log']),
                     repr(msg_json['wildcards']),
-                    msg_json['is_checkpoint']
+                    msg_json['is_checkpoint'],
+
                 )
             db_session.add(job)
             db_session.commit()
@@ -33,7 +32,7 @@ def maintain_jobs(msg, wf_id):
 
         if msg_json["level"] == 'job_finished':
             job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id).filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
-            job.status = "Done"
+            job.job_done()
             db_session.commit()
             return True
 

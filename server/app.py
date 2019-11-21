@@ -1,5 +1,6 @@
 import uuid
 import traceback
+import humanfriendly
 
 from server.server_utilities.db_queries import maintain_jobs, get_db_workflows_by_id
 from server.database import init_db, db_session
@@ -19,7 +20,14 @@ init_db()
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    wf = [w.get_workflow() for w in get_db_workflows()]
+    info = {
+        'workflows': len(wf),
+        'completed': sum([1 if w['status']=='Done' else 0 for w in wf]),
+        'jobs_done': sum([w['jobs_done'] if w['jobs_done'] else 0 for w in wf]),
+        'jobs_total': sum([w['jobs_total'] if w['jobs_total'] else 0 for w in wf]),
+    }
+    return render_template("index.html", info=info)
 
 
 @app.route('/workflows/')
@@ -98,6 +106,22 @@ def send_node_modules_charts(path):
 @app.route('/<path:path>')
 def send_js(path):
     return send_from_directory('static/src', path)
+
+
+@app.template_filter('formatdatetime')
+def format_datetime(value, format="%d %b %Y %I:%M %p"):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+    return value.strftime(format)\
+
+@app.template_filter('formatdelta')
+def format_delta(value):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+
+    return humanfriendly.format_timespan(value)
 
 
 if __name__ == '__main__':

@@ -10,18 +10,22 @@
       <th class="text-center">id</th>
       <th class="text-center">name</th>
       <th class="text-center">status</th>
+      <th class="text-center">duration</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-      <td>
+      <td class="text-center">
       {{ job.jobid }}
       </td>
-      <td>
+      <td class="text-center">
         {{ job.name }}
       </td>
-      <td>
-        {{ job.status }}
+      <td class="text-center">
+        <span class="badge badge-{{ 'success' if job.status=='Done' else 'warning' }}"> {{ job.status }} </span>
+      </td>
+      <td class="text-center">
+        {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}
       </td>
     </tr>
     </tbody>
@@ -32,11 +36,13 @@
   <div class="card-header">input</div>
   <table class="table table-responsive-sm table-hover table-outline mb-0">
     <tbody>
+    {% for in in job.input %}
     <tr>
       <td>
-        {{ job.input }}
+        {{ in }}
       </td>
     </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
@@ -46,11 +52,13 @@
   <div class="card-header">output</div>
   <table class="table table-responsive-sm table-hover table-outline mb-0">
     <tbody>
+    {% for out in job.output %}
     <tr>
       <td>
-        {{ job.output }}
+        {{ out }}
       </td>
     </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
@@ -59,11 +67,13 @@
   <div class="card-header">log path</div>
   <table class="table table-responsive-sm table-hover table-outline mb-0">
     <tbody>
+    {% for logs in job.log %}
     <tr>
       <td>
-        {{ job.log }}
+        {{ logs }}
       </td>
     </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
