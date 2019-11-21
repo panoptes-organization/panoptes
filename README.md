@@ -12,22 +12,19 @@ panoptes is a service that can be used by:
 
 # Installation
 
-## End Users installation process
+## Basic installation process
 
 ### Requirements
 
 - Python>=3.6
-- sqlite3 (tested with 3.27.2)
-
-### Install sqlite3
-
-Install [sqlite3](https://www.sqlite.org/download.html)
+- [sqlite3](https://www.sqlite.org/download.html)
+- virtualenv
 
 ### Install and run server
 
 Clone repo
 ```bash
-git clone -b develop https://github.com/panoptes-organization/panoptes.git
+git clone https://github.com/panoptes-organization/panoptes.git
 ```
 
 Enter repo
@@ -50,29 +47,20 @@ Install all requirements
 python setup.py npm_install
 ```
 
-Export variables
-```bash
-export FLASK_APP=server/app.py
-export FLASK_ENV=development
-```
-
 Run server
 ```bash
-python -m flask run
+python panoptes.py
 ```
 Server should run on: http://127.0.0.1:5000/'
 
-## Contributors installation process
+## Developer installation
 
 ### Requirements
 
 - Python>=3.6
-- sqlite3 (tested with 3.27.2)
-- npm (tested with versio 6.11.3)
-
-### Install sqlite3
-
-Install [sqlite3](https://www.sqlite.org/download.html)
+- [sqlite3](https://www.sqlite.org/download.html)
+- npm (tested with version >=6)
+- virtualenv
 
 ### Install and run server
 
@@ -112,17 +100,33 @@ Go to the root directory
 cd ../../
 ```
 
-Export variables
-```bash
-export FLASK_APP=server/app.py
-export FLASK_ENV=development
-```
-
 Run server
 ```bash
-python -m flask run
+python panoptes.py
 ```
 Server should run on: http://127.0.0.1:5000/'
+
+## Docker
+
+### Requirements
+
+- docker
+- docker-compose
+
+
+### Build and run
+
+Build
+```bash
+docker-compose build
+```
+
+Run
+```bash
+docker-compose up -d
+```
+
+Server should run on: http://127.0.0.1:8000/'
 
 ### Run an example workflow
 
