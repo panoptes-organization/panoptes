@@ -134,7 +134,7 @@ In order to run an example workflow please follow the instructions [here](https:
 
 #### panoptes in action
 
-[![Watch the video](https://img.youtube.com/vi/Expb3odk0GQ/hqdefault.jpg)](https://www.youtube.com/watch?v=Expb3odk0GQ)
+[![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
 
 #### CI server
 
