@@ -12,8 +12,6 @@ branches:
   only:
     - master
     - develop
-    #TO BE DELETED
-    - feature/docker_to_travis
 
 python:
   - 3.6
@@ -24,12 +22,7 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 
-#before_script:
-#  - docker-compose up -d --build
-
-# command to install dependencies test
 install: docker-compose up -d --build
-
 
 script:
   - virtualenv -p `which python3` venv_test
