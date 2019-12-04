@@ -35,7 +35,7 @@ script:
   - virtualenv -p `which python3` venv_test
   - source venv_test/bin/activate
   - pip install -U 'requests==2.22.0' 'pytest'
-  - python -m pytest
+  - py.test tests/api_test.py --ignore server/
 
 after_script:
   - docker-compose down
