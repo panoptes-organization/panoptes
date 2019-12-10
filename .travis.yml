@@ -1,13 +1,34 @@
+sudo: required
+
 language: python
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.24.1
+
 os:
   - linux
+
 branches:
   only:
     - master
     - develop
+
 python:
   - 3.6
-# command to install dependencies test
-install: python setup.py install
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+install: docker-compose up -d --build
+
 script:
-  - pytest
+  - virtualenv -p `which python3` venv_test
+  - source venv_test/bin/activate
+  - pip install -U 'requests==2.22.0' 'pytest'
+  - py.test tests/api_test.py --ignore server/
+
+after_script:
+  - docker-compose down
