@@ -9,7 +9,8 @@ from server.schema_forms import SnakemakeUpdateForm
 from server.routes import *
 from flask import Flask, request, render_template, abort, send_from_directory
 
-app = Flask(__name__, template_folder="static/src/")
+#app = Flask(__name__, template_folder="static/src/")
+app = Flask(__name__, static_folder="client/build/", template_folder="static/src/")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(routes)
 app.jinja_env.globals.update(get_jobs=get_jobs)
@@ -18,17 +19,21 @@ app.jinja_env.globals.update(get_job=get_job)
 init_db()
 
 
-@app.route('/')
-def index():
-    wf = [w.get_workflow() for w in get_db_workflows()]
-    info = {
-        'workflows': len(wf),
-        'completed': sum([1 if w['status']=='Done' else 0 for w in wf]),
-        'jobs_done': sum([w['jobs_done'] if w['jobs_done'] else 0 for w in wf]),
-        'jobs_total': sum([w['jobs_total'] if w['jobs_total'] else 0 for w in wf]),
-    }
-    return render_template("index.html", info=info)
+#@app.route('/')
+#def index():
+#    wf = [w.get_workflow() for w in get_db_workflows()]
+#    info = {
+#        'workflows': len(wf),
+#        'completed': sum([1 if w['status']=='Done' else 0 for w in wf]),
+#        'jobs_done': sum([w['jobs_done'] if w['jobs_done'] else 0 for w in wf]),
+#        'jobs_total': sum([w['jobs_total'] if w['jobs_total'] else 0 for w in wf]),
+#    }
+#    return render_template("index.html", info=info)
 
+
+@app.route('/new')
+def index():
+    return send_from_directory('client/build', 'index.html')
 
 @app.route('/workflows/')
 def workflows_page():

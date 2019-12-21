@@ -28,3 +28,6 @@ venv
 
 .DS_Store
 server/.DS_Store
+
+/server/client/build
+/server/client/node_modules
