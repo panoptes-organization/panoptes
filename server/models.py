@@ -54,6 +54,9 @@ class Workflows(Base):
             self.status = 'Done'
             self.completed_at = datetime.now()
 
+    def set_error(self):
+        self.status = 'Error'
+
 
 class WorkflowMessages(Base):
     __tablename__ = 'workflow_messages'
@@ -136,4 +139,8 @@ class WorkflowJobs(Base):
 
     def job_done(self):
         self.status = "Done"
+        self.completed_at = datetime.now()
+
+    def job_error(self):
+        self.status = "Error"
         self.completed_at = datetime.now()
