@@ -36,11 +36,25 @@ def maintain_jobs(msg, wf_id):
             db_session.commit()
             return True
 
+        if msg_json["level"] == 'job_error':
+            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id).filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
+            job.job_error()
+            db_session.commit()
+            return True
+            
+
     if msg_json["level"] == 'progress':
         wf = Workflows.query.filter(Workflows.id == wf_id).first()
         wf.edit_workflow(msg_json['done'], msg_json['total'])
         db_session.commit()
         return True
+
+    if msg_json["level"] == 'error':
+        wf = Workflows.query.filter(Workflows.id == wf_id).first()
+        wf.set_error()
+        db_session.commit()
+        return True
+        
 
     if msg_json["level"] in ['shellcmd', '']:
         w = WorkflowMessages(msg, wf_id=wf_id)
