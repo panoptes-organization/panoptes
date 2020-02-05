@@ -57,6 +57,10 @@ class Workflows(Base):
     def set_error(self):
         self.status = 'Error'
 
+    def set_not_executed(self):
+        self.done = 1
+        self.status = 'No Execution'
+
 
 class WorkflowMessages(Base):
     __tablename__ = 'workflow_messages'

@@ -29,7 +29,7 @@
           <a href='/workflow/{{ wf.id }}'> {{ wf.name }} </a>
         </td>
         <td>
-          <span class="badge badge-{{ 'success' if wf.status=='Done' else ('danger' if wf.status=='Error' else 'warning')}}"> {{ wf.status }} </span>
+          <span class="badge badge-{{ 'success' if wf.status=='Done' else ('danger' if wf.status=='Error' else ('info' if wf.status=='Running' else 'light text-dark'))}}"> {{ wf.status }} </span>
         </td>
         <td>
           <a> {{ wf.started_at|formatdatetime }} </a>

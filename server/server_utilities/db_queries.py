@@ -41,7 +41,13 @@ def maintain_jobs(msg, wf_id):
             job.job_error()
             db_session.commit()
             return True
-            
+    
+    if msg_json["level"] == 'info':
+        if msg_json['msg'] == 'Nothing to be done.':
+            wf = Workflows.query.filter(Workflows.id == wf_id).first()
+            wf.set_not_executed()
+            db_session.commit()
+            return True
 
     if msg_json["level"] == 'progress':
         wf = Workflows.query.filter(Workflows.id == wf_id).first()
