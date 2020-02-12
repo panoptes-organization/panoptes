@@ -9,6 +9,9 @@ from . import routes
 /api/workflow<workflow_id>/job/<job_id>
 '''
 
+@routes.route('/api/service-info', methods=['GET'])
+def get_service_info():
+    return jsonify({'status': "running"})
 
 @routes.route('/api/workflows', methods=['GET'])
 def get_workflows():
