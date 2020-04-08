@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
-from server.database import Base
+from panoptes.database import Base
 from sqlalchemy.orm import relationship
-from datetime import  datetime
+from datetime import datetime
+
 
 class User(Base):
     __tablename__ = 'users'

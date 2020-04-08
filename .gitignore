@@ -3,8 +3,8 @@
 
 *.pyc
 
-grade_venv/
-
+build/*
+dist/*
 # VSCode
 .classpath/
 
