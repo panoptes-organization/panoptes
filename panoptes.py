@@ -28,13 +28,6 @@ def main():
     )
 
     parser.add_argument(
-        "--db-path",
-        dest="db_path",
-        help="The path of the database",
-        required=False
-    )
-
-    parser.add_argument(
         "-v", "--verbose",
         action = "store_true",
         dest = "verbose",
@@ -46,8 +39,7 @@ def main():
     args = parser.parse_args()
 
     app.run(host=args.ip,
-            port=args.port,
-            db_path=args.db_path)
+            port=args.port)
 
 if __name__ == '__main__':
     try:
