@@ -51,7 +51,9 @@ Run server
 ```bash
 python panoptes.py
 ```
-Server should run on: http://127.0.0.1:5000/'
+Server should run on: 127.0.0.1:5000
+
+By default it should generate an sqlite database: .panoptes.db 
 
 ## Developer installation
 
@@ -126,7 +128,7 @@ Run
 docker-compose up -d
 ```
 
-Server should run on: http://127.0.0.1:8000/'
+Server should run on: http://127.0.0.1:8000/
 
 ### Run an example workflow
 
@@ -143,8 +145,6 @@ Changes in develop or master trigger a [Travis](https://travis-ci.com/panoptes-o
 # Contribute
 
 Please see the [Contributing instructions](CONTRIBUTING.md).
-
-**panoptes** is one of the [selected projects](https://github.com/elixir-europe/BioHackathon-projects-2019/tree/master/projects/14) for the [2019 Paris Biohackthon](https://www.biohackathon-europe.org/). 
 
 # Contact
 
