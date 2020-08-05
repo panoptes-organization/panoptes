@@ -30,4 +30,4 @@ RUN cd panoptes && pip install -r requirements.txt \
   && npm install \
   && cd ../../
 
-CMD ["python3", "/panoptes/panoptes.py"]
+CMD ["python3", "panoptes.py", "--ip 0.0.0.0", "--port 8000"]
