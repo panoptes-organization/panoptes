@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from server.app import app
 from argparse import ArgumentParser, RawTextHelpFormatter
 import sys
