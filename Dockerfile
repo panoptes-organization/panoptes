@@ -1,8 +1,8 @@
 ##### BASE IMAGE #####
-FROM python:3.6.6
+FROM python:3.6.12-slim
 
 ##### METADATA #####
-LABEL base.image="python:3.6.6"
+LABEL base.image="python:3.6.12-slim"
 LABEL version="1"
 LABEL software="panoptes"
 LABEL software.version="development"
@@ -16,18 +16,9 @@ LABEL maintainer.organisation=""
 LABEL maintainer.location=""
 LABEL maintainer.license="MIT"
 
-##### INSTALL #####
-RUN apt-get update \
-  && apt-get install -y git-core curl build-essential openssl libssl-dev
-
-RUN curl -sL https://deb.nodesource.com/setup_13.x | /bin/bash - \
-  && apt-get install -y nodejs
-
 COPY . /panoptes
 
 RUN cd panoptes && pip install -r requirements.txt \
-  && cd server/static \
-  && npm install \
-  && cd ../../
+  && cd ../
 
 CMD ["python3", "/panoptes/panoptes.py"]

@@ -17,8 +17,8 @@ panoptes is a service that can be used by:
 ### Requirements
 
 - Python>=3.6
-- [sqlite3](https://www.sqlite.org/download.html)
 - virtualenv
+- [sqlite3](https://www.sqlite.org/download.html)
 
 ### Install and run server
 
@@ -44,7 +44,9 @@ source venv/bin/activate
 
 Install all requirements
 ```bash
-python setup.py npm_install
+pip install .
+or
+pip install -r requirements.txt
 ```
 
 Run server
@@ -55,66 +57,12 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db 
 
-## Developer installation
-
-### Requirements
-
-- Python>=3.6
-- [sqlite3](https://www.sqlite.org/download.html)
-- npm (tested with version >=6)
-- virtualenv
-
-### Install and run server
-
-Clone repo
-```bash
-git clone -b develop https://github.com/panoptes-organization/panoptes.git
-```
-
-Enter repo
-```bash
-cd panoptes
-```
-
-Create virtual environment
-```bash
-virtualenv -p `which python3` venv
-```
-
-Activate virtual environment
-```bash
-source venv/bin/activate
-```
-
-Install pip requirements
-```bash
-pip install -r requirements.txt
-```
-
-Enter coreui directory and install javascipt dependencies
-```bash
-cd server/static
-npm install
-```
-
-Go to the root directory
-```bash
-cd ../../
-```
-
-Run server
-```bash
-python panoptes.py
-```
-Server should run on: http://127.0.0.1:5000/'
-
 ## Docker
 
 ### Requirements
 
 - docker
 - docker-compose
-
 
 ### Build and run
 
@@ -129,6 +77,11 @@ docker-compose up -d
 ```
 
 Server should run on: http://127.0.0.1:8000/
+
+Stop
+```bash
+docker-compose down
+```
 
 ### Run an example workflow
 

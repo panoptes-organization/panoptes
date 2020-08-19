@@ -1,30 +1,23 @@
-import subprocess
+import sys
+from setuptools import setup
 
-from setuptools import setup, find_packages
-from setuptools.command.build_py import build_py
+if sys.version_info < (3, 6):
+    sys.exit('Sorry, panoptes requires Python >= 3.6')
 
+requirements = []
 
-class NPMInstall(build_py):
-    def run(self):
-        subprocess.check_call("pip install -r requirements.txt", shell=True)
-        subprocess.check_call("nodeenv -p", shell=True)
-        subprocess.check_call(["npm --prefix ./server/static install ./server/static"], shell=True)
-        build_py.run(self)
-
-
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+with open("requirements.txt") as fp:
+    for line in fp:
+        requirements.append(line.replace("==", ">="))
 
 setup(
     name='panoptes',
     version='0.1',
-    packages=find_packages(),
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
     author='panoptes-organization',
     author_email='georgekostoulas@gmail.com, agardelakos@gmail.com, fgypas@gmail.com, gntalaperas@gmail.com',
-    description=long_description,
-    cmdclass={
-        'npm_install': NPMInstall
-    },
+    description="panoptes: monitor computational workflows in real time",
+    scripts=['panoptes.py'],
+    install_requires=requirements,
 )
