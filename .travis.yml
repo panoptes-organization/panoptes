@@ -25,11 +25,6 @@ before_install:
 install: docker-compose up -d --build
 
 script:
-  - virtualenv -p `which python3` venv_test
-  - source venv_test/bin/activate
-  - pip install -U 'requests==2.22.0' 'pytest'
-  - py.test tests/api_test.py --ignore server/
-  - deactivate
   - git clone -b features/wms-monitor https://github.com/panoptes-organization/snakemake
   - cd snakemake
   - virtualenv -p `which python3` venv_snakemake_develop
@@ -38,6 +33,15 @@ script:
   - cd ..
   - git clone https://github.com/panoptes-organization/snakemake_example_workflow.git
   - cd snakemake_example_workflow
+  - sed -i 's/5000/8000/g' run_local.sh
+  - bash run_local.sh
+  - cd ../
+  - deactivate 
+  - virtualenv -p `which python3` venv_test
+  - source venv_test/bin/activate
+  - pip install -U 'requests==2.22.0' 'pytest'
+  - py.test tests/api_test.py --ignore server/
+  - deactivate
 
 after_script:
   - docker-compose down
