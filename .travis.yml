@@ -39,12 +39,12 @@ install:
 
 
 script:
-  - conda activate base
-  - which conda
   - git clone -b features/wms-monitor https://github.com/panoptes-organization/snakemake
-  - cd snakemake
-  - virtualenv -p `which python3` venv_snakemake_develop
-  - source venv_snakemake_develop/bin/activate
+  # - cd snakemake
+  # - virtualenv -p `which python3` venv_snakemake_develop
+  # - source venv_snakemake_develop/bin/activate
+  - conda create -n snakemake_develop -c conda-forge mamba
+  - conda activate snakemake_develop
   - pip install .
   - cd ..
   - git clone https://github.com/panoptes-organization/snakemake_example_workflow.git
@@ -52,7 +52,7 @@ script:
   - sed -i 's/5000/8000/g' run_local.sh
   - bash run_local.sh
   - cd ../
-  - deactivate 
+  - conda deactivate
   - virtualenv -p `which python3` venv_test
   - source venv_test/bin/activate
   - pip install -U 'requests==2.22.0' 'pytest'
