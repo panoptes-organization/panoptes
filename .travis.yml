@@ -39,6 +39,7 @@ install:
 
 
 script:
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
   - git clone -b features/wms-monitor https://github.com/panoptes-organization/snakemake
   - cd snakemake
   - virtualenv -p `which python3` venv_snakemake_develop
