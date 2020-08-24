@@ -40,7 +40,7 @@ install:
 
 script:
   - git clone -b features/wms-monitor https://github.com/panoptes-organization/snakemake
-  # - cd snakemake
+  - cd snakemake
   # - virtualenv -p `which python3` venv_snakemake_develop
   # - source venv_snakemake_develop/bin/activate
   - conda create -n snakemake_develop -c conda-forge mamba
