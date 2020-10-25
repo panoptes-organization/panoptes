@@ -21,7 +21,9 @@ setup(
     description="panoptes: monitor computational workflows in real time",
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
-    scripts=['panoptes.py'],
+    entry_points = {
+        'console_scripts': ['panoptes=panoptes:main'],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
