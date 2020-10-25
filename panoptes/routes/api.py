@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from server.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id
+from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id
 from . import routes
 
 '''

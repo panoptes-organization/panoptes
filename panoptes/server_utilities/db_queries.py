@@ -1,5 +1,5 @@
-from server.database import db_session
-from server.models import Workflows, WorkflowMessages, WorkflowJobs
+from panoptes.database import db_session
+from panoptes.models import Workflows, WorkflowMessages, WorkflowJobs
 
 
 def get_db_workflows():
@@ -41,7 +41,7 @@ def maintain_jobs(msg, wf_id):
             job.job_error()
             db_session.commit()
             return True
-    
+
     if msg_json["level"] == 'info':
         if msg_json['msg'] == 'Nothing to be done.':
             wf = Workflows.query.filter(Workflows.id == wf_id).first()
@@ -60,7 +60,6 @@ def maintain_jobs(msg, wf_id):
         wf.set_error()
         db_session.commit()
         return True
-        
 
     if msg_json["level"] in ['shellcmd', '']:
         w = WorkflowMessages(msg, wf_id=wf_id)
