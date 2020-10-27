@@ -1,1 +1,2 @@
-include panoptes/static/src/*
+graft panoptes/static
+graft panoptes/static/src
