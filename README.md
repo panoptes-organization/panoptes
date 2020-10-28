@@ -44,7 +44,7 @@ source venv/bin/activate
 
 Install all requirements
 ```bash
-pip install panoptes
+pip install panoptes-ui
 ```
 
 Run server
