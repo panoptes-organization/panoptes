@@ -44,14 +44,12 @@ source venv/bin/activate
 
 Install all requirements
 ```bash
-pip install .
-or
-pip install -r requirements.txt
+pip install panoptes
 ```
 
 Run server
 ```bash
-python panoptes.py
+panoptes
 ```
 Server should run on: 127.0.0.1:5000
 
