@@ -1,4 +1,5 @@
-# panoptes
+# ![alt text](panoptes/static/src/img/brand/panoptes.png "panoptes")
+
 
 Bioinformaticians and data scientists, rely on computational frameworks (e.g. [snakemake](https://snakemake.readthedocs.io/en/stable/), [nextflow](https://www.nextflow.io/), [CWL](https://www.commonwl.org/), [WDL](https://software.broadinstitute.org/wdl/)) to process, analyze and integrate data of various types. Such frameworks allow scientists to combine software and custom tools of different origin in a unified way, which lets them reproduce the results of others, or reuse the same pipeline on different datasets. One of the fundamental issues is that the majority of the users execute multiple pipelines at the same time, or execute a multistep pipeline for a big number of datasets, or both, making it hard to track the execution of the individual steps or monitor which of the processed datasets are complete. panoptes is a tool that monitors the execution of such workflows.
 
@@ -11,23 +12,19 @@ panoptes is a service that can be used by:
 
 # Installation
 
-## Development installation
+## Basic installation process
 
 ### Requirements
 
 - Python>=3.6
-- sqlite3 (tested with 3.27.2)
-- npm (tested with versio 6.11.3)
-
-### Install sqlite3
-
-Install [sqlite3](https://www.sqlite.org/download.html)
+- virtualenv
+- [sqlite3](https://www.sqlite.org/download.html)
 
 ### Install and run server
 
 Clone repo
 ```bash
-git clone -b develop https://github.com/panoptes-organization/panoptes.git
+git clone https://github.com/panoptes-organization/panoptes.git
 ```
 
 Enter repo
@@ -40,40 +37,49 @@ Create virtual environment
 virtualenv -p `which python3` venv
 ```
 
-Create virtual environment
+Activate virtual environment
 ```bash
 source venv/bin/activate
 ```
 
-Install requirements
+Install all requirements
 ```bash
-pip install -r requirements.txt
-```
-
-Enter coreui directory and install javascipt dependencies
-```bash
-cd server/static
-npm install
-```
-
-Go to the root directory
-```bash
-cd ../../
-```
-
-EXPORT FLASK_APP
-```bash
-export FLASK_APP=server/app.py
-export FLASK_ENV=development
+pip install panoptes-ui
 ```
 
 Run server
 ```bash
-python -m flask run
+panoptes
+```
+Server should run on: 127.0.0.1:5000
+
+By default it should generate an sqlite database: .panoptes.db 
+
+## Docker
+
+### Requirements
+
+- docker
+- docker-compose
+
+### Build and run
+
+Build
+```bash
+docker-compose build
 ```
 
-Server should run on: http://127.0.0.1:5000/'
+Run
+```bash
+docker-compose up -d
+```
 
+Server should run on: http://127.0.0.1:8000/
+
+Stop
+```bash
+docker-compose down
+```
 
 ### Run an example workflow
 
@@ -81,14 +87,15 @@ In order to run an example workflow please follow the instructions [here](https:
 
 #### panoptes in action
 
-[![Watch the video](https://img.youtube.com/vi/Expb3odk0GQ/hqdefault.jpg)](https://www.youtube.com/watch?v=Expb3odk0GQ)
+[![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
 
+#### CI server
+
+Changes in develop or master trigger a [Travis](https://travis-ci.com/panoptes-organization/panoptes) build (and soon tests)
 
 # Contribute
 
 Please see the [Contributing instructions](CONTRIBUTING.md).
-
-**panoptes** is one of the [selected projects](https://github.com/elixir-europe/BioHackathon-projects-2019/tree/master/projects/14) for the [2019 Paris Biohackthon](https://www.biohackathon-europe.org/). 
 
 # Contact
 

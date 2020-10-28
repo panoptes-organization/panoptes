@@ -28,3 +28,10 @@ venv
 
 .DS_Store
 server/.DS_Store
+
+.panoptes.db
+
+# Package build
+build/
+dist/
+panoptes.egg-info/

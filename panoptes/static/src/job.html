@@ -1,0 +1,81 @@
+{% extends "index.html" %}
+
+{% block main_info %}
+
+<div class="card">
+  <div class="card-header"><strong>job info</strong></div>
+  <table class="table table-responsive-sm table-hover table-outline mb-0">
+    <thead class="thead-light">
+    <tr>
+      <th class="text-center">id</th>
+      <th class="text-center">name</th>
+      <th class="text-center">status</th>
+      <th class="text-center">duration</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td class="text-center">
+      {{ job.jobid }}
+      </td>
+      <td class="text-center">
+        {{ job.name }}
+      </td>
+      <td class="text-center">
+        <span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else 'warning')}}"> {{ job.status }} </span>
+      </td>
+      <td class="text-center">
+        {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header">input</div>
+  <table class="table table-responsive-sm table-hover table-outline mb-0">
+    <tbody>
+    {% for in in job.input %}
+    <tr>
+      <td>
+        {{ in }}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<div class="card">
+  <div class="card-header">output</div>
+  <table class="table table-responsive-sm table-hover table-outline mb-0">
+    <tbody>
+    {% for out in job.output %}
+    <tr>
+      <td>
+        {{ out }}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header">log path</div>
+  <table class="table table-responsive-sm table-hover table-outline mb-0">
+    <tbody>
+    {% for logs in job.log %}
+    <tr>
+      <td>
+        {{ logs }}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

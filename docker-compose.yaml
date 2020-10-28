@@ -1,0 +1,10 @@
+version: '3.6'
+services:
+  panoptes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: panoptes
+    ports:
+      - 8000:5000
