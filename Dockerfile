@@ -18,7 +18,6 @@ LABEL maintainer.license="MIT"
 
 COPY . /panoptes
 
-RUN cd panoptes && pip install -r requirements.txt \
-  && cd ../
+RUN cd panoptes && pip install .
 
-CMD ["python3", "/panoptes/panoptes.py"]
+CMD ["panoptes"]
