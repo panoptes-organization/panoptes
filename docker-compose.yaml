@@ -5,6 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    command: python /panoptes/panoptes.py
+    command: panoptes
     ports:
       - 8000:5000

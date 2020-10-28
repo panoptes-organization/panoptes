@@ -1,5 +1,6 @@
 import sys
 from setuptools import setup
+import setuptools
 
 if sys.version_info < (3, 6):
     sys.exit('Sorry, panoptes requires Python >= 3.6')
@@ -12,12 +13,22 @@ with open("requirements.txt") as fp:
 
 setup(
     name='panoptes',
-    version='0.1',
+    version='0.1.0',
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
     author='panoptes-organization',
     author_email='georgekostoulas@gmail.com, agardelakos@gmail.com, fgypas@gmail.com, gntalaperas@gmail.com',
     description="panoptes: monitor computational workflows in real time",
-    scripts=['panoptes.py'],
+    long_description_content_type="text/markdown",
+    packages=setuptools.find_packages(),
+    entry_points = {
+        'console_scripts': ['panoptes=panoptes:main'],
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
     install_requires=requirements,
+    include_package_data=True,
 )

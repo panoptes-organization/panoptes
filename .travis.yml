@@ -53,8 +53,8 @@ script:
   - conda deactivate
   - virtualenv -p `which python3` venv_test
   - source venv_test/bin/activate
-  - pip install -U 'requests==2.22.0' 'pytest'
-  - py.test tests/api_test.py --ignore server/
+  - pip install -r requirements.txt
+  - py.test panoptes/tests/api_test.py
   - deactivate
 
 after_script:

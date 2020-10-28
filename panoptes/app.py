@@ -2,11 +2,11 @@ import uuid
 import traceback
 import humanfriendly
 
-from server.server_utilities.db_queries import maintain_jobs, get_db_workflows_by_id
-from server.database import init_db, db_session
-from server.models import Workflows, WorkflowMessages
-from server.schema_forms import SnakemakeUpdateForm
-from server.routes import *
+from panoptes.server_utilities.db_queries import maintain_jobs, get_db_workflows_by_id
+from panoptes.database import init_db, db_session
+from panoptes.models import Workflows, WorkflowMessages
+from panoptes.schema_forms import SnakemakeUpdateForm
+from panoptes.routes import *
 from flask import Flask, request, render_template, abort, send_from_directory
 
 app = Flask(__name__, template_folder="static/src/")
@@ -50,7 +50,7 @@ def contribute():
 def get_status(id):
     try:
         workflow = get_db_workflows_by_id(id).get_workflow()
-        
+
         if workflow:
             return render_template('workflow.html', workflow=workflow)
         else:
