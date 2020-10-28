@@ -54,7 +54,7 @@ script:
   - virtualenv -p `which python3` venv_test
   - source venv_test/bin/activate
   - pip install -U 'requests==2.22.0' 'pytest'
-  - py.test panoptes/panoptes/tests/api_test.py --ignore server/
+  - py.test panoptes/tests/api_test.py
   - deactivate
 
 after_script:
