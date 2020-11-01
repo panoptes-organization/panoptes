@@ -20,7 +20,31 @@ panoptes is a service that can be used by:
 - virtualenv
 - [sqlite3](https://www.sqlite.org/download.html)
 
-### Install and run server
+### Option 1: Install via pypi and run server
+
+Create virtual environment
+```bash
+virtualenv -p `which python3` venv
+```
+
+Activate virtual environment
+```bash
+source venv/bin/activate
+```
+
+Install via pypi
+```bash
+pip install panoptes-ui
+```
+Run server
+```bash
+panoptes
+```
+Server should run on: 127.0.0.1:5000
+
+By default it should generate an sqlite database: .panoptes.db
+
+### Option 2: Install from source code and run server
 
 Clone repo
 ```bash
@@ -44,7 +68,7 @@ source venv/bin/activate
 
 Install all requirements
 ```bash
-pip install panoptes-ui
+pip install .
 ```
 
 Run server
@@ -55,14 +79,14 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db 
 
-## Docker
+## Docker installation
 
 ### Requirements
 
 - docker
 - docker-compose
 
-### Build and run
+### Build and run with docker-compose
 
 Build
 ```bash
@@ -74,7 +98,7 @@ Run
 docker-compose up -d
 ```
 
-Server should run on: http://127.0.0.1:8000/
+Server should run on: http://127.0.0.1:8000
 
 Stop
 ```bash
@@ -85,18 +109,19 @@ docker-compose down
 
 In order to run an example workflow please follow the instructions [here](https://github.com/panoptes-organization/snakemake_example_workflow)
 
-#### panoptes in action
+### panoptes in action
 
 [![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
 
-#### CI server
-
-Changes in develop or master trigger a [Travis](https://travis-ci.com/panoptes-organization/panoptes) build (and soon tests)
 
 # Contribute
 
 Please see the [Contributing instructions](CONTRIBUTING.md).
 
+## CI server
+
+Changes in develop or master trigger a [Travis](https://travis-ci.com/panoptes-organization/panoptes) build (and runs tests)
+
 # Contact
 
-In case the [issues section](https://github.com/panoptes-organization/panoptes/issues) is not enough for you, you can also contact us via [gitter](https://gitter.im/panoptes-organization/)
+In case the [issues section](https://github.com/panoptes-organization/panoptes/issues) is not enough for you, you can also contact us via [discord](https://discord.gg/vMcZCVZ)
