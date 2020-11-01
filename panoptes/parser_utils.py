@@ -1,16 +1,13 @@
-import os
 import re
 from pprint import pprint
-from pandas.io.json import json_normalize
-import datetime
 import argparse
-import sys
 
 DATE = 'date'
 LEVEL = 'level'
 TYPE = 'type'
 CLASS = 'class'
 MESSAGE = 'message'
+
 
 def match_date(line):
     match_this = ''
@@ -103,7 +100,7 @@ def structure_snakemake_logs(logs):
         elif "Finished job" in log['message']:
             try:
                 job_id = re.search(r'Finished job (\d+)\.', log['message']).group(1)
-                progress = re.search(r'(\d+) of (\d+) steps \((\d+%)\) done', log['message']).group(1,2,3)
+                progress = re.search(r'(\d+) of (\d+) steps \((\d+%)\) done', log['message']).group(1, 2, 3)
                 current_job = progress[0]
                 total_jobs = progress[1]
                 percent = progress[2]
@@ -120,6 +117,7 @@ def structure_snakemake_logs(logs):
                                           })
 
     return snakemake_log_objects
+
 
 def main():
     """
@@ -143,8 +141,8 @@ def main():
 
     print(structure_snakemake_logs(parced_logs))
 
-    #data = parced_logs.jason_normalize()
-    #data.to_csv('exported.csv')
+    # data = parced_logs.jason_normalize()
+    # data.to_csv('exported.csv')
 
 
 if __name__ == '__main__':

@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from panoptes.database import Base
 from sqlalchemy.orm import relationship
-from datetime import  datetime
+from datetime import datetime
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -14,7 +15,7 @@ class User(Base):
         self.email = email
 
     def __repr__(self):
-        return '<User %r>' % (self.name)
+        return '<User %r>' % self.name
 
 
 class Workflows(Base):
@@ -45,7 +46,7 @@ class Workflows(Base):
                 "status": self.status,
                 "started_at": self.started_at,
                 "completed_at": self.completed_at,
-        }
+                }
 
     def edit_workflow(self, done, total):
         self.done = done
@@ -134,7 +135,7 @@ class WorkflowJobs(Base):
                 "output": eval(self.output),
                 "log": eval(self.log),
                 "wildcards": eval(self.wildcards),
-                "is_checkpoint":  self.is_checkpoint,
+                "is_checkpoint": self.is_checkpoint,
                 "shell_command": self.shell_command,
                 "status": self.status,
                 "started_at": self.started_at,

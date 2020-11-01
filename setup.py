@@ -12,7 +12,7 @@ with open("requirements.txt") as fp:
         requirements.append(line.replace("==", ">="))
 
 setup(
-    name='panoptes',
+    name='panoptes-ui',
     version='0.1.0',
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
@@ -21,7 +21,7 @@ setup(
     description="panoptes: monitor computational workflows in real time",
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
-    entry_points = {
+    entry_points={
         'console_scripts': ['panoptes=panoptes:main'],
     },
     classifiers=[

@@ -4,8 +4,8 @@ from panoptes.app import app
 from argparse import ArgumentParser, RawTextHelpFormatter
 import sys
 
-def main():
 
+def main():
     __doc__ = "panoptes: monitor computational workflows in real-time"
 
     parser = ArgumentParser(
@@ -31,17 +31,18 @@ def main():
 
     parser.add_argument(
         "-v", "--verbose",
-        action = "store_true",
-        dest = "verbose",
-        default = False,
-        required = False,
-        help = "Be Verbose"
+        action="store_true",
+        dest="verbose",
+        default=False,
+        required=False,
+        help="Be Verbose"
     )
 
     args = parser.parse_args()
 
     app.run(host=args.ip,
             port=args.port)
+
 
 if __name__ == '__main__':
     try:

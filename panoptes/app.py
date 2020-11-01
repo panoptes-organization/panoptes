@@ -1,13 +1,14 @@
-import uuid
 import traceback
-import humanfriendly
+import uuid
 
-from panoptes.server_utilities.db_queries import maintain_jobs, get_db_workflows_by_id
-from panoptes.database import init_db, db_session
-from panoptes.models import Workflows, WorkflowMessages
-from panoptes.schema_forms import SnakemakeUpdateForm
-from panoptes.routes import *
+import humanfriendly
 from flask import Flask, request, render_template, abort, send_from_directory
+
+from panoptes.database import init_db, db_session
+from panoptes.models import Workflows
+from panoptes.routes import *
+from panoptes.schema_forms import SnakemakeUpdateForm
+from panoptes.server_utilities.db_queries import maintain_jobs
 
 app = Flask(__name__, template_folder="static/src/")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -23,7 +24,7 @@ def index():
     wf = [w.get_workflow() for w in get_db_workflows()]
     info = {
         'workflows': len(wf),
-        'completed': sum([1 if w['status']=='Done' else 0 for w in wf]),
+        'completed': sum([1 if w['status'] == 'Done' else 0 for w in wf]),
         'jobs_done': sum([w['jobs_done'] if w['jobs_done'] else 0 for w in wf]),
         'jobs_total': sum([w['jobs_total'] if w['jobs_total'] else 0 for w in wf]),
     }
@@ -115,6 +116,8 @@ def format_datetime(value, format="%d %b %Y %I:%M %p"):
         return ""
     return value.strftime(format)\
 
+
+
 @app.template_filter('formatdelta')
 def format_delta(value):
     """Format a date time to (Default): d Mon YYYY HH:MM P"""
@@ -127,6 +130,7 @@ def format_delta(value):
 @app.errorhandler(Exception)
 def handle_bad_request(e):
     return render_template('404.html')
+
 
 if __name__ == '__main__':
     app.run()
