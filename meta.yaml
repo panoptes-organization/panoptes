@@ -1,0 +1,59 @@
+{% set name = "panoptes-ui" %}
+{% set version = "0.1.1" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: d0d77e5da46db54ed494b663e6e6c541bc87d624d12d65e1468df366639043d4
+
+build:
+  number: 0
+  entry_points:
+    - panoptes=panoptes:main
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - flask >=1.1.1
+    - humanfriendly >=4.18
+    - marshmallow >=3.0.1
+    - pip
+    - pytest >=5.3.0
+    - python
+    - requests >=2.22.0
+    - sqlalchemy >=1.3.7
+  run:
+    - flask >=1.1.1
+    - humanfriendly >=4.18
+    - marshmallow >=3.0.1
+    - pytest >=5.3.0
+    - python
+    - requests >=2.22.0
+    - sqlalchemy >=1.3.7
+
+test:
+  imports:
+    - panoptes
+    - panoptes.routes
+    - panoptes.server_utilities
+    - panoptes.static
+    - panoptes.static.src
+    - panoptes.tests
+  commands:
+    - panoptes --help
+
+about:
+  home: "https://github.com/panoptes-organization/panoptes"
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE.md
+  summary: "panoptes: monitor computational workflows in real time"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - agardelakos
