@@ -31,13 +31,15 @@ def maintain_jobs(msg, wf_id):
             return True
 
         if msg_json["level"] == 'job_finished':
-            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id).filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
+            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
+                .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
             job.job_done()
             db_session.commit()
             return True
 
         if msg_json["level"] == 'job_error':
-            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id).filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
+            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
+                .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
             job.job_error()
             db_session.commit()
             return True

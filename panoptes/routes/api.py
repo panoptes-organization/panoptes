@@ -1,4 +1,5 @@
-from flask import Flask, jsonify
+from flask import jsonify
+
 from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id
 from . import routes
 
@@ -9,9 +10,11 @@ from . import routes
 /api/workflow<workflow_id>/job/<job_id>
 '''
 
+
 @routes.route('/api/service-info', methods=['GET'])
 def get_service_info():
     return jsonify({'status': "running"})
+
 
 @routes.route('/api/workflows', methods=['GET'])
 def get_workflows():

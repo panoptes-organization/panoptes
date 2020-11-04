@@ -25,5 +25,3 @@ class SnakemakeUpdateForm(Schema):
     msg = fields.Str(required=True)
     timestamp = fields.Str(required=True)
     id = fields.Integer(required=False)
-
-

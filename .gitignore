@@ -34,4 +34,4 @@ server/.DS_Store
 # Package build
 build/
 dist/
-panoptes.egg-info/
+panoptes-ui.egg-info/
