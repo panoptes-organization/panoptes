@@ -22,19 +22,22 @@ panoptes is a service that can be used by:
 
 ### Option 1: Install via pypi and run server
 
-Create virtual environment
+Create virtual environment OR conda environment
 ```bash
 virtualenv -p `which python3` venv
+conda create --name panoptes
 ```
 
-Activate virtual environment
+Activate virtual environment OR conda environment
 ```bash
 source venv/bin/activate
+conda activate panoptes
 ```
 
-Install via pypi
+Install via pypi OR conda
 ```bash
 pip install panoptes-ui
+conda install panoptes-ui
 ```
 Run server
 ```bash
