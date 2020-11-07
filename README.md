@@ -22,22 +22,19 @@ panoptes is a service that can be used by:
 
 ### Option 1: Install via pypi and run server
 
-Create virtual environment OR conda environment
+Create virtual environment
 ```bash
 virtualenv -p `which python3` venv
-conda create --name panoptes
 ```
 
-Activate virtual environment OR conda environment
+Activate virtual environment
 ```bash
 source venv/bin/activate
-conda activate panoptes
 ```
 
-Install via pypi OR conda
+Install via pypi
 ```bash
 pip install panoptes-ui
-conda install panoptes-ui
 ```
 Run server
 ```bash
@@ -47,7 +44,31 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db
 
-### Option 2: Install from source code and run server
+### Option 2: Install via conda and run server
+
+Create conda environment
+```bash
+conda create --name panoptes
+```
+
+Activate conda environment
+```bash
+conda activate panoptes
+```
+
+Install via pypi OR conda
+```bash
+conda install -c panoptes-organization panoptes-ui
+```
+Run server
+```bash
+panoptes
+```
+Server should run on: 127.0.0.1:5000
+
+By default it should generate an sqlite database: .panoptes.db
+
+### Option 3: Install from source code and run server
 
 Clone repo
 ```bash
