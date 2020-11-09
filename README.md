@@ -44,7 +44,31 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db
 
-### Option 2: Install from source code and run server
+### Option 2: Install via conda and run server
+
+Create conda environment
+```bash
+conda create --name panoptes
+```
+
+Activate conda environment
+```bash
+conda activate panoptes
+```
+
+Install via pypi OR conda
+```bash
+conda install -c panoptes-organization panoptes-ui
+```
+Run server
+```bash
+panoptes
+```
+Server should run on: 127.0.0.1:5000
+
+By default it should generate an sqlite database: .panoptes.db
+
+### Option 3: Install from source code and run server
 
 Clone repo
 ```bash
