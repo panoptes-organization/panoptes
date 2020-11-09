@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id,get_db_jobs
+from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id,del_db_wf
 from . import routes
 
 '''
@@ -72,8 +72,10 @@ def get_job_of_workflow(workflow_id, job_id):
 '''
 @routes.route('/api/delete/<workflow_id>', methods=['GET'])
 def set_db_delete(workflow_id):
-     get_db_jobs(workflow_id)
-     return jsonify({'msg': "Delete done maybe"})
+     #get_db_jobs(workflow_id)
+     del_db_wf(workflow_id)
+     return jsonify({'msg': "Delete Complete Correctly",
+                                    'Workflow': workflow_id})
    
 
 

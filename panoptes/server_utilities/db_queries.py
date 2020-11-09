@@ -77,3 +77,24 @@ def get_db_jobs(workflow_id):
 
 def get_db_job_by_id(workflow_id, job_id):
     return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).filter(WorkflowJobs.jobid == job_id).first()
+
+def del_db_wf(workflow_id):
+
+
+    try:
+        db_session.query(WorkflowMessages).filter(WorkflowMessages.wf_id == workflow_id).delete()
+        db_session.query(WorkflowJobs).filter(WorkflowJobs.wf_id == workflow_id).delete()
+        d_wf=Workflows.query.filter(Workflows.id == workflow_id).first()
+        db_session.delete(d_wf)
+        db_session.commit()
+        
+        return True
+    except:
+        traceback.print_exc()
+        return render_template('404.html')
+    
+  
+
+
+
+
