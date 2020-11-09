@@ -5,7 +5,7 @@ local_url = 'http://127.0.0.1:5000'
 docker_url = 'http://127.0.0.1:8000'
 
 # CI server uses docker, to run locally use local_url
-url_to_use = local_url
+url_to_use = docker_url
 # Workflow and job entries to check. We don't check the date related entries
 workflow_entries = ['id', 'jobs_done', 'jobs_total']
 job_entries = ['input', 'is_checkpoint', 'jobid', 'log', 'msg', 'name', 'output', 'shell_command', 'status',
