@@ -74,6 +74,7 @@ def set_db_delete(workflow_id):
     if delete:
         return jsonify({'msg': "Delete Complete Correctly ",'Workflow': workflow_id})
     else:
-        return jsonify({ "error": {
-                            "Cause":"Unable to complete the Workflow "+workflow_id+" deletion",
-                             "message":"Please check if this Workflow "+workflow_id+" exists"}})
+        return jsonify({'error': 404, 'msg': 'Unable to delete Workflow ' + workflow_id + 
+                        '. Please check if workflow ' + workflow_id + ' exists.'})
+            
+            
