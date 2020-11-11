@@ -86,6 +86,31 @@ def del_db_wf(workflow_id):
         d_wf=Workflows.query.filter(Workflows.id == workflow_id).first()
         db_session.delete(d_wf)
         db_session.commit()
+        msg_garbage_collector()
+        job_garbage_collector()
         return True
     except:
         return False
+
+def msg_garbage_collector():
+    result=db_session.query(Workflows.id).all()
+    notin_list_tuple=tuple([r[0] for r in result])
+    result=db_session.query(WorkflowMessages.id).filter(~WorkflowMessages.wf_id.in_(notin_list_tuple)).distinct()
+    in_list_tuple=tuple([r[0] for r in result])
+    if in_list_tuple:
+        delete_q = WorkflowMessages.__table__.delete().where(WorkflowMessages.id.in_(in_list_tuple))
+        db_session.execute(delete_q)
+        db_session.commit()
+    return True
+
+
+def job_garbage_collector():
+    result=db_session.query(Workflows.id).all()
+    notin_list_tuple=tuple([r[0] for r in result])
+    result=db_session.query(WorkflowJobs.id).filter(~WorkflowJobs.wf_id.in_(notin_list_tuple)).distinct()
+    in_list_tuple=tuple([r[0] for r in result])
+    if in_list_tuple:
+        delete_q = WorkflowJobs.__table__.delete().where(WorkflowJobs.id.in_(in_list_tuple))
+        db_session.execute(delete_q)
+        db_session.commit() 
+    return True
