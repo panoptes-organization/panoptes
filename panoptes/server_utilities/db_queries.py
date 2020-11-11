@@ -46,6 +46,9 @@ def maintain_jobs(msg, wf_id):
                 .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
             job.job_error()
             db_session.commit()
+            wf = Workflows.query.filter(Workflows.id == wf_id).first()
+            wf.set_error()
+            db_session.commit()
             return True
 
     if msg_json["level"] == 'info':

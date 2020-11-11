@@ -70,7 +70,7 @@ def get_job_of_workflow(workflow_id, job_id):
 
 @routes.route('/api/delete/<workflow_id>', methods=['GET'])
 def set_db_delete(workflow_id):
-    if(get_db_workflows_by_id(workflow_id)==None):
+    if(get_db_workflows_by_id(workflow_id) is None):
         return jsonify({'error': 404, 'msg': 'Unable to delete Workflow ' + workflow_id + 
                         '. Please check if workflow ' + workflow_id + ' exists.'})
     elif(get_db_workflows_by_status(workflow_id)=='Running'):
