@@ -66,7 +66,7 @@
         <td>
           <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.name }} </a>
         </td>
-        <td><span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else 'warning')}}"> {{ job.status }} </span></td>
+        <td><span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else ('info' if job.status=='Running' else 'light text-dark'))}}"> {{ job.status }} </span></td>
         <td>
          <a> {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}</a>
         </td>
