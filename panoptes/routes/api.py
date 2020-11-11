@@ -1,5 +1,5 @@
 from flask import jsonify
-from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, del_db_wf, get_db_workflows_by_status
+from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, delete_db_wf, get_db_workflows_by_status, delete_whole_db
 from . import routes
 
 '''
@@ -8,6 +8,7 @@ from . import routes
 /api/workflow/<workflow_id>/jobs
 /api/workflow<workflow_id>/job/<job_id>
 /api/delete/<workflow_id>
+/api/clean-up-database
 '''
 
 
@@ -76,8 +77,21 @@ def set_db_delete(workflow_id):
     elif(get_db_workflows_by_status(workflow_id)=='Running'):
         return jsonify({'error': 'Delete Rejected', 'msg': 'You cannot delete Running Workflow '})
     else:        
-        delete=del_db_wf(workflow_id)
+        delete=delete_db_wf(workflow_id)
         if delete:
           return jsonify({'msg': "Delete Complete Correctly ",'Workflow': workflow_id})
         else:
              return jsonify({'error': 404, 'msg': 'Database error'})
+
+
+@routes.route('/api/clean-up-database', methods=['GET'])
+def set_whole_db_delete():
+    if get_db_workflows():
+        return jsonify({'error': 404, 'msg': 'Database is empty'})
+    else:
+        delete=delete_whole_db()
+        if delete:
+            return jsonify({'msg': 'Clean Up The Whole Database Complete Correctly'})
+        else:
+            return jsonify({'error': 404, 'msg': 'Database error'})
+    

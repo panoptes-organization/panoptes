@@ -86,7 +86,7 @@ def get_db_job_by_id(workflow_id, job_id):
     return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).filter(WorkflowJobs.jobid == job_id).first()
 
 
-def del_db_wf(workflow_id):
+def delete_db_wf(workflow_id):
     try:
         db_session.query(WorkflowMessages).filter(WorkflowMessages.wf_id == workflow_id).delete()
         db_session.query(WorkflowJobs).filter(WorkflowJobs.wf_id == workflow_id).delete()
@@ -95,6 +95,17 @@ def del_db_wf(workflow_id):
         db_session.commit()
         msg_garbage_collector()
         job_garbage_collector()
+        return True
+    except:
+        return False
+
+
+def delete_whole_db():
+    try:
+        db_session.query(WorkflowMessages).delete()
+        db_session.query(WorkflowJobs).delete()
+        db_session.query(Workflows).delete()
+        db_session.commit()        
         return True
     except:
         return False
