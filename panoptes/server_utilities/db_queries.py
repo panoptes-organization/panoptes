@@ -12,6 +12,8 @@ def get_db_workflows_by_id(workflow_id):
 
 def get_db_workflows_by_status(workflow_id):
     return (db_session.query(Workflows.status).filter(Workflows.id == workflow_id).first())[0]
+
+
 def get_db_table_is_empty(table_name):
     if(table_name == 'User'): 
         result=db_session.query(User.id).all()
