@@ -1,5 +1,5 @@
 from flask import jsonify
-from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, delete_db_wf, get_db_workflows_by_status, delete_whole_db
+from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, delete_db_wf, get_db_workflows_by_status, delete_whole_db, get_db_table_is_empty
 from . import routes
 
 '''
@@ -88,7 +88,7 @@ def set_db_delete(workflow_id):
 
 @routes.route('/api/clean-up-database', methods=['GET'])
 def set_whole_db_delete():
-    if get_db_workflows():
+    if get_db_table_is_empty('Workflows'):
         return jsonify({'error': 404, 'msg': 'Database is empty'})
     else:
         delete=delete_whole_db()
