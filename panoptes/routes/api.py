@@ -1,5 +1,5 @@
 from flask import jsonify
-from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, del_db_wf
+from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, del_db_wf, get_db_workflows_by_status
 from . import routes
 
 '''
@@ -70,12 +70,14 @@ def get_job_of_workflow(workflow_id, job_id):
 
 @routes.route('/api/delete/<workflow_id>', methods=['GET'])
 def set_db_delete(workflow_id):
-    if(get_db_workflows_by_id(workflow_id)!=None):
+    if(get_db_workflows_by_id(workflow_id) is None):
+        return jsonify({'error': 404, 'msg': 'Unable to delete Workflow ' + workflow_id + 
+                        '. Please check if workflow ' + workflow_id + ' exists.'})
+    elif(get_db_workflows_by_status(workflow_id)=='Running'):
+        return jsonify({'error': 'Delete Rejected', 'msg': 'You cannot delete Running Workflow '})
+    else:        
         delete=del_db_wf(workflow_id)
         if delete:
           return jsonify({'msg': "Delete Complete Correctly ",'Workflow': workflow_id})
         else:
              return jsonify({'error': 404, 'msg': 'Database error'})
-    else:        
-           return jsonify({'error': 404, 'msg': 'Unable to delete Workflow ' + workflow_id + 
-                        '. Please check if workflow ' + workflow_id + ' exists.'})
