@@ -77,7 +77,9 @@ def set_db_delete(workflow_id):
     elif(get_db_workflows_by_status(workflow_id)=='Running'):
         return jsonify({'error': 'Delete Rejected', 'msg': 'You cannot delete Running Workflow '})
     else:        
+
         delete=delete_db_wf(workflow_id)
+
         if delete:
           return jsonify({'msg': "Delete Complete Correctly ",'Workflow': workflow_id})
         else:
@@ -94,4 +96,3 @@ def set_whole_db_delete():
             return jsonify({'msg': 'Clean Up The Whole Database Complete Correctly'})
         else:
             return jsonify({'error': 404, 'msg': 'Database error'})
-    
