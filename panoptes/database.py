@@ -1,8 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
+from panoptes.db_properties import db_conf_init
+# sqlite://<nohostname>/<path>
 
-engine = create_engine('sqlite:///.panoptes.db?check_same_thread=False', convert_unicode=True)
+database, nohostname, path, sqlite_thread = db_conf_init()
+print(database+ '://' +nohostname+ '/' +path+ '' +sqlite_thread+ '')
+engine = create_engine( database+ '://' +nohostname+ '/' +path+ '' +sqlite_thread+ '', convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
