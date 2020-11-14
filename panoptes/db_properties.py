@@ -1,16 +1,21 @@
 conf_path='.db.conf'
-
-
+database_type=''
+number_of_extra=0
+number_of_parameters=0
+extra=',' # tha gineis malakia
+parameters=''
 def db_conf_init():
-    database, nohostname, path, sqlite_thread = read_db_conf()
+    database, nohostname, path, extra, parameters = read_db_conf()
     if (database==False):
         database='sqlite'
         nohostname=''
         path='.panoptes.db'
-        sqlite_thread='?check_same_thread=False'
+        extra='?check_same_thread=False'
+        parameters=', convert_unicoe = True'
         print('Default DB')
-
-    return database,nohostname,path,sqlite_thread
+    #engine = create_engine( database+ '://' +nohostname+ '/' +path+ '' +sqlite_thread+ '', convert_unicode=True)
+    database_engine=( database + '://' + nohostname + '/' + path + '' + extra + ''+parameters)
+    return database_engine
 
 
 def read_db_conf():
@@ -18,6 +23,10 @@ def read_db_conf():
     nohostname=''
     path=''
     sqlite_thread=''
+    extra=',' 
+    parameters=''
+    number_of_extra=0
+    number_of_parameters=0
     try:
         file_conf = open(conf_path, "r")
         for line in file_conf:
@@ -30,8 +39,9 @@ def read_db_conf():
                 fields= line.strip().split()
                 print(fields[0])
                 print(fields[1])
-                if(len(fields)>=3): 
+                if(len(fields)>=3):
                     print(fields[2])
+
                 if(fields[0]=='DATABASE'):
                     database=fields[2]
                 if(fields[0]=='PATH'):
@@ -40,6 +50,32 @@ def read_db_conf():
                     nohostname=fields[2]
                 if(fields[0]=='SQLITE_THREAD'):
                     sqlite_thread=fields[2]
+
+
+
+                if((number_of_extra>0) and (len(extra)==1)):
+                    print('number_of_extra1')
+                    extra=extra+fields 
+                    number_of_extra-=1
+                    
+                
+                elif(number_of_extra>0):
+                    print('number_of_extra2')
+                    extra=extra + ',' + fields
+                    number_of_extra-=1
+                    
+                print('continue')
+                if(number_of_parameters>0) :
+                    parameters=parameters+fields[2] 
+                    number_of_parameters-=1
+                    print(number_of_parameters)
+
+                #must be at the end   
+                if(fields[0]=='NUBER_OF_EXTRA'):
+                    number_of_extra=int(fields[2])
+                if(fields[0]=='NUBER_OF_PARAMETERS'):
+                    number_of_parameters=int(fields[2])
+                
                 continue
             print('eof')
             file_conf.close() 
@@ -53,7 +89,7 @@ def read_db_conf():
         sqlite_thread=False
         
         
-    return database, nohostname, path, sqlite_thread
+    return database, nohostname, path, extra, parameters
     
 
 
