@@ -1,9 +1,5 @@
 conf_path='.db.conf'
-database_type=''
-number_of_extra=0
-number_of_parameters=0
-extra=',' # tha gineis malakia
-parameters=''
+
 def db_conf_init():
     database, nohostname, path, extra, parameters = read_db_conf()
     if (database==False):
@@ -11,11 +7,16 @@ def db_conf_init():
         nohostname=''
         path='.panoptes.db'
         extra='?check_same_thread=False'
-        parameters=', convert_unicoe = True'
+        parameters='convert_unicode=True'
         print('Default DB')
-    #engine = create_engine( database+ '://' +nohostname+ '/' +path+ '' +sqlite_thread+ '', convert_unicode=True)
-    database_engine=( database + '://' + nohostname + '/' + path + '' + extra + ''+parameters)
-    return database_engine
+    db_args=( database + '://' + nohostname + '/' + path + '' + extra ) 
+    db_kwargs =list_to_dictionary(parameters)
+    print(db_kwargs )
+    return db_args, db_kwargs
+
+
+def list_to_dictionary(text_list):
+    return {sub.split("=")[0]: sub.split("=")[1] for sub in text_list.split(", ")} 
 
 
 def read_db_conf():
@@ -23,53 +24,53 @@ def read_db_conf():
     nohostname=''
     path=''
     sqlite_thread=''
-    extra=',' 
+    extra='' 
     parameters=''
     number_of_extra=0
     number_of_parameters=0
     try:
         file_conf = open(conf_path, "r")
         for line in file_conf:
+            
             if (line[0] is None):
+                file_conf.close() 
                 break
             elif(line[0]=='#' or line[0]=='\n'):
                 continue 
-            else:
-                print(line) 
+            
+            else:  
+                print(line)
                 fields= line.strip().split()
-                print(fields[0])
-                print(fields[1])
-                if(len(fields)>=3):
-                    print(fields[2])
+                if(len(fields)<3):
+                    print('Your syntax in file  panoptes/.db.conf is incorrect. Default database enable.')
+                    file_conf.close()
+                    return False, False, False, False, False
+
 
                 if(fields[0]=='DATABASE'):
                     database=fields[2]
+
                 if(fields[0]=='PATH'):
                     path=fields[2]
-                if(fields[0]=='NOHOSTNAME' and len(fields)==3):
+
+                if(fields[0]=='NOHOSTNAME'):
                     nohostname=fields[2]
+
                 if(fields[0]=='SQLITE_THREAD'):
                     sqlite_thread=fields[2]
 
 
+                if(number_of_extra>0):
+                    extra=extra + '' + fields[2]
+                    number_of_extra-=1
 
-                if((number_of_extra>0) and (len(extra)==1)):
-                    print('number_of_extra1')
-                    extra=extra+fields 
-                    number_of_extra-=1
-                    
-                
-                elif(number_of_extra>0):
-                    print('number_of_extra2')
-                    extra=extra + ',' + fields
-                    number_of_extra-=1
-                    
-                print('continue')
-                if(number_of_parameters>0) :
-                    parameters=parameters+fields[2] 
+                if((number_of_parameters>0) and (len(parameters)==0)) :
+                    parameters=fields[0] + fields[1] + fields[2]
+                    number_of_parameters-=1                   
+                elif(number_of_parameters>0) :
+                    parameters=parameters + ', ' + fields[0] + fields[1] + fields[2]
                     number_of_parameters-=1
-                    print(number_of_parameters)
-
+                    
                 #must be at the end   
                 if(fields[0]=='NUBER_OF_EXTRA'):
                     number_of_extra=int(fields[2])
@@ -77,16 +78,13 @@ def read_db_conf():
                     number_of_parameters=int(fields[2])
                 
                 continue
-            print('eof')
             file_conf.close() 
-            print('close')
+
             
     except:
         file_conf.close()
-        database=False
-        nohostname=False
-        path=False
-        sqlite_thread=False
+        return False, False, False, False, False
+
         
         
     return database, nohostname, path, extra, parameters
