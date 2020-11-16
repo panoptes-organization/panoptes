@@ -4,22 +4,23 @@ import toml
 def db_conf_init():
     conf_path='.db_conf.toml'
     extra=''
+    config = toml.load(conf_path)
     try:
         if(config['Database_info']['DATABASE']=='sqlite'):
             for key in config['Extra']:
                 extra = extra+config['Extra'][key]
-            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_1']['NOHOSTNAME'] + /
+            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_1']['NOHOSTNAME'] + 
                     '/' + config['db_type_1']['PATH'] + '' + extra)
             db_kwargs=config['Parameters']
             return db_args, db_kwargs
         elif((config['Database_info']['DATABASE']=='oracle+cx_oracle') or (config['Database_info']['DATABASE']=='mssql+pyodbc')):
-            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_2']['USERNAME'] + /
+            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_2']['USERNAME'] + 
                     ':' + config['db_type_2']['PASSWORD'] + '@' + config['db_type_2']['MYDATABASE'])
             db_kwargs=config['Parameters'] 
             return db_args, db_kwargs  
         else:
-            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_3']['USERNAME'] + /
-                ':' + config['db_type_3']['PASSWORD'] + '@' + config['db_type_3']['HOSTNAME'] + /
+            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_3']['USERNAME'] + 
+                ':' + config['db_type_3']['PASSWORD'] + '@' + config['db_type_3']['HOSTNAME'] + 
                 ':' + config['db_type_3']['PORT'] +'/' + config['db_type_3']['MYDATABASE'])
             db_kwargs=config['Parameters'] 
             return db_args, db_kwargs  
