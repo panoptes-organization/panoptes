@@ -1,17 +1,22 @@
-conf_path='.db.conf'
+
+import toml
+conf_path='.db_conf.toml'
 
 def db_conf_init():
-    database, nohostname, path, extra, parameters = read_db_conf()
-    if (database==False):
-        database='sqlite'
-        nohostname=''
-        path='.panoptes.db'
-        extra='?check_same_thread=False'
-        parameters='convert_unicode=True'
-        print('Default DB')
-    db_args=( database + '://' + nohostname + '/' + path + '' + extra ) 
-    db_kwargs =list_to_dictionary(parameters)
-    print(db_kwargs )
+
+  #  database, nohostname, path, extra, parameters = read_db_conf()
+   # if (database==False):
+    #   database='sqlite'
+     #   nohostname=''
+      #  path='.panoptes.db'
+       # extra='?check_same_thread=False'
+        #parameters='convert_unicode=True'
+        #print('Default DB')
+    db_args, db_kwargs=_get_config(conf_path)
+  #  db_args=( database + '://' + nohostname + '/' + path + '' + extra ) 
+  #  db_kwargs =list_to_dictionary(parameters)
+#print(db_kwargs )
+    print(db_args+ ',' + str(db_kwargs))
     return db_args, db_kwargs
 
 
@@ -90,7 +95,22 @@ def read_db_conf():
     return database, nohostname, path, extra, parameters
     
 
-
+def _get_config(conf_path_toml):
+    extra=''
+    config = toml.load(conf_path_toml)
+    try:
+        if(config['Database_info']['DATABASE']=='sqlite'):
+            for key in config['Extra']:
+                extra = extra+config['Extra'][key]
+            db_args=( config['Database_info']['DATABASE'] + '://' + config['Database_info']['NOHOSTNAME'] + '/' + config['Database_info']['PATH'] + '' + extra )
+            db_kwargs=config['Parameters']
+        return db_args, db_kwargs
+    except Exception as inst:
+        print('***Your syntax in file  panoptes/.db_conf.toml is incorrect. Default database enable.***')
+        print('***Error: at key or value: ' + str(inst) + '***') 
+        db_args=('sqlite:///.panoptes.db?check_same_thread=False')
+        db_kwargs={"convert_unicode":True}
+        return db_args, db_kwargs
 
 
 

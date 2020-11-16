@@ -1,0 +1,25 @@
+#--------------------------------SQLITE------------------------------
+# sqlite://<nohostname>/<path>
+# where <path> is relative:
+#-----------------------------START SQLITE---------------------------
+[Database_info]
+DATABASE = "sqlite"
+PATH = ".panoptes.db"
+NOHOSTNAME =''
+#-----------------------------EXTRA SQLITE---------------------------
+[Extra]
+EXTRA1 = "?check_same_thread=false"
+EXTRA2 = "?test"
+#-----------------------------END SQLITE---------------------------
+
+
+#------------------Engine Configuration Parameters-----------------
+#
+#--------------------------START Parameters------------------------
+[Parameters]
+convert_unicode = true
+pool_size=20
+max_overflow=10
+
+
+#---------------------------END Parameters-------------------------
