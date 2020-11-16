@@ -2,11 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from panoptes.db_properties import db_conf_init
-# sqlite://<nohostname>/<path>
 
 db_args, db_kwargs = db_conf_init()
-#engine = create_engine('postgresql+psycopg2://user:password@hostname/database_name')
-#engine = create_engine('postgresql+psycopg2://docker:docker@localhost:5433/gis',**db_kwargs)
 engine = create_engine(db_args,**db_kwargs)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,

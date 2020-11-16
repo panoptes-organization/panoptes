@@ -32,6 +32,4 @@ EXTRA1 = "?check_same_thread=false"
 #--------------------------START Parameters-------------------------#
 [Parameters]                                                      
 convert_unicode = true
-
 #--------------------------END Parameters---------------------------#
-
