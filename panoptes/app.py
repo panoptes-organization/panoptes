@@ -47,6 +47,23 @@ def contribute():
     return render_template('contribute.html')
 
 
+@app.route('/searchResults')
+def search_results():
+    userInput = request.args.get('q')
+    workflows = [w.get_workflow() for w in get_db_workflows()]
+    filteredWorkflows = [w for w in workflows if userInput in w['name']]
+    alljobs = []
+    for wf in workflows:
+        # print(wf['id'])
+        # workflows2 = get_db_workflows_by_id(wf['id'])
+        jobs = [j.get_job_json() for j in get_db_jobs(wf['id'])]
+        filteredJobs = [j for j in jobs if userInput in j['name']]
+        alljobs.extend(filteredJobs)
+    
+
+    return render_template('searchResults.html', workflows=filteredWorkflows, alljobs=alljobs)
+
+
 @app.route('/workflow/<id>', methods=['GET'])
 def get_status(id):
     try:

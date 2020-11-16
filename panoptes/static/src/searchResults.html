@@ -1,0 +1,81 @@
+{% extends "index.html" %}
+
+{% block main_info %}
+
+<div class="card">
+  <div class="card-header"> Search Results </div>
+  <div class="card-body">
+    <table id="workFlowsTable" class="table table-responsive-sm table-bordered table-striped table-sm">
+      <thead class="thead-light">
+      <div class="card-header"> Workflows </div>
+      <tr>
+        <th >Id
+        </th>
+        <th >Name
+        </th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Current jobs</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for wf in workflows %}
+      <tr class="tableRow">
+        <td>
+          <a href='/workflow/{{ wf.id }}'> {{ wf.id }} </a>
+        </td>
+        <td class="nameColumn">
+          <a href='/workflow/{{ wf.id }}'> {{ wf.name }} </a>
+        </td>
+        <td>
+          <span class="badge badge-{{ 'success' if wf.status=='Done' else ('danger' if wf.status=='Error' else ('info' if wf.status=='Running' else 'light text-dark'))}}"> {{ wf.status }} </span>
+        </td>
+        <td>
+          <a> {{ wf.started_at|formatdatetime }} </a>
+        </td>
+        <td>
+          <a> {{ wf.jobs_done }}/{{ wf.jobs_total }} </a>
+        </td>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card-body">
+    <table id="jobsTable" class="table table-responsive-sm table-bordered table-striped table-sm">
+      <thead>
+      <div class="card-header">Jobs</div>
+      <tr>
+        <th>Workflow Id
+        </th>
+        <th>Job Id
+        </th>
+        <th>Name
+        </th>
+        <th>Status</th>
+        <th>Duration</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for job in alljobs %}
+      <tr class="tableRow">
+        <td>
+          <a href='/workflow/{{ job.workflow_id }}'> {{ job.workflow_id }} </a>
+        </td>
+        <td>
+          <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.jobid }} </a>
+        </td>
+        <td class="nameColumn">
+          <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.name }} </a>
+        </td>
+        <td><span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else 'warning')}}"> {{ job.status }} </span></td>
+        <td>
+         <a> {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}
