@@ -35,5 +35,6 @@ server/.DS_Store
 build/
 dist/
 panoptes-ui.egg-info/
-
+# Package TOML
 toml/
+.db_conf.toml
