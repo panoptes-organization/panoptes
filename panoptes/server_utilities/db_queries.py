@@ -10,6 +10,26 @@ def get_db_workflows_by_id(workflow_id):
     return Workflows.query.filter(Workflows.id == workflow_id).first()
 
 
+def get_db_workflows_by_status(workflow_id):
+    return (db_session.query(Workflows.status).filter(Workflows.id == workflow_id).first())[0]
+
+
+def get_db_table_is_empty(table_name):
+    if(table_name == 'User'): 
+        result=db_session.query(User.id).all()
+    elif (table_name == 'Workflows'):
+        result=db_session.query(Workflows.id).all()         
+    elif (table_name == 'WorkflowJobs'):
+        result=db_session.query(WorkflowJobs.id).all()         
+    elif (table_name == 'WorkflowMessages'):
+        result=db_session.query(WorkflowMessages.id).all() 
+    if len(result)<=0:
+        return True     
+    else:
+        return False     
+    return    
+
+
 def maintain_jobs(msg, wf_id):
     msg_json = eval(msg)
 
@@ -41,6 +61,9 @@ def maintain_jobs(msg, wf_id):
             job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
                 .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
             job.job_error()
+            db_session.commit()
+            wf = Workflows.query.filter(Workflows.id == wf_id).first()
+            wf.set_error()
             db_session.commit()
             return True
 
@@ -79,7 +102,7 @@ def get_db_job_by_id(workflow_id, job_id):
     return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).filter(WorkflowJobs.jobid == job_id).first()
 
 
-def del_db_wf(workflow_id):
+def delete_db_wf(workflow_id):
     try:
         db_session.query(WorkflowMessages).filter(WorkflowMessages.wf_id == workflow_id).delete()
         db_session.query(WorkflowJobs).filter(WorkflowJobs.wf_id == workflow_id).delete()
@@ -88,6 +111,17 @@ def del_db_wf(workflow_id):
         db_session.commit()
         msg_garbage_collector()
         job_garbage_collector()
+        return True
+    except:
+        return False
+
+
+def delete_whole_db():
+    try:
+        db_session.query(WorkflowMessages).delete()
+        db_session.query(WorkflowJobs).delete()
+        db_session.query(Workflows).delete()
+        db_session.commit()        
         return True
     except:
         return False

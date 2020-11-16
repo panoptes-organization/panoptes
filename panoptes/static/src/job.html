@@ -22,7 +22,7 @@
         {{ job.name }}
       </td>
       <td class="text-center">
-        <span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else 'warning')}}"> {{ job.status }} </span>
+        <span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else ('info' if job.status=='Running' else 'light text-dark'))}}"> {{ job.status }} </span>
       </td>
       <td class="text-center">
         {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}
