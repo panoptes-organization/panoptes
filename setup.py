@@ -30,6 +30,7 @@ setup(
         "pytest >= 5.3.0",
         "requests >= 2.22.0",
         "SQLAlchemy >= 1.3.7",
+        "toml >=0.10.2",
     ],
     include_package_data=True,
 )
