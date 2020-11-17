@@ -16,7 +16,7 @@ panoptes is a service that can be used by:
 
 ### Requirements
 
-- Python>=3.6
+- Python>=3.8
 - virtualenv
 - [sqlite3](https://www.sqlite.org/download.html)
 
