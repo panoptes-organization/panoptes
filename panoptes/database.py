@@ -4,7 +4,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from panoptes.db_properties import db_conf_init
 
 
-db_args, db_kwargs=db_conf_init()
+#db_args, db_kwargs=db_conf_init()
 engine = create_engine('sqlite:///.panoptes.db?check_same_thread=False', convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
