@@ -1,32 +1,16 @@
-import toml
+import ast 
+from sqlalchemy.engine.url import URL
 
 
 def db_conf_init():
-    conf_path='.db_conf.toml'
-    extra=''
-    config = toml.load(conf_path)
-    try:
-        if(config['Database_info']['DATABASE']=='sqlite'):
-            for key in config['Extra']:
-                extra = extra+config['Extra'][key]
-            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_1']['NOHOSTNAME'] + 
-                    '/' + config['db_type_1']['PATH'] + '' + extra)
-            db_kwargs=config['Parameters']
-            return db_args, db_kwargs
-        elif((config['Database_info']['DATABASE']=='oracle+cx_oracle') or (config['Database_info']['DATABASE']=='mssql+pyodbc')):
-            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_2']['USERNAME'] + 
-                    ':' + config['db_type_2']['PASSWORD'] + '@' + config['db_type_2']['MYDATABASE'])
-            db_kwargs=config['Parameters'] 
-            return db_args, db_kwargs  
-        else:
-            db_args=(config['Database_info']['DATABASE'] + '://' + config['db_type_3']['USERNAME'] + 
-                ':' + config['db_type_3']['PASSWORD'] + '@' + config['db_type_3']['HOSTNAME'] + 
-                ':' + config['db_type_3']['PORT'] +'/' + config['db_type_3']['MYDATABASE'])
-            db_kwargs=config['Parameters'] 
-            return db_args, db_kwargs  
-    except Exception as inst:
-        print('***Your syntax in file  panoptes/.db_conf.toml is incorrect. Default database enable.***')
-        print('***Error: at key or value: ' + str(inst) + '***') 
-        db_args=('sqlite:///.panoptes.db?check_same_thread=False')
-        db_kwargs={"convert_unicode":True}
-        return db_args, db_kwargs
+    conf_path='.db.config'
+    with open(conf_path) as f: 
+        data = f.read() 
+    config_info = ast.literal_eval(data)
+    db=config_info['Database'][0]
+    db_url=URL(drivername=db['drivername'], username=db['username'], password=db['password'], 
+                host=db['host'], port=db['port'], database=db['database'], query=db['query'])
+    connect_args=config_info['Connect_args'][0]
+    connect_dictionary={'connect_args':connect_args}
+    db_kwargs={**connect_dictionary,**config_info['Parameters'][0]} 
+    return db_url,db_kwargs

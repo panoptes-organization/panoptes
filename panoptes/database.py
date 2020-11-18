@@ -3,7 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from panoptes.db_properties import db_conf_init
 
-db_args, db_kwargs = db_conf_init()
+
+db_args, db_kwargs=db_conf_init()
 engine = create_engine(db_args,**db_kwargs)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
