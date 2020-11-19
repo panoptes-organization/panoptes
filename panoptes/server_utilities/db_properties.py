@@ -1,9 +1,11 @@
-import json
 from sqlalchemy.engine.url import URL
+from pathlib import Path,PurePath
+import json,os
 
 
 def db_conf_init():
-    conf_path='.db.config'
+    real_path=os.path.dirname(os.path.abspath(__file__))
+    conf_path=os.path.join(real_path, 'db.config')
     with open(conf_path) as f: 
         data = f.read() 
     config_info = json.loads(data)

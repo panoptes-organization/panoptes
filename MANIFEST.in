@@ -1,2 +1,3 @@
 graft panoptes/static
 graft panoptes/static/src
+graft panoptes/server_utilities/
