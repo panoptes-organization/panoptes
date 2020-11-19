@@ -4,9 +4,7 @@ import json,os
 
 
 def db_conf_init():
-    real_path=os.path.dirname(os.path.abspath(__file__))
-    conf_path=os.path.join(real_path, 'db.config')
-    with open(conf_path) as f: 
+    with open(get_path_conf()) as f: 
         data = f.read() 
     config_info = json.loads(data)
     db=config_info['Database']
@@ -16,3 +14,9 @@ def db_conf_init():
     connect_dictionary={'connect_args':connect_args}
     db_kwargs={**connect_dictionary,**config_info['Parameters']} 
     return db_url,db_kwargs
+
+
+def get_path_conf():
+     real_path=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+     conf_path=os.path.join(real_path, 'db.config')
+     return conf_path

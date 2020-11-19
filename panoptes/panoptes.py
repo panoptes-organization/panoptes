@@ -2,6 +2,7 @@
 
 from panoptes.app import app
 from argparse import ArgumentParser, RawTextHelpFormatter
+from panoptes.server_utilities.db_properties import get_path_conf
 import sys
 
 
@@ -38,8 +39,20 @@ def main():
         help="Be Verbose"
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "--show-config-path",
+        dest="show_config_path",
+        help="Show the path of configuration file for Database",
+        default=False,
+        required=False,
+        action='store_true'
+    )
 
+    args = parser.parse_args()
+    
+    if args.show_config_path:
+        return print(get_path_conf())
+        
     app.run(host=args.ip,
             port=args.port)
 
