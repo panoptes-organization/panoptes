@@ -49,10 +49,10 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     if args.show_config_path:
         return print(get_path_conf())
-        
+
     app.run(host=args.ip,
             port=args.port)
 
