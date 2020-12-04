@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, delete_db_wf, get_db_workflows_by_status, delete_whole_db, get_db_table_is_empty, rename_db_wf, rename_db_job
 from . import routes
 
@@ -7,10 +7,8 @@ from . import routes
 /api/workflow/<workflow_id>
 /api/workflow/<workflow_id>/jobs
 /api/workflow<workflow_id>/job/<job_id>
-/api/workflow-rename/<workflow_id>/<new_name>
-/api/workflow-rename/<workflow_id>/job/<job_id>/<new_name>
 /api/delete/<workflow_id>
-/api/clean-up-database
+/api/workflows/all
 '''
 
 
@@ -71,30 +69,34 @@ def get_job_of_workflow(workflow_id, job_id):
                         'count': 0}), 404
 
 
-@routes.route('/api/workflow-rename/<workflow_id>/<new_name>', methods=['GET'])
-def rename_workflow_by_id(workflow_id, new_name):
+@routes.route('/api/workflow/<workflow_id>', methods=['PUT'])
+def rename_workflow_by_id(workflow_id):
+    data = request.json
+    if 'name' not in data or len(data['name'])<1:
+        return jsonify({'msg': "Bad Request"}), 400
     workflows = get_db_workflows_by_id(workflow_id)
     if workflows:
-        old_wf_name = workflows.name
-        rename = rename_db_wf(workflow_id, new_name)
-        if rename:
-            return jsonify({'msg': 'The name change from ' + old_wf_name + ' to ' + new_name}), 200
+        if rename_db_wf(workflow_id, data['name']):
+            return jsonify({'workflow': workflows.get_workflow()}), 200
         else:
             return jsonify({'error': 500, 'msg': 'Database error'}), 500
     else:
         return jsonify({'msg': "Workflow not found"}), 404
 
 
-@routes.route('/api/workflow-rename/<workflow_id>/job/<job_id>/<new_name>', methods=['GET'])
-def rename_job_of_workflow(workflow_id, job_id, new_name):
+@routes.route('/api/workflow/<workflow_id>/job/<job_id>', methods=['PUT'])
+def rename_job_of_workflow(workflow_id, job_id):
+    data = request.json
+    if 'name' not in data or len(data['name'])<1:
+        return jsonify({'msg': "Bad Request"}), 400
     workflows = get_db_workflows_by_id(workflow_id)
     if workflows:
         job = get_db_job_by_id(workflows.id, job_id)
         if job:
             old_job_name = job.name
-            rename = rename_db_job(workflow_id, job_id, new_name)
+            rename = rename_db_job(workflow_id, job_id, data['name'])
             if rename:
-                return jsonify({'msg': 'The name change from ' + old_job_name + ' to ' + new_name}), 200
+                return jsonify({'jobs': job.get_job_json()}), 200
             else:
                 return jsonify({'error': 500, 'msg': 'Database error'}), 500
         else:
@@ -105,7 +107,7 @@ def rename_job_of_workflow(workflow_id, job_id, new_name):
                         'count': 0}), 404
 
 
-@routes.route('/api/delete/<workflow_id>', methods=['GET'])
+@routes.route('/api/workflow/<workflow_id>', methods=['DELETE'])
 def set_db_delete(workflow_id):
     if(get_db_workflows_by_id(workflow_id) is None):
         return jsonify({'msg': 'Unable to delete Workflow ' + workflow_id +
@@ -120,7 +122,7 @@ def set_db_delete(workflow_id):
             return jsonify({'msg': 'Database error'}), 500
 
 
-@routes.route('/api/clean-up-database', methods=['GET'])
+@routes.route('/api/workflows/all', methods=['DELETE'])
 def set_whole_db_delete():
     if get_db_table_is_empty('Workflows'):
         return jsonify({'error': 510, 'msg': 'Database is empty'}), 510

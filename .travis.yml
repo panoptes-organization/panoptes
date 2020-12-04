@@ -49,6 +49,7 @@ script:
   - cd snakemake_example_workflow
   - sed -i 's/5000/8000/g' run_local.sh
   - bash run_local.sh
+  - bash run_local.sh
   - cd ../
   - conda deactivate
   - virtualenv -p `which python3` venv_test
