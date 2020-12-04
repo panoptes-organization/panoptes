@@ -78,7 +78,7 @@ def rename_workflow_by_id(workflow_id, new_name):
         old_wf_name = workflows.name
         rename = rename_db_wf(workflow_id, new_name)
         if rename:
-            return jsonify({'msg': ' The name change from ' + old_wf_name + ' to ' + new_name}), 200
+            return jsonify({'msg': 'The name change from ' + old_wf_name + ' to ' + new_name}), 200
         else:
             return jsonify({'error': 500, 'msg': 'Database error'}), 500
     else:
@@ -94,8 +94,7 @@ def rename_job_of_workflow(workflow_id, job_id, new_name):
             old_job_name = job.name
             rename = rename_db_job(workflow_id, job_id, new_name)
             if rename:
-                # 'jobs': job.get_job_json()}),200
-                return jsonify({'msg': ' The name change from ' + old_job_name + ' to ' + new_name}), 200
+                return jsonify({'msg': 'The name change from ' + old_job_name + ' to ' + new_name}), 200
             else:
                 return jsonify({'error': 500, 'msg': 'Database error'}), 500
         else:
@@ -109,16 +108,16 @@ def rename_job_of_workflow(workflow_id, job_id, new_name):
 @routes.route('/api/delete/<workflow_id>', methods=['GET'])
 def set_db_delete(workflow_id):
     if(get_db_workflows_by_id(workflow_id) is None):
-        return jsonify({'error': 404, 'msg': 'Unable to delete Workflow ' + workflow_id +
+        return jsonify({'msg': 'Unable to delete Workflow ' + workflow_id +
                         '. Please check if workflow ' + workflow_id + ' exists.'}), 404
     elif(get_db_workflows_by_status(workflow_id) == 'Running'):
-        return jsonify({'error': 'Delete Rejected', 'msg': 'You cannot delete Running Workflow '}), 403
+        return jsonify({'msg': 'You cannot delete Running Workflow '}), 403
     else:
         delete = delete_db_wf(workflow_id)
         if delete:
             return jsonify({'msg': "Delete Complete Correctly ", 'Workflow': workflow_id}), 200
         else:
-            return jsonify({'error': 404, 'msg': 'Database error'}), 500
+            return jsonify({'msg': 'Database error'}), 500
 
 
 @routes.route('/api/clean-up-database', methods=['GET'])
