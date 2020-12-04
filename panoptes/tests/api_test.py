@@ -17,7 +17,7 @@ def test_workflows():
     response = requests.request(
         "GET", url_to_use + '/api/workflows', headers=helper.headers)
     assert response.status_code == 200
-    assert response.json()["count"] == 1
+    assert response.json()["count"] == 2
     for entry in workflow_entries:
         assert response.json()[
             "workflows"][0][entry] == helper.workflows[0][entry]
