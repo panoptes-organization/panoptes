@@ -14,12 +14,6 @@ workflows = [{
     'jobs_done': 14,
     'jobs_total': 14,
     'status': "Done"
-    },
-    {
-    'id': 2,
-    'jobs_done': 13,
-    'jobs_total': 14,
-    'status': "Running"
 }]
 
 jobs = {
