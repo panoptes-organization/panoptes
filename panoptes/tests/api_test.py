@@ -152,8 +152,7 @@ def test_specific_non_existent_work_flow_re_name_job():
 def test_specific_work_flow_delete_existent():
     response = requests.request(
         "DELETE", url_to_use + '/api/workflow/1', headers=helper.headers)
-    assert response.status_code == 200
-    assert response.json()["msg"] == "Delete Complete Correctly "
+    assert response.status_code == 204
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -181,6 +180,6 @@ def test_clean_up_database_existent():
 def test_clean_up_database_non_existent():
     response = requests.request(
         "DELETE", url_to_use + '/api/workflows/all', headers=helper.headers)
-    assert response.status_code == 510
+    assert response.status_code == 410
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)

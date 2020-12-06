@@ -71,7 +71,7 @@ def get_job_of_workflow(workflow_id, job_id):
 @routes.route('/api/workflow/<workflow_id>', methods=['PUT'])
 def rename_workflow_by_id(workflow_id):
     data = request.json
-    if 'name' not in data or len(data['name'])<1:
+    if 'name' not in data or len(data['name']) < 1:
         response = Response(status=400)
         return response
     workflows = get_db_workflows_by_id(workflow_id)
@@ -79,8 +79,7 @@ def rename_workflow_by_id(workflow_id):
         if rename_db_wf(workflow_id, data['name']):
             return jsonify({'workflow': workflows.get_workflow()}), 200
         else:
-            response = Response(status=500)
-        return response
+            return jsonify({'msg': 'Database error'}), 500
     else:
         response = Response(status=404)
         return response
@@ -89,7 +88,7 @@ def rename_workflow_by_id(workflow_id):
 @routes.route('/api/workflow/<workflow_id>/job/<job_id>', methods=['PUT'])
 def rename_job_of_workflow(workflow_id, job_id):
     data = request.json
-    if 'name' not in data or len(data['name'])<1:
+    if 'name' not in data or len(data['name']) < 1:
         response = Response(status=400)
         return response
     workflows = get_db_workflows_by_id(workflow_id)
@@ -101,8 +100,7 @@ def rename_job_of_workflow(workflow_id, job_id):
             if rename:
                 return jsonify({'jobs': job.get_job_json()}), 200
             else:
-                response = Response(status=500)
-                return response
+                return jsonify({'msg': 'Database error'}), 500
         else:
             response = Response(status=404)
             return response
@@ -117,26 +115,26 @@ def set_db_delete(workflow_id):
         response = Response(status=404)
         return response
     elif(get_db_workflows_by_status(workflow_id) == 'Running'):
-        response = Response(status=403)
-        return response
+        return jsonify({'msg': 'You cannot delete Running Workflow '}), 403
     else:
         delete = delete_db_wf(workflow_id)
         if delete:
-            return jsonify({'msg': "Delete Complete Correctly ", 'Workflow': workflow_id}), 200
-        else:
-            response = Response(status=500)
+            response = Response(status=204)
             return response
+        else:
+            return jsonify({'msg': 'The server is unable to store the '
+                            'representation needed to complete the delete request.'}), 507
 
 
 @routes.route('/api/workflows/all', methods=['DELETE'])
 def set_whole_db_delete():
     if get_db_table_is_empty('Workflows'):
-        response = Response(status=510)
+        response = Response(status=410)
         return response
     else:
         delete = delete_whole_db()
         if delete:
             return jsonify({'msg': 'Database clean up is complete'}), 200
         else:
-            response = Response(status=500)
-            return response
+            return jsonify({'msg': 'The server is unable to store the '
+                            'representation needed to complete the delete request.'}), 507
