@@ -117,37 +117,6 @@ def test_specific_work_flow_re_name_non_existent():
     helper.pretty_print_response(response)
 
 
-#   Specific workflow rename a specific job
-def test_specific_work_flow_re_name_job_existent():
-    data = {'name': 'test name job'}
-    response = requests.request(
-        "PUT", url_to_use + '/api/workflow/1/job/3', json=data, headers=helper.headers)
-    assert response.status_code == 200
-    assert response.json()["jobs"]['name'] == data['name']
-    helper.pretty_print_request(response.request)
-    helper.pretty_print_response(response)
-
-
-#   Non existent specific job rename at specific existent workflow
-def test_specific_work_flow_re_name_job_non_existent():
-    data = {'name': 'test name job'}
-    response = requests.request(
-        "PUT", url_to_use + '/api/workflow/1/job/100', json=data, headers=helper.headers)
-    assert response.status_code == 404
-    helper.pretty_print_request(response.request)
-    helper.pretty_print_response(response)
-
-
-#   specific job rename at specific non existent workflow
-def test_specific_non_existent_work_flow_re_name_job():
-    data = {'name': 'test name job'}
-    response = requests.request(
-        "PUT", url_to_use + '/api/workflow/100/job/3', json=data, headers=helper.headers)
-    assert response.status_code == 404
-    helper.pretty_print_request(response.request)
-    helper.pretty_print_response(response)
-
-
 #   Specific workflow delete existent
 def test_specific_work_flow_delete_existent():
     response = requests.request(

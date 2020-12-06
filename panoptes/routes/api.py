@@ -85,30 +85,6 @@ def rename_workflow_by_id(workflow_id):
         return response
 
 
-@routes.route('/api/workflow/<workflow_id>/job/<job_id>', methods=['PUT'])
-def rename_job_of_workflow(workflow_id, job_id):
-    data = request.json
-    if 'name' not in data or len(data['name']) < 1:
-        response = Response(status=400)
-        return response
-    workflows = get_db_workflows_by_id(workflow_id)
-    if workflows:
-        job = get_db_job_by_id(workflows.id, job_id)
-        if job:
-            old_job_name = job.name
-            rename = rename_db_job(workflow_id, job_id, data['name'])
-            if rename:
-                return jsonify({'jobs': job.get_job_json()}), 200
-            else:
-                return jsonify({'msg': 'Database error'}), 500
-        else:
-            response = Response(status=404)
-            return response
-    else:
-        response = Response(status=404)
-        return response
-
-
 @routes.route('/api/workflow/<workflow_id>', methods=['DELETE'])
 def set_db_delete(workflow_id):
     if(get_db_workflows_by_id(workflow_id) is None):
