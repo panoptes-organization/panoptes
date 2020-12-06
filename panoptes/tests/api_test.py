@@ -30,7 +30,6 @@ def test_specific_work_flow_not_found():
     response = requests.request(
         "GET", url_to_use + '/api/workflow/100', headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Workflow not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -63,7 +62,6 @@ def test_specific_work_flow_jobs_not_found():
     response = requests.request(
         "GET", url_to_use + '/api/workflow/100/jobs', headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Workflow not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -84,7 +82,6 @@ def test_specific_work_flow_and_job_non_existent():
     response = requests.request(
         "GET", url_to_use + '/api/workflow/1/job/100', headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Job not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -94,7 +91,6 @@ def test_specific_work_flow_job_non_existent():
     response = requests.request(
         "GET", url_to_use + '/api/workflow/100/job/1', headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Workflow not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -117,7 +113,6 @@ def test_specific_work_flow_re_name_non_existent():
     response = requests.request(
         "PUT", url_to_use + '/api/workflow/100', json=data, headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Workflow not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -139,7 +134,6 @@ def test_specific_work_flow_re_name_job_non_existent():
     response = requests.request(
         "PUT", url_to_use + '/api/workflow/1/job/100', json=data, headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Job not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -150,7 +144,6 @@ def test_specific_non_existent_work_flow_re_name_job():
     response = requests.request(
         "PUT", url_to_use + '/api/workflow/100/job/3', json=data, headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()["msg"] == "Workflow not found"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -170,8 +163,6 @@ def test_specific_work_flow_delete_non_existent():
     response = requests.request(
         "DELETE", url_to_use + '/api/workflow/100', headers=helper.headers)
     assert response.status_code == 404
-    assert response.json()[
-        "msg"] == "Unable to delete Workflow 100. Please check if workflow 100 exists."
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
@@ -191,6 +182,5 @@ def test_clean_up_database_non_existent():
     response = requests.request(
         "DELETE", url_to_use + '/api/workflows/all', headers=helper.headers)
     assert response.status_code == 510
-    assert response.json()["msg"] == "Database is empty"
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
