@@ -71,7 +71,7 @@ def get_job_of_workflow(workflow_id, job_id):
 @routes.route('/api/workflow/<workflow_id>', methods=['PUT'])
 def rename_workflow_by_id(workflow_id):
     data = request.json
-    if 'name' not in data or len(data['name']) < 1:
+    if data is None or 'name' not in data or len(data['name']) < 1 or data['name'].isspace():
         response = Response(status=400)
         return response
     workflows = get_db_workflows_by_id(workflow_id)
