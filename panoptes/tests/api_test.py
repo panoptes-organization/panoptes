@@ -106,6 +106,41 @@ def test_specific_work_flow_re_name_existent():
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
 
+#   Specific rename a specific workflow with empty json
+def test_specific_work_flow_re_name_json_non_existent():
+    response = requests.request(
+        "PUT", url_to_use + '/api/workflow/1', headers=helper.headers)
+    assert response.status_code == 400
+    helper.pretty_print_request(response.request)
+    helper.pretty_print_response(response)
+
+#   Specific rename a specific workflow with wrong key
+def test_specific_work_flow_re_name_json_wrong_key():
+    data = {'wrong_name':'test name'}
+    response = requests.request(
+        "PUT", url_to_use + '/api/workflow/1', json=data, headers=helper.headers)
+    assert response.status_code == 400
+    helper.pretty_print_request(response.request)
+    helper.pretty_print_response(response)
+
+
+#   Specific rename a specific workflow with white space data
+def test_specific_work_flow_re_name_json_wrong_data():
+    data = {'name':'    '}
+    response = requests.request(
+        "PUT", url_to_use + '/api/workflow/1', json=data, headers=helper.headers)
+    assert response.status_code == 400
+    helper.pretty_print_request(response.request)
+    helper.pretty_print_response(response)
+
+#   Specific rename a specific workflow with white no data
+def test_specific_work_flow_re_name_json_wrong_non_data():
+    data = {'name':''}
+    response = requests.request(
+        "PUT", url_to_use + '/api/workflow/1', json=data, headers=helper.headers)
+    assert response.status_code == 400
+    helper.pretty_print_request(response.request)
+    helper.pretty_print_response(response)
 
 #   Non existent specific rename a specific workflow
 def test_specific_work_flow_re_name_non_existent():
