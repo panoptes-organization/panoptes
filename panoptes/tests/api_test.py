@@ -10,6 +10,8 @@ url_to_use = docker_url
 workflow_entries = ['id', 'jobs_done', 'jobs_total']
 job_entries = ['input', 'is_checkpoint', 'jobid', 'log', 'msg', 'name', 'output', 'shell_command', 'status',
                'wildcards', 'workflow_id']
+jobs_entries = ['is_checkpoint', 'msg', 'name', 'shell_command', 'status',
+                'workflow_id']
 
 
 #   Get all workflows
@@ -51,7 +53,7 @@ def test_specific_work_flow_all_jobs_valid():
         "GET", url_to_use + '/api/workflow/1/jobs', headers=helper.headers)
     assert response.status_code == 200
     assert response.json()["count"] == 14
-    for entry in job_entries:
+    for entry in jobs_entries:
         assert response.json()["jobs"][0][entry] == helper.jobs[entry]
     helper.pretty_print_request(response.request)
     helper.pretty_print_response(response)
