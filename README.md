@@ -148,8 +148,9 @@ Endpoint | Method | Description
 `/api/workflow/<workflow-id>` | `GET` | Get workflow status
 `/api/workflow/<workflow-id>/jobs` | `GET` | Get all jobs of a workflow
 `/api/workflow/<workflow-id>/job/<job-id>` | `GET` | Get job status
-`/api/delete/<workflow-id>` | `DELETE` | Delete a workflow
-`/api/clean-up-database` | `DELETE` | Clean up database
+`/api/workflow/<workflow-id>` | `PUT` | Rename a workflow  <br>  Expects a dictionary with new name <br> (e.g. `{'name': 'my new workflow name'}`)
+`/api/workflow/<workflow-id>` | `DELETE` | Delete a workflow
+`/api/workflows/all` | `DELETE` | Clean up database
 
 To communicate with panoptes the following endpoints are used by snakemake:
 
