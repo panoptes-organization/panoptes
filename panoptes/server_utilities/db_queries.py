@@ -1,5 +1,5 @@
 from panoptes.database import db_session
-from panoptes.models import Workflows, WorkflowMessages, WorkflowJobs
+from panoptes.models import Workflows, WorkflowMessages, WorkflowJobs, User
 
 
 def get_db_workflows():

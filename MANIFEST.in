@@ -1,2 +1,3 @@
 graft panoptes/static
 graft panoptes/static/src
+include panoptes/db_config.json
