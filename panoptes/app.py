@@ -3,6 +3,9 @@ import uuid
 
 import humanfriendly
 from flask import Flask, request, render_template, abort, send_from_directory
+from functools import wraps, update_wrapper
+from datetime import datetime
+from flask import make_response
 
 from panoptes.database import init_db, db_session
 from panoptes.models import Workflows
@@ -19,6 +22,19 @@ app.jinja_env.globals.update(get_job=get_job)
 init_db()
 
 
+# you can add @nocache in any endpoint to disable caching
+def nocache(view):
+    @wraps(view)
+    def no_cache(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Last-Modified'] = datetime.now()
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '-1'
+        return response
+
+    return update_wrapper(no_cache, view)
+
 @app.route('/')
 def index():
     wf = [w.get_workflow() for w in get_db_workflows()]
@@ -32,6 +48,7 @@ def index():
 
 
 @app.route('/workflows/')
+@nocache
 def workflows_page():
     workflows = [w.get_workflow() for w in get_db_workflows()]
     return render_template('workflows.html', workflows=workflows)
@@ -48,6 +65,7 @@ def contribute():
 
 
 @app.route('/searchResults')
+@nocache
 def search_results():
     userinput = request.args.get('q')
     workflows = [w.get_workflow() for w in get_db_workflows()]
@@ -57,12 +75,12 @@ def search_results():
         jobs = [j.get_job_json() for j in get_db_jobs(wf['id'])]
         filteredjobs = [j for j in jobs if userinput in j['name']]
         alljobs.extend(filteredjobs)
-    
 
     return render_template('searchResults.html', workflows=filteredworkflows, alljobs=alljobs)
 
 
 @app.route('/workflow/<id>', methods=['GET'])
+@nocache
 def get_status(id):
     try:
         workflow = get_db_workflows_by_id(id).get_workflow()
