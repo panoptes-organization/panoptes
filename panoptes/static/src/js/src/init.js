@@ -4,7 +4,6 @@
 * */
 
 $( document ).ready(function() {
-
     //listener for every delete table button
     $('.delete').click(function(event) {
         let button = $(event.target);
@@ -16,7 +15,7 @@ $( document ).ready(function() {
         modal.attr('rowIndex',row.index());
         modal.attr('tableId',button.closest('table').attr('id'));
         modal.find('.modal-body').html(
-            '<p>Are you sure you want to delete workflow with ID: '+id+'?</p>');
+            '<p>Do you want to delete workflow with ID: '+id+'?</p>');
         modal.modal('show');
     });
 
@@ -30,6 +29,11 @@ $( document ).ready(function() {
          deleteWorkflow(rowId,rowIndex,tableId);
     });
 
+        //listener for deleteConfirmationModal's OK button
+    $('.confirmDeleteAll').click(function() {
+         deleteAllWorkflows();
+    });
+
     //listener for deleteFailedModal's or editFailedModal's OK buttons
     $('.renameFailed, .deleteFailed').click(function(myEvt) {
         location.reload();
@@ -38,17 +42,37 @@ $( document ).ready(function() {
     //initialization of all tables
     let tables = document.getElementsByClassName("fullTable");
     for(let t of tables){
-        $(t).DataTable({
+        let table = $(t).DataTable({
             "ordering": true, // false to disable sorting (or any other option)
             "paging":true,
               columnDefs: [
                   {
                       targets: "_all",
                       className: 'dt-center'
-                  }]
+                  }],
+            "initComplete": function() {
+                $("#workFlowsTable_wrapper")
+                    .prepend('<div class="dataTables_length"><button id="deleteAll" title="Clean up database" class="btn btn-danger delete">' +
+                        '<i class="far fa-trash-alt fa-xl"></i></button></div>');
+                if (this.DataTable().rows().count() === 0 ) {
+                    $("#deleteAll").attr("disabled","");
+                }
+                else{
+                    $("#deleteAll").attr("enabled","");
+                }
+            }
         });
         $('.dataTables_length').addClass('bs-select');
+
     }
+
+    $('#deleteAll').click(function(event) {
+        let modal = $('#deleteAllConfirmationModal');
+        modal.find('.modal-body').html(
+            '<p>Do you want to delete all workflows?</p>');
+        modal.modal('show');
+    });
+
     let informTables = document.getElementsByClassName("informTable");
     for(let t of informTables){
         $(t).DataTable({
@@ -64,6 +88,7 @@ $( document ).ready(function() {
         });
         $('.dataTables_length').addClass('bs-select');
     }
+
 
     //listener for add button (add button is enabled after clicking the edit button)
     $(document).on("click", ".add", function(event){
@@ -148,34 +173,64 @@ window.onload = function(){
 });
 };
 
-function deleteWorkflow(rowId,rowIndex, tableId){
-     let table = $('#'+tableId).DataTable();
-     let row = table.row(rowIndex);
+function deleteWorkflow(rowId,rowIndex, tableId) {
+    let table = $('#' + tableId).DataTable();
+    let row = table.row(rowIndex);
+    //call backend to delete the workflow
+    $.ajax({
+        url: "/api/workflow/" + rowId,
+        method: "DELETE",
+        async: true,
+        timeout: 2000,
+        success: function (data, textStatus, jqXHR) {
+            if (location.pathname.includes("/workflow/")) {
+                //if we are in a specific workflow page and we delete it, we redirect to /workflows
+                location.href = "/workflows";
+            } else {
+                table
+                    .row(row)
+                    .remove()
+                    .draw(false);
+                //delete completed, hide the modal
+                if ($('#workFlowsTable').DataTable().rows().count() === 0 ) {
+                    $("#deleteAll").attr("disabled","");
+                }
+                $('#deleteConfirmationModal').modal('hide');
+            }
+        },
+        //on error, show fail modal
+        error: function (data, jqXHR, textStatus, errorThrown) {
+            let deleteFailedModal = $("#deleteFailedModal");
+            deleteFailedModal.find('.modal-body').html(
+                '<p>Deleting the workflow failed, page will reload</p>');
+            deleteFailedModal.modal('show');
+        }
+    });
+}
+
+function deleteAllWorkflows(){
+     let table = $('#workFlowsTable').DataTable();
      //call backend to delete the workflow
      $.ajax({
-         url: "/api/workflow/" + rowId,
+         url: "/api/workflows/all",
          method: "DELETE",
          async: true,
          timeout: 2000,
          success: function (data, textStatus, jqXHR) {
-             if(location.pathname.includes("/workflow/")){
-                 //if we are in a specific workflow page and we delete it, we redirect to /workflows
-                 location.href="/workflows";
-             }
-             else{
-                 table
-                     .row(row)
-                     .remove()
-                     .draw(false);
+             table
+                 .clear()
+                 .draw(false);
                  //delete completed, hide the modal
-                 $('#deleteConfirmationModal').modal('hide');
-             }
+                if ($('#workFlowsTable').DataTable().rows().count() === 0 ) {
+                    $("#deleteAll").attr("disabled","");
+                }
+             $('#deleteAllConfirmationModal').modal('hide');
          },
          //on error, show fail modal
          error: function (data, jqXHR, textStatus, errorThrown) {
              let deleteFailedModal = $("#deleteFailedModal");
              deleteFailedModal.find('.modal-body').html(
-                 '<p>Deleting the workflow failed, page will reload</p>');
+                 '<p>Deleting all workflows failed, page will reload</p>');
              deleteFailedModal.modal('show');
          }
      });

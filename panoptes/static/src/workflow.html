@@ -4,7 +4,7 @@
 
 <div class="card">
   <div class="card-header"><strong>workflow {{workflow.id}} {{" finished after "+ (workflow.completed_at-workflow.started_at)|formatdelta if workflow.completed_at else "" }}</strong></div>
-  <table class="informTable table text-center table-responsive-sm table-hover table-outline mb-0">
+  <table class="informTable table text-center table-responsive-sm table-outline mb-0">
     <thead class="thead-light">
     <tr>
       <th class="text-center">Id</th>
@@ -29,9 +29,9 @@
         <a> {{ workflow.jobs_done }}/{{ workflow.jobs_total }} </a>
       </td>
         <td class="dt-nowrap">
-            <button class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
-            <button class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
-            <button data-toggle="modal" data-target="#deleteConfirmationModal" class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
+            <button id="addBtn" title="Add workflow" class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
+            <button id="editBtn" title="Edit workflow"class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
+            <button id="deleteBtn" data-toggle="modal" data-target="#deleteConfirmationModal" title="Delete workflow" class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
         </td>
     </tr>
     </tbody>
@@ -53,7 +53,7 @@
 <div class="card">
   <div class="card-header"> workflow Jobs</div>
   <div class="card-body">
-    <table id="jobsTable" class="fullTable table table-responsive-sm table-hover table-outline mb-0">
+    <table id="jobsTable" class="fullTable table table-responsive-sm stripe table-outline mb-0">
       <thead>
       <tr>
         <th class="text-center">Id</th>
