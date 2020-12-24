@@ -69,7 +69,7 @@ $( document ).ready(function() {
     $('#deleteAll').click(function(event) {
         let modal = $('#deleteAllConfirmationModal');
         modal.find('.modal-body').html(
-            '<p>Do you want to delete all workflows?</p>');
+            '<p>This operation will delete all workflows, even running ones.<br>Do you want to delete all workflows?  </p>');
         modal.modal('show');
     });
 
