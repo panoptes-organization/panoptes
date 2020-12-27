@@ -5,7 +5,7 @@
 <div class="card">
   <div class="card-header"> Search Results </div>
   <div class="card-body">
-    <table id="workFlowsTable" class="fullTable table table-responsive-sm table-bordered table-striped table-sm">
+    <table id="workFlowsTableResults" class="fullTable table table-responsive-sm stripe table-sm">
       <thead>
       <div class="card-header"> Workflows </div>
       <tr>
@@ -38,16 +38,16 @@
           <a> {{ wf.jobs_done }}/{{ wf.jobs_total }} </a>
         </td>
         <td class="dt-nowrap">
-            <button class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
-            <button class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
-            <button class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
+            <button id="addBtn" title="Add workflow" class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
+            <button id="editBtn" title="Edit workflow"class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
+            <button id="deleteBtn" title="Delete workflow" class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
         </td>
       {% endfor %}
       </tbody>
     </table>
   </div>
   <div class="card-body">
-    <table id="jobsTable" class="fullTable table table-responsive-sm table-bordered table-striped table-sm">
+    <table id="jobsTableResults" class="fullTable table table-responsive-sm stripe table-sm">
       <thead>
       <div class="card-header">Jobs</div>
       <tr>
