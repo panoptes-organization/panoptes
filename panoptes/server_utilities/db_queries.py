@@ -1,6 +1,7 @@
 from panoptes.database import db_session
 from panoptes.models import Workflows, WorkflowMessages, WorkflowJobs
 
+import json
 
 def get_db_workflows():
     return Workflows.query.all()
@@ -31,7 +32,9 @@ def get_db_table_is_empty(table_name):
 
 
 def maintain_jobs(msg, wf_id):
-    msg_json = eval(msg)
+
+    # The message should be a json dump
+    msg_json = json.loads(msg)
 
     if "jobid" in msg_json.keys():
         if msg_json["level"] == 'job_info':
