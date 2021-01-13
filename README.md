@@ -44,7 +44,31 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db
 
-### Option 2: Install from source code and run server
+### Option 2: Install via conda and run server
+
+Create conda environment
+```bash
+conda create --name panoptes
+```
+
+Activate conda environment
+```bash
+conda activate panoptes
+```
+
+Install via pypi OR conda
+```bash
+conda install -c panoptes-organization panoptes-ui
+```
+Run server
+```bash
+panoptes
+```
+Server should run on: 127.0.0.1:5000
+
+By default it should generate an sqlite database: .panoptes.db
+
+### Option 3: Install from source code and run server
 
 Clone repo
 ```bash
@@ -113,6 +137,28 @@ In order to run an example workflow please follow the instructions [here](https:
 
 [![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
 
+### panoptes API
+
+Panoptes provides the following API endpoints:
+
+Endpoint | Method | Description 
+-- | -- | --
+`/api/service-info` | `GET` | Server status
+`/api/workflows` | `GET` | Get all workflows
+`/api/workflow/<workflow-id>` | `GET` | Get workflow status
+`/api/workflow/<workflow-id>/jobs` | `GET` | Get all jobs of a workflow
+`/api/workflow/<workflow-id>/job/<job-id>` | `GET` | Get job status
+`/api/workflow/<workflow-id>` | `PUT` | Rename a workflow  <br>  Expects a dictionary with new name <br> (e.g. `{'name': 'my new workflow name'}`)
+`/api/workflow/<workflow-id>` | `DELETE` | Delete a workflow
+`/api/workflows/all` | `DELETE` | Clean up database
+
+To communicate with panoptes the following endpoints are used by snakemake:
+
+Endpoint | Method | Description 
+-- | -- | --
+`/api/service-info` | `GET` | Server status (same as above)
+`/create_workflow` | `GET` | Get a unique id/name str(uuid.uuid4()) for each workflow
+`/update_workflow_status` | `POST` | Panoptes receives a dictionary from snakemake that contains: <br> - A log message dictionary <br> - The current timestamp <br> - The unique id/name of the workflow. <br> (e.g. `{'msg': repr(msg), 'timestamp': time.asctime(), 'id': id}`)
 
 # Contribute
 

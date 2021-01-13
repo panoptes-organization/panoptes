@@ -1,0 +1,87 @@
+{% extends "index.html" %}
+
+{% block main_info %}
+
+<div class="card">
+  <div class="card-header"> Search Results </div>
+  <div class="card-body">
+    <table id="workFlowsTableResults" class="fullTable table table-responsive-sm stripe table-sm">
+      <thead>
+      <div class="card-header"> Workflows </div>
+      <tr>
+        <th >Id
+        </th>
+        <th >Name
+        </th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Current jobs</th>
+        <th class="text-center">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for wf in workflows %}
+      <tr class="tableRow">
+        <td>
+          <a href='/workflow/{{ wf.id }}'> {{ wf.id }} </a>
+        </td>
+        <td class="nameColumn">
+          <a href='/workflow/{{ wf.id }}'> {{ wf.name }} </a>
+        </td>
+        <td>
+          <span class="badge badge-{{ 'success' if wf.status=='Done' else ('danger' if wf.status=='Error' else ('info' if wf.status=='Running' else 'light text-dark'))}}"> {{ wf.status }} </span>
+        </td>
+        <td>
+          <a> {{ wf.started_at|formatdatetime }} </a>
+        </td>
+        <td>
+          <a> {{ wf.jobs_done }}/{{ wf.jobs_total }} </a>
+        </td>
+        <td class="dt-nowrap">
+            <button id="addBtn" title="Add workflow" class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
+            <button id="editBtn" title="Edit workflow"class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
+            <button id="deleteBtn" title="Delete workflow" class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
+        </td>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card-body">
+    <table id="jobsTableResults" class="fullTable table table-responsive-sm stripe table-sm">
+      <thead>
+      <div class="card-header">Jobs</div>
+      <tr>
+        <th>Workflow Id
+        </th>
+        <th>Job Id
+        </th>
+        <th>Name
+        </th>
+        <th>Status</th>
+        <th>Duration</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for job in alljobs %}
+      <tr class="tableRow">
+        <td>
+          <a href='/workflow/{{ job.workflow_id }}'> {{ job.workflow_id }} </a>
+        </td>
+        <td>
+          <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.jobid }} </a>
+        </td>
+        <td class="nameColumn">
+          <a href='/workflow/{{ job.workflow_id }}/job/{{ job.jobid }}'> {{ job.name }} </a>
+        </td>
+        <td><span class="badge badge-{{ 'success' if job.status=='Done' else ('danger' if job.status=='Error' else 'warning')}}"> {{ job.status }} </span></td>
+        <td>
+         <a> {{ (job.completed_at-job.started_at)|formatdelta if job.completed_at else '-' }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}

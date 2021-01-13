@@ -39,7 +39,6 @@ def main():
     )
 
     args = parser.parse_args()
-
     app.run(host=args.ip,
             port=args.port)
 

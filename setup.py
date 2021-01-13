@@ -7,11 +7,11 @@ if sys.version_info < (3, 6):
 
 setup(
     name='panoptes-ui',
-    version='0.1.1',
+    version='0.2.0',
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
     author='panoptes-organization',
-    author_email='georgekostoulas@gmail.com, agardelakos@gmail.com, fgypas@gmail.com, gntalaperas@gmail.com',
+    author_email='georgekostoulas@gmail.com, agardelakos@gmail.com, fgypas@gmail.com, gntalaperas@gmail.com, dimitris.afe@gmail.com, rekoumisd@gmail.com, vsochat@stanford.edu',
     description="panoptes: monitor computational workflows in real time",
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),

@@ -1,31 +1,29 @@
 {% extends "index.html" %}
 
 {% block main_info %}
-
 <div class="card">
   <div class="card-body">
-    <table class="table table-responsive-sm table-hover table-outline mb-0">
-      <thead class="thead-light">
+    <table id="workFlowsTable" class="fullTable table table-responsive-sm stripe table-outline mb-0">
+      <thead>
       <tr>
-        <th >id</th>
-        <th >name
-          <button type="button" class="btn btn-default">
-            <span class="nav-icon icon-pencil" aria-hidden="true" aria-label="edit"></span>
-          </button>
+        <th>Id
         </th>
-        <th>status</th>
-        <th>date</th>
-        <th>current jobs</th>
+        <th >Name
+
+        </th>
+        <th class="text-center">Status</th>
+        <th class="text-center">Date</th>
+        <th class="text-center">Current jobs</th>
+        <th class="text-center">Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr>
         {% for wf in workflows %}
-      <tr>
-        <td >
+      <tr class="tableRow">
+        <td>
           <a href='/workflow/{{ wf.id }}'> {{ wf.id }} </a>
         </td>
-        <td>
+        <td class="nameColumn">
           <a href='/workflow/{{ wf.id }}'> {{ wf.name }} </a>
         </td>
         <td>
@@ -35,9 +33,13 @@
           <a> {{ wf.started_at|formatdatetime }} </a>
         </td>
         <td>
-          <a> {{ wf.jobs_done }}/{{ wf.jobs_total }} </a>
+           <a> {{ wf.jobs_done }}/{{ wf.jobs_total }} </a>
         </td>
-      </tr>
+        <td class="dt-nowrap">
+            <button id="addBtn" title="Add workflow" class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
+            <button id="editBtn" title="Edit workflow"class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
+            <button id="deleteBtn" title="Delete workflow" class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
+        </td>
       {% endfor %}
       </tbody>
     </table>
