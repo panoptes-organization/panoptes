@@ -7,3 +7,4 @@
 - Johannes Köster (@johanneskoester)
 - Georgios Ntalaperas (@gntalaperas)
 - Dimitrios Rekoumis (@drekoumis)
+- Vanessa Sochat (@vsoch)
