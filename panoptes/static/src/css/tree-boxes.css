@@ -1,0 +1,120 @@
+/***************************************************************
+ *
+ *  Copyright (C) 2016 Swayvil <swayvil@gmail.com>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ ***************************************************************/
+
+
+/*
+ * Styles of the components of the tree
+ */
+#tree-container {
+	position: absolute;
+	left: 0px;
+	width: 100%;
+}
+
+.svgContainer {
+	display: block;
+    margin: auto;
+}
+
+.node {
+	cursor: pointer;
+}
+
+.node-rect {
+}
+
+.node-rect-closed {
+	stroke-width: 2px;
+	stroke: rgb(0,0,0);
+}
+
+.link {
+	fill: none;
+	stroke: lightsteelblue;
+	stroke-width: 2px;
+}
+
+.linkselected {
+	fill: none;
+	stroke: tomato;
+	stroke-width: 2px;
+}
+
+.arrow {
+	fill: lightsteelblue;
+	stroke-width: 1px;
+}
+
+.arrowselected {
+	fill: tomato;
+	stroke-width: 2px;
+}
+
+.link text {
+	font: 7px sans-serif;
+	fill: #CC0000;
+}
+
+.wordwrap {
+	white-space: pre-wrap; /* CSS3 */
+	white-space: -moz-pre-wrap; /* Firefox */
+	white-space: -pre-wrap; /* Opera <7 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* IE */
+}
+
+.node-text {
+	font: 7px sans-serif;
+	color: white;
+}
+
+.tooltip-text-container {
+    height: 100%;
+	width: 100%;
+}
+
+.tooltip-text {
+	visibility: hidden;
+	font: 7px sans-serif;
+	color: white;
+	display: block;
+ 	padding: 5px;
+}
+
+.tooltip-box {
+	background: rgba(0, 0, 0, 0.7);
+	visibility: hidden;
+	position: absolute;
+	border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    border-top-right-radius: 0.5em;
+}
+
+p {
+	display: inline;
+}
+
+.textcolored {
+	color: orange;
+}
+
+a.exchangeName {
+	color: orange;
+}

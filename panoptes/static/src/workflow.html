@@ -51,6 +51,24 @@
 </div>
 
 <div class="card">
+  <div class="card-header">Workflow DAG</div>
+  <div class="card-body ">
+    <div class="container">
+        <ct-visualization id="tree-container"></ct-visualization>
+        <script>
+      window.addEventListener('load', (event) => {
+
+            d3.json("/get-dag/{{ workflow.id }}", function(error, json) {
+                treeBoxes('', json.tree);
+            });
+            });
+
+        </script>
+    </div>
+  </div>
+</div>
+
+<div class="card">
   <div class="card-header"> workflow Jobs</div>
   <div class="card-body">
     <table id="jobsTable" class="fullTable table table-responsive-sm table-hover table-outline mb-0">

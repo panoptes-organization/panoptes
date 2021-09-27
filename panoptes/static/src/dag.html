@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+
+{% block main_info %}
+
+ <!--   <div class="container">
+        <ct-visualization id="tree-container"></ct-visualization>
+        <script>
+            window.addEventListener('load', (event) => {
+
+            d3.json("/get-dag/{{ workflow.id }}", function(error, json) {
+                treeBoxes('', json.tree);
+            });
+            });
+
+        </script> -->
+
+<script>
+window.addEventListener('load', (event) => {
+let viz = new Viz();
+
+  viz.renderSVGElement('{{ dag.decode()|safe }}')
+  .then(function(element) {
+    document.body.appendChild(element);
+  })
+  .catch(error => {
+    // Create a new Viz instance (@see Caveats page for more info)
+    viz = new Viz();
+
+    // Possibly display the error
+    console.error(error);
+  });
+              });
+
+</script>
+    </div>
+{% endblock %}

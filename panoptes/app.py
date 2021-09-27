@@ -2,14 +2,14 @@ import traceback
 import uuid
 
 import humanfriendly
-from flask import Flask, request, render_template, abort, send_from_directory
+from flask import Flask, request, render_template, abort, send_from_directory, make_response, jsonify
 from functools import wraps, update_wrapper
 from datetime import datetime
-from flask import make_response
 
 from panoptes.database import init_db, db_session
 from panoptes.models import Workflows
 from panoptes.routes import *
+from panoptes.server_utilities.dag import *
 from panoptes.schema_forms import SnakemakeUpdateForm
 from panoptes.server_utilities.db_queries import maintain_jobs
 
@@ -92,6 +92,21 @@ def get_status(id):
 
     except:
         traceback.print_exc()
+        return render_template('404.html')\
+
+@app.route('/dag/<id>', methods=['GET'])
+@nocache
+def get_status2(id):
+    try:
+        workflow = get_db_workflows_by_id(id).get_workflow()
+
+        if workflow:
+            return render_template('dag.html', workflow=workflow, dag=produce_dag_spec(workflow, get_db_jobs(id)))
+        else:
+            return render_template('404.html')
+
+    except:
+        traceback.print_exc()
         return render_template('404.html')
 
 
@@ -166,4 +181,4 @@ def handle_bad_request(e):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
