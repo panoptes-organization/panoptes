@@ -7,7 +7,7 @@ if sys.version_info < (3, 6):
 
 setup(
     name='panoptes-ui',
-    version='0.2.0',
+    version='0.2.1',
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
     author='panoptes-organization',
