@@ -24,7 +24,7 @@ jobs:
         pip install .
     - name: Test panoptes
       run: |
-        panoptes
+        nohup panoptes &
         response=$(curl http://127.0.0.1:5000/api/service-info)
         if [ "$response" = "{\"status\":\"running\"}" ]; then
                 echo "Success";
