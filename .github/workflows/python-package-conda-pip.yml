@@ -24,7 +24,7 @@ jobs:
         pip install .
     - name: Deploy panoptes
       run: |
-        panoptes
+        panoptes &
     - name: Test panoptes
       run: |
         response=$(curl http://127.0.0.1:5000/api/service-info)
