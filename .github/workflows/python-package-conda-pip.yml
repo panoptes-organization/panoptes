@@ -22,10 +22,11 @@ jobs:
       run: |
         conda install -c conda-forge -c bioconda snakemake pip
         pip install .
+    - name: Deploy panoptes
+      run: |
+        panoptes
     - name: Test panoptes
       run: |
-        panoptes &
-        sleep 5 &
         response=$(curl http://127.0.0.1:5000/api/service-info)
         if [ "$response" = "{\"status\":\"running\"}" ]; then
                 echo "Success";
