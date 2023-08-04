@@ -35,3 +35,10 @@ jobs:
                 echo "Fail";
                 exit 1;
         fi
+    - name: Run test workflow
+      run: |
+        cd ..
+        git clone https://github.com/panoptes-organization/snakemake_example_workflow.git
+        cd snakemake_example_workflow
+        bash run_local.sh
+        
