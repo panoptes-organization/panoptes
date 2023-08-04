@@ -37,8 +37,10 @@ jobs:
         fi
     - name: Run test workflow
       run: |
+        snakemake --version
         cd ..
         git clone https://github.com/panoptes-organization/snakemake_example_workflow.git
         cd snakemake_example_workflow
+        ls
         bash run_local.sh
         
