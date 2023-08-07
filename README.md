@@ -58,7 +58,7 @@ conda activate panoptes
 
 Install via pypi OR conda
 ```bash
-conda install -c panoptes-organization panoptes-ui
+conda install -c conda-forge -c bioconda panoptes-ui
 ```
 Run server
 ```bash
@@ -108,6 +108,25 @@ By default it should generate an sqlite database: .panoptes.db
 ### Requirements
 
 - docker
+
+### Build and run with docker
+
+Pull image that is automatically built from bioconda. You can find the latest tag in the following url: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags. For example:
+```
+docker pull quay.io/biocontainers/panoptes-ui:0.2.2--pyh7cba7a3_0
+```
+
+Then run the container with:
+
+```bash
+docker run -p 5000:5000 -it "image id" panoptes
+```
+
+> Note: In this case the database is stored within the docker image, so every time you restart the server the database will be empty. You would need to mount the volumes to make the database persistent.
+
+### Requirements
+
+- docker
 - docker-compose
 
 ### Build and run with docker-compose
@@ -127,6 +146,19 @@ Server should run on: http://127.0.0.1:8000
 Stop
 ```bash
 docker-compose down
+```
+
+## Singularity
+
+You can also deploy the server with singularity. To do so pull the image with singularity. For example:
+
+```bash
+singularity pull docker://quay.io/biocontainers/panoptes-ui:0.2.2--pyh7cba7a3_0
+```
+
+And then we can start the server by running:
+```bash
+singularity exec panoptes-ui:0.2.2--pyh7cba7a3_0
 ```
 
 ### Run an example workflow
