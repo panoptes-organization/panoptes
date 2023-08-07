@@ -3,6 +3,7 @@
 - Dimitrios Afentoulis (@dafentoulis)
 - Argyrios-Alexandros Gardelakos (@agardelakos)
 - Foivos Gypas (@fgypas)
+- Bruno P. Kinoshita (@kinow)
 - Georgios Kostoulas (@gkostoulas)
 - Johannes Köster (@johanneskoester)
 - Russell Neches (@ryneches)
