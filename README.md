@@ -166,7 +166,7 @@ Please see the [Contributing instructions](CONTRIBUTING.md).
 
 ## CI server
 
-Changes in develop or master trigger a [Travis](https://travis-ci.com/panoptes-organization/panoptes) build (and runs tests)
+Changes in develop or master trigger a [GitHub Actions](https://github.com/panoptes-organization/panoptes/actions) build (and runs tests)
 
 # Contact
 
