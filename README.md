@@ -12,15 +12,12 @@ panoptes is a service that can be used by:
 
 # Installation
 
-## Basic installation process
-
-### Requirements
-
+Requirements:
 - Python>=3.6
 - virtualenv
 - [sqlite3](https://www.sqlite.org/download.html)
 
-### Option 1: Install via pypi and run server
+## Install from pypi and run server
 
 Create virtual environment
 ```bash
@@ -44,11 +41,11 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db
 
-### Option 2: Install via conda and run server
+## Install from conda and run server
 
 Create conda environment
 ```bash
-conda create --name panoptes
+conda create --name panoptes -c conda-forge -c bioconda panoptes-ui
 ```
 
 Activate conda environment
@@ -56,10 +53,6 @@ Activate conda environment
 conda activate panoptes
 ```
 
-Install via pypi OR conda
-```bash
-conda install -c conda-forge -c bioconda panoptes-ui
-```
 Run server
 ```bash
 panoptes
@@ -68,7 +61,7 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db
 
-### Option 3: Install from source code and run server
+## Install from source code and run server
 
 Clone repo
 ```bash
@@ -103,13 +96,10 @@ Server should run on: 127.0.0.1:5000
 
 By default it should generate an sqlite database: .panoptes.db 
 
-## Docker installation
+## Docker execution
 
-### Requirements
-
+Requirements:
 - docker
-
-### Build and run with docker
 
 Pull image that is automatically built from bioconda. You can find the latest tag in the following url: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags. For example:
 ```
@@ -124,12 +114,11 @@ docker run -p 5000:5000 -it "image id" panoptes
 
 > Note: In this case the database is stored within the docker image, so every time you restart the server the database will be empty. You would need to mount the volumes to make the database persistent.
 
-### Requirements
+## Docker compose execution
 
+Requirements:
 - docker
 - docker-compose
-
-### Build and run with docker-compose
 
 Build
 ```bash
@@ -148,7 +137,7 @@ Stop
 docker-compose down
 ```
 
-## Singularity
+## Singularity execution
 
 You can also deploy the server with singularity. To do so pull the image with singularity. For example:
 
@@ -161,15 +150,15 @@ And then we can start the server by running:
 singularity exec panoptes-ui:0.2.2--pyh7cba7a3_0
 ```
 
-### Run an example workflow
+# Run an example workflow
 
 In order to run an example workflow please follow the instructions [here](https://github.com/panoptes-organization/snakemake_example_workflow)
 
-### panoptes in action
+## panoptes in action
 
 [![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
 
-### panoptes API
+## panoptes API
 
 Panoptes provides the following API endpoints:
 
