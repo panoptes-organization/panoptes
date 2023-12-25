@@ -103,7 +103,7 @@ Requirements:
 
 Pull image that is automatically built from bioconda. You can find the latest tag in the following url: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags. For example:
 ```
-docker pull quay.io/biocontainers/panoptes-ui:0.2.2--pyh7cba7a3_0
+docker pull quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
 ```
 
 Then run the container with:
