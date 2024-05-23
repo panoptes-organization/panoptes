@@ -17,7 +17,8 @@ Requirements:
 - virtualenv
 - [sqlite3](https://www.sqlite.org/download.html)
 
-## Install from pypi and run server
+## Local
+### pypi
 
 Create virtual environment
 ```bash
@@ -33,15 +34,8 @@ Install via pypi
 ```bash
 pip install panoptes-ui
 ```
-Run server
-```bash
-panoptes
-```
-Server should run on: 127.0.0.1:5000
 
-By default it should generate an sqlite database: .panoptes.db
-
-## Install from conda and run server
+### conda
 
 Create conda environment
 ```bash
@@ -53,15 +47,7 @@ Activate conda environment
 conda activate panoptes
 ```
 
-Run server
-```bash
-panoptes
-```
-Server should run on: 127.0.0.1:5000
-
-By default it should generate an sqlite database: .panoptes.db
-
-## Install from source code and run server
+### Source code
 
 Clone repo
 ```bash
@@ -88,15 +74,22 @@ Install all requirements
 pip install .
 ```
 
-Run server
+### Run the server
+By default, server should run on `127.0.0.1:5000`, and generate the sqlite database `.panoptes.db`.
+
+#### Using the development server
 ```bash
 panoptes
 ```
-Server should run on: 127.0.0.1:5000
 
-By default it should generate an sqlite database: .panoptes.db 
+#### Using a WSGI server
+Install all necessary packages (see above), plus a WSGI server (e.g. [gunicorn](https://gunicorn.org/) or [waitress](https://docs.pylonsproject.org/projects/waitress/en/latest/)), and run the server:
+```bash
+gunicorn --access-logfile logs/access.log --error-logfile logs/error.log --timeout 120 --bind :5000 panoptes.app:app
+```
 
-## Docker execution
+## Containers
+### Docker
 
 Requirements:
 - docker
@@ -114,7 +107,7 @@ docker run -p 5000:5000 -it "image id" panoptes
 
 > Note: In this case the database is stored within the docker image, so every time you restart the server the database will be empty. You would need to mount the volumes to make the database persistent.
 
-## Docker compose execution
+### Docker compose
 
 Requirements:
 - docker
@@ -137,7 +130,7 @@ Stop
 docker-compose down
 ```
 
-## Singularity execution
+### Singularity
 
 You can also deploy the server with singularity. To do so pull the image with singularity. For example:
 
