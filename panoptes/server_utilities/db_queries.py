@@ -3,6 +3,23 @@ from panoptes.models import Workflows, WorkflowMessages, WorkflowJobs
 
 import json
 
+
+# Events emitted by the Snakemake 9 logger plugin
+# (snakemake-logger-plugin-panoptes) that the server understands. Anything else
+# is ignored without raising, so the plugin never causes a workflow to crash.
+_KNOWN_LEVELS = {
+    "job_info",
+    "job_started",
+    "job_finished",
+    "job_error",
+    "info",
+    "progress",
+    "error",
+    "shellcmd",
+    "",
+}
+
+
 def get_db_workflows():
     return Workflows.query.all()
 
@@ -35,65 +52,82 @@ def maintain_jobs(msg, wf_id):
 
     # The message should be a json dump
     msg_json = json.loads(msg)
+    level = msg_json.get("level", "")
 
-    if "jobid" in msg_json.keys():
-        if msg_json["level"] == 'job_info':
+    if "jobid" in msg_json and msg_json.get("jobid") is not None:
+        if level == 'job_info':
             job = WorkflowJobs(
                 msg_json['jobid'],
-                wf_id, msg_json['msg'],
-                msg_json['name'],
-                repr(msg_json['input']),
-                repr(msg_json['output']),
-                repr(msg_json['log']),
-                repr(msg_json['wildcards']),
-                msg_json['is_checkpoint'],
-
+                wf_id, msg_json.get('msg'),
+                msg_json.get('name', ''),
+                repr(msg_json.get('input', [])),
+                repr(msg_json.get('output', [])),
+                repr(msg_json.get('log', [])),
+                repr(msg_json.get('wildcards', {})),
+                bool(msg_json.get('is_checkpoint', False)),
+                shell_command=msg_json.get('shellcmd'),
             )
             db_session.add(job)
             db_session.commit()
             return True
 
-        if msg_json["level"] == 'job_finished':
+        if level == 'job_finished':
             job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
                 .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
-            job.job_done()
-            db_session.commit()
+            if job is not None:
+                job.job_done()
+                db_session.commit()
             return True
 
-        if msg_json["level"] == 'job_error':
+        if level == 'job_error':
             job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
                 .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
-            job.job_error()
-            db_session.commit()
+            if job is not None:
+                job.job_error()
+                db_session.commit()
             wf = Workflows.query.filter(Workflows.id == wf_id).first()
+            if wf is not None:
+                wf.set_error()
+                db_session.commit()
+            return True
+
+    if level == 'job_started':
+        # Snakemake 9 fires JOB_STARTED with a list of job ids when execution
+        # actually begins. Jobs are already created at JOB_INFO time with
+        # status="Running", so nothing extra to persist here.
+        return True
+
+    if level == 'info':
+        if msg_json.get('msg') == 'Nothing to be done.':
+            wf = Workflows.query.filter(Workflows.id == wf_id).first()
+            if wf is not None:
+                wf.set_not_executed()
+                db_session.commit()
+            return True
+        return True
+
+    if level == 'progress':
+        wf = Workflows.query.filter(Workflows.id == wf_id).first()
+        if wf is not None:
+            wf.edit_workflow(msg_json.get('done', 0), msg_json.get('total', 0))
+            db_session.commit()
+        return True
+
+    if level == 'error':
+        wf = Workflows.query.filter(Workflows.id == wf_id).first()
+        if wf is not None:
             wf.set_error()
             db_session.commit()
-            return True
-
-    if msg_json["level"] == 'info':
-        if msg_json['msg'] == 'Nothing to be done.':
-            wf = Workflows.query.filter(Workflows.id == wf_id).first()
-            wf.set_not_executed()
-            db_session.commit()
-            return True
-
-    if msg_json["level"] == 'progress':
-        wf = Workflows.query.filter(Workflows.id == wf_id).first()
-        wf.edit_workflow(msg_json['done'], msg_json['total'])
-        db_session.commit()
         return True
 
-    if msg_json["level"] == 'error':
-        wf = Workflows.query.filter(Workflows.id == wf_id).first()
-        wf.set_error()
-        db_session.commit()
-        return True
-
-    if msg_json["level"] in ['shellcmd', '']:
+    if level in ('shellcmd', ''):
         w = WorkflowMessages(msg, wf_id=wf_id)
         db_session.add(w)
         db_session.commit()
         return True
+
+    # Unknown / not-yet-mapped LogEvent — just drop it so the workflow keeps
+    # running.
     return False
 
 

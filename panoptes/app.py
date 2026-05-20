@@ -2,7 +2,7 @@ import traceback
 import uuid
 
 import humanfriendly
-from flask import Flask, request, render_template, abort, send_from_directory
+from flask import Flask, request, render_template, send_from_directory, jsonify
 from functools import wraps, update_wrapper
 from datetime import datetime
 from flask import make_response
@@ -115,15 +115,23 @@ def create_workflow():
 
 @app.route('/update_workflow_status', methods=['POST'])
 def update_status():
-    update_form = SnakemakeUpdateForm()
-    errors = update_form.validate(request.form)
+    # Snakemake's legacy --wms-monitor used form-encoded bodies; the Snakemake 9
+    # logger plugin (snakemake-logger-plugin-panoptes) does the same, but other
+    # clients may send JSON, so accept either.
+    payload = request.get_json(silent=True) or request.form
 
+    update_form = SnakemakeUpdateForm()
+    errors = update_form.validate(payload)
     if errors:
-        abort(404, str(errors))
-    else:
-        r = update_form.load(request.form)
-    # now all required fields exist and are the right type
-    maintain_jobs(msg=r["msg"], wf_id=r["id"])
+        return jsonify({"errors": errors}), 400
+
+    r = update_form.load(payload)
+    try:
+        maintain_jobs(msg=r["msg"], wf_id=r["id"])
+    except Exception:
+        # Don't fail the whole pipeline on a single unparseable event — log it
+        # server-side and keep going.
+        traceback.print_exc()
     return "ok"
 
 

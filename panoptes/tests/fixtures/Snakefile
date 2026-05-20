@@ -1,0 +1,28 @@
+# Minimal two-rule workflow used by the panoptes e2e test.
+#
+# We deliberately avoid conda / bioinformatics tools so the test runs anywhere
+# Snakemake itself is installed. Outputs are written to whatever directory the
+# workflow is launched in (the test uses a tmp_path).
+
+SAMPLES = ["a", "b"]
+
+
+rule all:
+    input:
+        expand("results/{sample}.done", sample=SAMPLES),
+
+
+rule make_input:
+    output:
+        "raw/{sample}.txt",
+    shell:
+        "mkdir -p raw && echo {wildcards.sample} > {output}"
+
+
+rule finalize:
+    input:
+        "raw/{sample}.txt",
+    output:
+        "results/{sample}.done",
+    shell:
+        "mkdir -p results && cp {input} {output}"

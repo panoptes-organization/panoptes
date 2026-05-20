@@ -10,6 +10,10 @@ panoptes is a service that can be used by:
 
 **Note:** panoptes is in early development stage and the first proof of concept server will support only workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
 
+> **Snakemake 9 users:** the legacy `--wms-monitor` flag was removed upstream.
+> Monitoring is now delivered via a logger plugin — see
+> [Snakemake 9 support](#snakemake-9-support) below.
+
 # Installation
 
 Requirements:
@@ -145,7 +149,43 @@ singularity exec panoptes-ui:0.2.2--pyh7cba7a3_0
 
 # Run an example workflow
 
-In order to run an example workflow please follow the instructions [here](https://github.com/panoptes-organization/snakemake_example_workflow)
+A small reference pipeline (samtools sort/index → htseq-count → merge across
+four samples) that already wires up `--logger panoptes` lives at
+[snakemake_example_workflow](https://github.com/panoptes-organization/snakemake_example_workflow).
+Follow the instructions there to exercise this server end-to-end.
+
+# Snakemake 9 support
+
+Starting with Snakemake 9, the `--wms-monitor` flag that older panoptes versions
+relied on has been removed. Monitoring is instead delivered through
+[logger plugins](https://snakemake.readthedocs.io/en/stable/executing/monitoring.html).
+
+To stream events from a Snakemake 9 workflow to panoptes, install the companion
+logger plugin and pass `--logger panoptes` to Snakemake:
+
+```bash
+# via PyPI
+pip install snakemake-logger-plugin-panoptes
+
+# or via bioconda
+conda install -c bioconda snakemake-logger-plugin-panoptes
+
+snakemake \
+    --cores 1 \
+    --logger panoptes \
+    --logger-panoptes-address http://127.0.0.1:5000
+```
+
+The plugin lives in its own repository:
+[panoptes-organization/snakemake-logger-plugin-panoptes](https://github.com/panoptes-organization/snakemake-logger-plugin-panoptes).
+It registers a workflow with panoptes via `GET /create_workflow` on the first
+event and then translates Snakemake's `LogEvent` records (`JOB_INFO`,
+`JOB_STARTED`, `JOB_FINISHED`, `JOB_ERROR`, `SHELLCMD`, `PROGRESS`, `ERROR`,
+`RUN_INFO`) into the JSON payloads that panoptes' `/update_workflow_status`
+endpoint already understands.
+
+Workflows orchestrated by Snakemake &lt; 9 continue to work unchanged via the
+legacy `--wms-monitor http://<host>:<port>` flag.
 
 ## panoptes in action
 
