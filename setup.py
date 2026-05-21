@@ -2,8 +2,8 @@ import sys
 from setuptools import setup
 import setuptools
 
-if sys.version_info < (3, 6):
-    sys.exit('Sorry, panoptes requires Python >= 3.6')
+if sys.version_info < (3, 11):
+    sys.exit('Sorry, panoptes requires Python >= 3.11')
 
 setup(
     name='panoptes-ui',
@@ -15,6 +15,7 @@ setup(
     description="panoptes: monitor computational workflows in real time",
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
+    python_requires=">=3.11",
     entry_points={
         'console_scripts': ['panoptes=panoptes:main'],
     },
