@@ -26,7 +26,7 @@ Requirements:
 
 Create virtual environment
 ```bash
-virtualenv -p `which python3` venv
+python3 -m venv venv
 ```
 
 Activate virtual environment
@@ -65,7 +65,7 @@ cd panoptes
 
 Create virtual environment
 ```bash
-virtualenv -p `which python3` venv
+python3 -m venv venv
 ```
 
 Activate virtual environment
@@ -106,7 +106,7 @@ docker pull quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
 Then run the container with:
 
 ```bash
-docker run -p 5000:5000 -it "image id" panoptes
+docker run -p 5000:5000 -it <image-id> panoptes
 ```
 
 > Note: In this case the database is stored within the docker image, so every time you restart the server the database will be empty. You would need to mount the volumes to make the database persistent.
@@ -139,12 +139,12 @@ docker-compose down
 You can also deploy the server with singularity. To do so pull the image with singularity. For example:
 
 ```bash
-singularity pull docker://quay.io/biocontainers/panoptes-ui:0.2.2--pyh7cba7a3_0
+singularity pull docker://quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
 ```
 
 And then we can start the server by running:
 ```bash
-singularity exec panoptes-ui:0.2.2--pyh7cba7a3_0
+singularity exec panoptes-ui:0.2.3--pyh7cba7a3_0
 ```
 
 # Run an example workflow
@@ -211,7 +211,7 @@ Endpoint | Method | Description
 -- | -- | --
 `/api/service-info` | `GET` | Server status (same as above)
 `/create_workflow` | `GET` | Get a unique id/name str(uuid.uuid4()) for each workflow
-`/update_workflow_status` | `POST` | Panoptes receives a dictionary from snakemake that contains: <br> - A log message dictionary <br> - The current timestamp <br> - The unique id/name of the workflow. <br> (e.g. `{'msg': repr(msg), 'timestamp': time.asctime(), 'id': id}`)
+`/update_workflow_status` | `POST` | Panoptes receives a dictionary from snakemake that contains: <br> - A log message dictionary (JSON-encoded) <br> - The current timestamp <br> - The unique id/name of the workflow. <br> (e.g. `{'msg': json.dumps(message), 'timestamp': time.asctime(), 'id': id}`)
 
 # Contribute
 
@@ -219,7 +219,7 @@ Please see the [Contributing instructions](CONTRIBUTING.md).
 
 ## CI server
 
-Changes in develop or master trigger a [GitHub Actions](https://github.com/panoptes-organization/panoptes/actions) build (and runs tests)
+Changes on master (and pull requests against it) trigger a [GitHub Actions](https://github.com/panoptes-organization/panoptes/actions) build that runs the test suite and a live end-to-end run of the example workflow.
 
 # Contact
 
