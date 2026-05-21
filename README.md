@@ -164,17 +164,16 @@ To stream events from a Snakemake 9 workflow to panoptes, install the companion
 logger plugin and pass `--logger panoptes` to Snakemake:
 
 ```bash
-# via PyPI
 pip install snakemake-logger-plugin-panoptes
-
-# or via bioconda
-conda install -c bioconda snakemake-logger-plugin-panoptes
 
 snakemake \
     --cores 1 \
     --logger panoptes \
     --logger-panoptes-address http://127.0.0.1:5000
 ```
+
+> A bioconda recipe is on the way; once it lands you'll also be able to
+> `conda install -c bioconda snakemake-logger-plugin-panoptes`.
 
 The plugin lives in its own repository:
 [panoptes-organization/snakemake-logger-plugin-panoptes](https://github.com/panoptes-organization/snakemake-logger-plugin-panoptes).

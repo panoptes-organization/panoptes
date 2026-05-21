@@ -47,9 +47,10 @@ jobs:
           channel-priority: strict
           python-version: '3.11'
 
-      - name: Install Snakemake 9 + plugin from bioconda
+      - name: Install Snakemake 9 (conda) + plugin (PyPI)
         run: |
-          conda install -y 'snakemake>=9' snakemake-logger-plugin-panoptes
+          conda install -y -c bioconda 'snakemake>=9'
+          pip install snakemake-logger-plugin-panoptes
 
       - name: Install panoptes from source
         run: pip install .
