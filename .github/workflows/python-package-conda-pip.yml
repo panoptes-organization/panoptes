@@ -66,8 +66,12 @@ jobs:
           done
 
       - name: Clone the example workflow
+        # TODO: point at master once the Snakemake-9 migration PR is merged
+        # (panoptes-organization/snakemake_example_workflow#snakemake-9-logger-plugin).
         run: |
-          git clone https://github.com/panoptes-organization/snakemake_example_workflow.git ../snakemake_example_workflow
+          git clone --branch snakemake-9-logger-plugin --depth 1 \
+            https://github.com/panoptes-organization/snakemake_example_workflow.git \
+            ../snakemake_example_workflow
 
       - name: Run example workflow with --logger panoptes
         working-directory: ../snakemake_example_workflow
