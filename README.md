@@ -8,12 +8,16 @@ panoptes is a service that can be used by:
 - Administrations that want to monitor their servers
 - Web developers that want to integrate the service in bigger web applications
 
-**Note:** panoptes is in early development stage and the first proof of concept server will support only workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
+**Note:** panoptes currently supports workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
+
+> **Snakemake 9 users:** the legacy `--wms-monitor` flag was removed upstream.
+> Monitoring is now delivered via a logger plugin — see
+> [Snakemake 9 support](#snakemake-9-support) below.
 
 # Installation
 
 Requirements:
-- Python>=3.6
+- Python>=3.11
 - virtualenv
 - [sqlite3](https://www.sqlite.org/download.html)
 
@@ -22,7 +26,7 @@ Requirements:
 
 Create virtual environment
 ```bash
-virtualenv -p `which python3` venv
+python3 -m venv venv
 ```
 
 Activate virtual environment
@@ -61,7 +65,7 @@ cd panoptes
 
 Create virtual environment
 ```bash
-virtualenv -p `which python3` venv
+python3 -m venv venv
 ```
 
 Activate virtual environment
@@ -102,7 +106,7 @@ docker pull quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
 Then run the container with:
 
 ```bash
-docker run -p 5000:5000 -it "image id" panoptes
+docker run -p 5000:5000 -it <image-id> panoptes
 ```
 
 > Note: In this case the database is stored within the docker image, so every time you restart the server the database will be empty. You would need to mount the volumes to make the database persistent.
@@ -135,17 +139,55 @@ docker-compose down
 You can also deploy the server with singularity. To do so pull the image with singularity. For example:
 
 ```bash
-singularity pull docker://quay.io/biocontainers/panoptes-ui:0.2.2--pyh7cba7a3_0
+singularity pull docker://quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
 ```
 
 And then we can start the server by running:
 ```bash
-singularity exec panoptes-ui:0.2.2--pyh7cba7a3_0
+singularity exec panoptes-ui:0.2.3--pyh7cba7a3_0
 ```
 
 # Run an example workflow
 
-In order to run an example workflow please follow the instructions [here](https://github.com/panoptes-organization/snakemake_example_workflow)
+A small reference pipeline (samtools sort/index → htseq-count → merge across
+four samples) that already wires up `--logger panoptes` lives at
+[snakemake_example_workflow](https://github.com/panoptes-organization/snakemake_example_workflow).
+Follow the instructions there to exercise this server end-to-end.
+
+# Snakemake 9 support
+
+Starting with Snakemake 9, the `--wms-monitor` flag that older panoptes versions
+relied on has been removed. Monitoring is instead delivered through
+[logger plugins](https://snakemake.readthedocs.io/en/stable/executing/monitoring.html).
+
+To stream events from a Snakemake 9 workflow to panoptes, install the companion
+logger plugin with either pip or conda:
+
+```bash
+pip install snakemake-logger-plugin-panoptes
+# or
+conda install -c conda-forge -c bioconda snakemake-logger-plugin-panoptes
+```
+
+Then pass `--logger panoptes` to Snakemake:
+
+```bash
+snakemake \
+    --cores 1 \
+    --logger panoptes \
+    --logger-panoptes-address http://127.0.0.1:5000
+```
+
+The plugin lives in its own repository:
+[panoptes-organization/snakemake-logger-plugin-panoptes](https://github.com/panoptes-organization/snakemake-logger-plugin-panoptes).
+It registers a workflow with panoptes via `GET /create_workflow` on the first
+event and then translates Snakemake's `LogEvent` records (`JOB_INFO`,
+`JOB_STARTED`, `JOB_FINISHED`, `JOB_ERROR`, `SHELLCMD`, `PROGRESS`, `ERROR`,
+`RUN_INFO`) into the JSON payloads that panoptes' `/update_workflow_status`
+endpoint already understands.
+
+Workflows orchestrated by Snakemake &lt; 9 continue to work unchanged via the
+legacy `--wms-monitor http://<host>:<port>` flag.
 
 ## panoptes in action
 
@@ -172,7 +214,7 @@ Endpoint | Method | Description
 -- | -- | --
 `/api/service-info` | `GET` | Server status (same as above)
 `/create_workflow` | `GET` | Get a unique id/name str(uuid.uuid4()) for each workflow
-`/update_workflow_status` | `POST` | Panoptes receives a dictionary from snakemake that contains: <br> - A log message dictionary <br> - The current timestamp <br> - The unique id/name of the workflow. <br> (e.g. `{'msg': repr(msg), 'timestamp': time.asctime(), 'id': id}`)
+`/update_workflow_status` | `POST` | Panoptes receives a dictionary from snakemake that contains: <br> - A log message dictionary (JSON-encoded) <br> - The current timestamp <br> - The unique id/name of the workflow. <br> (e.g. `{'msg': json.dumps(message), 'timestamp': time.asctime(), 'id': id}`)
 
 # Contribute
 
@@ -180,7 +222,7 @@ Please see the [Contributing instructions](CONTRIBUTING.md).
 
 ## CI server
 
-Changes in develop or master trigger a [GitHub Actions](https://github.com/panoptes-organization/panoptes/actions) build (and runs tests)
+Changes on master (and pull requests against it) trigger a [GitHub Actions](https://github.com/panoptes-organization/panoptes/actions) build that runs the test suite and a live end-to-end run of the example workflow.
 
 # Contact
 

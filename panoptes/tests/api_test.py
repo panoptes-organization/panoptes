@@ -1,3 +1,4 @@
+import pytest
 import requests
 import panoptes.tests.api_test_helper as helper
 
@@ -6,6 +7,22 @@ docker_url = 'http://127.0.0.1:8000'
 
 # CI server uses docker, to run locally use local_url
 url_to_use = docker_url
+
+# This is a legacy end-to-end suite that expects a panoptes server already
+# running at `url_to_use` and seeded by two runs of the
+# snakemake_example_workflow (2 workflows, each with 14 jobs). Skip it
+# automatically when that server isn't reachable, so it doesn't break a normal
+# `pytest` run.
+try:
+    requests.get(url_to_use + '/api/service-info', timeout=0.5)
+    _SERVER_REACHABLE = True
+except Exception:
+    _SERVER_REACHABLE = False
+
+pytestmark = pytest.mark.skipif(
+    not _SERVER_REACHABLE,
+    reason=f"legacy api_test requires a pre-seeded panoptes server at {url_to_use}",
+)
 # Workflow and job entries to check. We don't check the date related entries
 workflow_entries = ['id', 'jobs_done', 'jobs_total']
 job_entries = ['input', 'is_checkpoint', 'jobid', 'log', 'msg', 'name', 'output', 'shell_command', 'status',

@@ -1,0 +1,33 @@
+.git
+.gitignore
+.github
+.dockerignore
+Dockerfile
+docker-compose.yaml
+
+# Virtualenvs / build artifacts
+.venv
+venv
+*.egg-info
+build
+dist
+
+# Caches
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+coverage.xml
+
+# Editor / OS
+.idea
+.vscode
+.DS_Store
+
+# Local databases / logs
+.panoptes.db
+logs
+
+# Claude Code workspace cache
+.claude
