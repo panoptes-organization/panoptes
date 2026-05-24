@@ -21,7 +21,7 @@ jobs:
       - name: Install panoptes + plugin + Snakemake 9
         run: |
           python -m pip install --upgrade pip
-          pip install .
+          pip install '.[dev]'
           pip install 'snakemake>=9'
           pip install snakemake-logger-plugin-panoptes
 
