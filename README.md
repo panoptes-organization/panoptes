@@ -8,7 +8,7 @@ panoptes is a service that can be used by:
 - Administrations that want to monitor their servers
 - Web developers that want to integrate the service in bigger web applications
 
-**Note:** panoptes is in early development stage and the first proof of concept server will support only workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
+**Note:** panoptes currently supports workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
 
 > **Snakemake 9 users:** the legacy `--wms-monitor` flag was removed upstream.
 > Monitoring is now delivered via a logger plugin — see
