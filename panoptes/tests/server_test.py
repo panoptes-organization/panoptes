@@ -63,6 +63,37 @@ def test_create_workflow_returns_id_and_uuid_name(client):
     assert payload["jobs_total"] == 1
 
 
+def test_create_workflow_with_name_uses_it(client):
+    payload = client.get("/create_workflow?name=my-run").get_json()
+    assert payload["name"] == "my-run"
+    assert payload["status"] == "Running"
+
+
+def test_create_workflow_same_name_reuses_the_workflow(client):
+    first = client.get("/create_workflow?name=nightly").get_json()
+    second = client.get("/create_workflow?name=nightly").get_json()
+    assert first["id"] == second["id"]
+    # Only one workflow row should exist for that name.
+    assert client.get("/api/workflows").get_json()["count"] == 1
+
+
+def test_create_workflow_name_reuse_resets_previous_run(client):
+    wf_id = client.get("/create_workflow?name=cohort").get_json()["id"]
+    _post_event(client, wf_id, {
+        "level": "job_info", "jobid": 1, "name": "step",
+        "input": [], "output": [],
+    })
+    _post_event(client, wf_id, {"level": "progress", "done": 2, "total": 5})
+    assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 1
+
+    # Re-running with the same name reuses the id but clears the prior run.
+    reused = client.get("/create_workflow?name=cohort").get_json()
+    assert reused["id"] == wf_id
+    assert reused["status"] == "Running"
+    assert reused["jobs_done"] == 0
+    assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 0
+
+
 # --------------------------------------------------------------------------- #
 # Ingestion: same payloads the Snakemake 9 plugin emits
 # --------------------------------------------------------------------------- #

@@ -11,7 +11,7 @@ from panoptes.database import init_db, db_session
 from panoptes.models import Workflows
 from panoptes.routes import *
 from panoptes.schema_forms import SnakemakeUpdateForm
-from panoptes.server_utilities.db_queries import maintain_jobs
+from panoptes.server_utilities.db_queries import maintain_jobs, get_db_workflow_by_name, reset_db_workflow
 
 app = Flask(__name__, template_folder="static/src/")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -103,7 +103,15 @@ def get_job_status(wf_id, job_id):
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
-        w = Workflows(str(uuid.uuid4()), "Running")
+        name = request.args.get('name')
+        if name:
+            # Reuse an existing workflow with this name (a re-run), resetting it
+            # so the new run starts from a clean state under the same id.
+            existing = get_db_workflow_by_name(name)
+            if existing is not None:
+                reset_db_workflow(existing.id)
+                return existing.get_workflow()
+        w = Workflows(name or str(uuid.uuid4()), "Running")
         db_session.add(w)
         db_session.commit()
 
