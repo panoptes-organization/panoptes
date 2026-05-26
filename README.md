@@ -100,7 +100,7 @@ Requirements:
 
 Pull image that is automatically built from bioconda. You can find the latest tag in the following url: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags. For example:
 ```
-docker pull quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
+docker pull quay.io/biocontainers/panoptes-ui:1.0.0--pyhdfd78af_0
 ```
 
 Then run the container with:
@@ -139,12 +139,12 @@ docker-compose down
 You can also deploy the server with singularity. To do so pull the image with singularity. For example:
 
 ```bash
-singularity pull docker://quay.io/biocontainers/panoptes-ui:0.2.3--pyh7cba7a3_0
+singularity pull docker://quay.io/biocontainers/panoptes-ui:1.0.0--pyhdfd78af_0
 ```
 
 And then we can start the server by running:
 ```bash
-singularity exec panoptes-ui:0.2.3--pyh7cba7a3_0
+singularity exec panoptes-ui:1.0.0--pyhdfd78af_0
 ```
 
 # Run an example workflow
