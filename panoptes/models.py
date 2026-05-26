@@ -62,6 +62,13 @@ class Workflows(Base):
         self.done = 1
         self.status = 'No Execution'
 
+    def reset(self):
+        self.status = 'Running'
+        self.done = 0
+        self.total = 1
+        self.started_at = datetime.now()
+        self.completed_at = None
+
 
 class WorkflowMessages(Base):
     __tablename__ = 'workflow_messages'

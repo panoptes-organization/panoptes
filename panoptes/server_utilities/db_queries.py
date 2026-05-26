@@ -32,6 +32,10 @@ def get_db_workflows_by_status(workflow_id):
     return (db_session.query(Workflows.status).filter(Workflows.id == workflow_id).first())[0]
 
 
+def get_db_workflow_by_name(name):
+    return Workflows.query.filter(Workflows.name == name).first()
+
+
 def get_db_table_is_empty(table_name):
     if(table_name == 'User'):
         result = db_session.query(User.id).all()
@@ -174,6 +178,25 @@ def delete_db_wf(workflow_id):
         return True
     except:
         return False
+
+
+def reset_db_workflow(workflow_id):
+    """Clear a workflow's jobs/messages and return it to a fresh Running state,
+    so a re-run that reuses the same name starts clean instead of stacking the
+    previous run's rows."""
+    try:
+        db_session.query(WorkflowMessages).filter(
+            WorkflowMessages.wf_id == workflow_id).delete()
+        db_session.query(WorkflowJobs).filter(
+            WorkflowJobs.wf_id == workflow_id).delete()
+        wf = Workflows.query.filter(Workflows.id == workflow_id).first()
+        if wf is not None:
+            wf.reset()
+        db_session.commit()
+        return wf
+    except Exception:
+        db_session.rollback()
+        return None
 
 
 def delete_whole_db():
