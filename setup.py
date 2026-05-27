@@ -10,7 +10,7 @@ long_description = (Path(__file__).parent / "README.md").read_text(encoding="utf
 
 setuptools.setup(
     name='panoptes-ui',
-    version='1.1.0',
+    version='1.1.1',
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
     author='panoptes-organization',

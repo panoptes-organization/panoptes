@@ -103,15 +103,17 @@ def get_job_status(wf_id, job_id):
 @app.route('/create_workflow', methods=['GET'])
 def create_workflow():
     try:
-        name = request.args.get('name')
-        if name:
-            # Reuse an existing workflow with this name (a re-run), resetting it
+        # Accept `workflow_id` (current) or the older `name` (back-compat with
+        # snakemake-logger-plugin-panoptes <= 0.2.1) as the stable identifier.
+        workflow_id = request.args.get('workflow_id') or request.args.get('name')
+        if workflow_id:
+            # Reuse an existing workflow with this id (a re-run), resetting it
             # so the new run starts from a clean state under the same id.
-            existing = get_db_workflow_by_name(name)
+            existing = get_db_workflow_by_name(workflow_id)
             if existing is not None:
                 reset_db_workflow(existing.id)
                 return existing.get_workflow()
-        w = Workflows(name or str(uuid.uuid4()), "Running")
+        w = Workflows(workflow_id or str(uuid.uuid4()), "Running")
         db_session.add(w)
         db_session.commit()
 

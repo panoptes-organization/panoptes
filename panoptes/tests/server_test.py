@@ -63,22 +63,22 @@ def test_create_workflow_returns_id_and_uuid_name(client):
     assert payload["jobs_total"] == 1
 
 
-def test_create_workflow_with_name_uses_it(client):
-    payload = client.get("/create_workflow?name=my-run").get_json()
+def test_create_workflow_with_workflow_id_uses_it(client):
+    payload = client.get("/create_workflow?workflow_id=my-run").get_json()
     assert payload["name"] == "my-run"
     assert payload["status"] == "Running"
 
 
-def test_create_workflow_same_name_reuses_the_workflow(client):
-    first = client.get("/create_workflow?name=nightly").get_json()
-    second = client.get("/create_workflow?name=nightly").get_json()
+def test_create_workflow_same_workflow_id_reuses_the_workflow(client):
+    first = client.get("/create_workflow?workflow_id=nightly").get_json()
+    second = client.get("/create_workflow?workflow_id=nightly").get_json()
     assert first["id"] == second["id"]
-    # Only one workflow row should exist for that name.
+    # Only one workflow row should exist for that id.
     assert client.get("/api/workflows").get_json()["count"] == 1
 
 
-def test_create_workflow_name_reuse_resets_previous_run(client):
-    wf_id = client.get("/create_workflow?name=cohort").get_json()["id"]
+def test_create_workflow_workflow_id_reuse_resets_previous_run(client):
+    wf_id = client.get("/create_workflow?workflow_id=cohort").get_json()["id"]
     _post_event(client, wf_id, {
         "level": "job_info", "jobid": 1, "name": "step",
         "input": [], "output": [],
@@ -86,12 +86,21 @@ def test_create_workflow_name_reuse_resets_previous_run(client):
     _post_event(client, wf_id, {"level": "progress", "done": 2, "total": 5})
     assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 1
 
-    # Re-running with the same name reuses the id but clears the prior run.
-    reused = client.get("/create_workflow?name=cohort").get_json()
+    # Re-running with the same workflow_id reuses the id but clears the prior run.
+    reused = client.get("/create_workflow?workflow_id=cohort").get_json()
     assert reused["id"] == wf_id
     assert reused["status"] == "Running"
     assert reused["jobs_done"] == 0
     assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 0
+
+
+def test_create_workflow_legacy_name_param_is_still_accepted(client):
+    # Plugins <= 0.2.1 send ?name=; it must map to the same workflow as ?workflow_id=.
+    first = client.get("/create_workflow?name=legacy").get_json()
+    second = client.get("/create_workflow?workflow_id=legacy").get_json()
+    assert first["name"] == "legacy"
+    assert first["id"] == second["id"]
+    assert client.get("/api/workflows").get_json()["count"] == 1
 
 
 # --------------------------------------------------------------------------- #
