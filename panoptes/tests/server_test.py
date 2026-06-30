@@ -35,6 +35,14 @@ def test_service_info_reports_running(client):
     assert resp.get_json() == {"status": "running"}
 
 
+def test_about_page_shows_version(client):
+    import panoptes
+
+    resp = client.get("/about")
+    assert resp.status_code == 200
+    assert panoptes.__version__ in resp.get_data(as_text=True)
+
+
 def test_workflows_is_empty_on_a_fresh_db(client):
     resp = client.get("/api/workflows")
     assert resp.status_code == 200

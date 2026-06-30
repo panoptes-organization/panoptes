@@ -8,9 +8,14 @@ if sys.version_info < (3, 11):
 
 long_description = (Path(__file__).parent / "README.md").read_text(encoding="utf-8")
 
+# Single source of truth for the version: panoptes/_version.py. exec'd (not
+# imported) so we don't pull in the package's runtime dependencies at build time.
+_version = {}
+exec((Path(__file__).parent / "panoptes" / "_version.py").read_text(encoding="utf-8"), _version)
+
 setuptools.setup(
     name='panoptes-ui',
-    version='1.1.2',
+    version=_version["__version__"],
     url='https://github.com/panoptes-organization/panoptes',
     license='MIT',
     author='panoptes-organization',
