@@ -133,6 +133,23 @@ class WorkflowJobs(Base):
     def __repr__(self):
         return self
 
+    def restart(self, msg, name, input, output, log, wildcards, is_checkpoint, shell_command=None):
+        """Reset an existing job back to a fresh Running state. Snakemake
+        re-emits a job_info event with the same jobid when a failed job is
+        re-submitted (e.g. via --retries), so we update the existing row
+        instead of inserting a duplicate."""
+        self.msg = msg
+        self.name = name
+        self.input = input
+        self.output = output
+        self.log = log
+        self.wildcards = wildcards
+        self.is_checkpoint = is_checkpoint
+        self.shell_command = shell_command
+        self.status = "Running"
+        self.started_at = datetime.now()
+        self.completed_at = None
+
     def get_job_json(self):
         return {"jobid": self.jobid,
                 "workflow_id": self.wf_id,

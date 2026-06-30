@@ -181,6 +181,38 @@ def test_job_error_flips_workflow_to_error(client):
     assert jobs["jobs"][0]["status"] == "Error"
 
 
+def test_retried_job_is_not_duplicated(client):
+    # Snakemake re-submits a failed job (e.g. --retries 1) by re-emitting a
+    # job_info event with the same jobid. The job must be updated in place, not
+    # duplicated. See https://github.com/panoptes-organization/panoptes/issues/188
+    wf_id = client.get("/create_workflow").get_json()["id"]
+
+    job_info = {
+        "level": "job_info",
+        "jobid": 7,
+        "name": "flaky_rule",
+        "input": ["a.in"],
+        "output": ["a.out"],
+        "log": ["a.log"],
+        "wildcards": {"sample": "a"},
+        "is_checkpoint": False,
+    }
+
+    # First attempt fails.
+    assert _post_event(client, wf_id, job_info).status_code == 200
+    assert _post_event(client, wf_id, {"level": "job_error", "jobid": 7}).status_code == 200
+
+    # Retry: same jobid is re-submitted and succeeds.
+    assert _post_event(client, wf_id, job_info).status_code == 200
+    assert _post_event(client, wf_id, {"level": "job_finished", "jobid": 7}).status_code == 200
+
+    jobs = client.get(f"/api/workflow/{wf_id}/jobs").get_json()
+    assert jobs["count"] == 1
+    job = jobs["jobs"][0]
+    assert job["jobid"] == 7
+    assert job["status"] == "Done"
+
+
 def test_shellcmd_message_is_stored_without_crashing(client):
     wf_id = client.get("/create_workflow").get_json()["id"]
     resp = _post_event(
