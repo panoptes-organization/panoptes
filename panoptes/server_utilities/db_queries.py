@@ -60,18 +60,26 @@ def maintain_jobs(msg, wf_id):
 
     if "jobid" in msg_json and msg_json.get("jobid") is not None:
         if level == 'job_info':
-            job = WorkflowJobs(
-                msg_json['jobid'],
-                wf_id, msg_json.get('msg'),
+            job_fields = (
+                msg_json.get('msg'),
                 msg_json.get('name', ''),
                 repr(msg_json.get('input', [])),
                 repr(msg_json.get('output', [])),
                 repr(msg_json.get('log', [])),
                 repr(msg_json.get('wildcards', {})),
                 bool(msg_json.get('is_checkpoint', False)),
-                shell_command=msg_json.get('shellcmd'),
+                msg_json.get('shellcmd'),
             )
-            db_session.add(job)
+            # A job_info event may arrive for a jobid that already exists when
+            # Snakemake re-submits a failed job (e.g. via --retries). Reuse the
+            # existing row in that case so the job is not duplicated.
+            job = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
+                .filter(WorkflowJobs.jobid == msg_json["jobid"]).first()
+            if job is not None:
+                job.restart(*job_fields)
+            else:
+                job = WorkflowJobs(msg_json['jobid'], wf_id, *job_fields)
+                db_session.add(job)
             db_session.commit()
             return True
 
