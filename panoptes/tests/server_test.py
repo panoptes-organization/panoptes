@@ -290,6 +290,25 @@ def test_cannot_delete_running_workflow(client):
     assert resp.status_code == 403
 
 
+def test_cancel_then_delete_running_workflow(client):
+    # A stuck "Running" workflow (e.g. a dry run or a killed process) can't be
+    # deleted directly, but can be cancelled and then deleted. See issue #177.
+    wf_id = client.get("/create_workflow").get_json()["id"]
+
+    assert client.delete(f"/api/workflow/{wf_id}").status_code == 403
+
+    cancelled = client.post(f"/api/workflow/{wf_id}/cancel")
+    assert cancelled.status_code == 200
+    assert cancelled.get_json()["workflow"]["status"] == "Cancelled"
+
+    assert client.delete(f"/api/workflow/{wf_id}").status_code == 204
+    assert client.get(f"/api/workflow/{wf_id}").status_code == 404
+
+
+def test_cancel_unknown_workflow_is_404(client):
+    assert client.post("/api/workflow/999/cancel").status_code == 404
+
+
 def test_clean_up_whole_db(client):
     wf_id = client.get("/create_workflow").get_json()["id"]
     _post_event(client, wf_id, {"level": "progress", "done": 1, "total": 1})

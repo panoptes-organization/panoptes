@@ -1,5 +1,5 @@
 from flask import jsonify, request, Response
-from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, delete_db_wf, get_db_workflows_by_status, delete_whole_db, get_db_table_is_empty, rename_db_wf, rename_db_job
+from panoptes.server_utilities.db_queries import get_db_workflows_by_id, get_db_workflows, get_db_jobs, get_db_job_by_id, delete_db_wf, get_db_workflows_by_status, delete_whole_db, get_db_table_is_empty, rename_db_wf, rename_db_job, cancel_db_wf
 from . import routes
 
 '''
@@ -7,6 +7,7 @@ from . import routes
 /api/workflow/<workflow_id>
 /api/workflow/<workflow_id>/jobs
 /api/workflow<workflow_id>/job/<job_id>
+/api/workflow/<workflow_id>/cancel
 /api/workflows/all
 '''
 
@@ -85,13 +86,30 @@ def rename_workflow_by_id(workflow_id):
         return response
 
 
+@routes.route('/api/workflow/<workflow_id>/cancel', methods=['POST'])
+def cancel_workflow_by_id(workflow_id):
+    if get_db_workflows_by_id(workflow_id) is None:
+        response = Response(status=404)
+        return response
+    wf = cancel_db_wf(workflow_id)
+    if wf:
+        return jsonify({'workflow': wf.get_workflow()}), 200
+    else:
+        return jsonify({'msg': 'Database error'}), 500
+
+
 @routes.route('/api/workflow/<workflow_id>', methods=['DELETE'])
 def set_db_delete(workflow_id):
+    # A genuinely running workflow is protected from deletion so it is not
+    # removed by accident mid-run. To delete one that is stuck as "Running"
+    # (e.g. a dry run, or a process killed with kill -9), cancel it first via
+    # POST /api/workflow/<id>/cancel, which moves it to "Cancelled". See #177.
     if(get_db_workflows_by_id(workflow_id) is None):
         response = Response(status=404)
         return response
     elif(get_db_workflows_by_status(workflow_id) == 'Running'):
-        return jsonify({'msg': 'You cannot delete Running Workflow '}), 403
+        return jsonify({'msg': 'You cannot delete a Running workflow. '
+                        'Cancel it first.'}), 403
     else:
         delete = delete_db_wf(workflow_id)
         if delete:

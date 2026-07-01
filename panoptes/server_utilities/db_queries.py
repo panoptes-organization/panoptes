@@ -151,6 +151,22 @@ def get_db_job_by_id(workflow_id, job_id):
     return WorkflowJobs.query.filter(WorkflowJobs.wf_id == workflow_id).filter(WorkflowJobs.jobid == job_id).first()
 
 
+def cancel_db_wf(workflow_id):
+    """Mark a workflow as Cancelled so it can be deleted. Snakemake dry runs and
+    workflows whose process was killed get stuck as "Running"; cancelling gives
+    the user an explicit way to move them out of that state. See issues #177/#99."""
+    try:
+        wf = Workflows.query.filter(Workflows.id == workflow_id).first()
+        if wf is None:
+            return None
+        wf.set_cancelled()
+        db_session.commit()
+        return wf
+    except Exception:
+        db_session.rollback()
+        return None
+
+
 def rename_db_wf(workflow_id, new_name):
     try:
         d_wf = Workflows.query.filter(Workflows.id == workflow_id).first()

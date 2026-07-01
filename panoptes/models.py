@@ -58,6 +58,10 @@ class Workflows(Base):
     def set_error(self):
         self.status = 'Error'
 
+    def set_cancelled(self):
+        self.status = 'Cancelled'
+        self.completed_at = datetime.now()
+
     def set_not_executed(self):
         self.done = 1
         self.status = 'No Execution'
