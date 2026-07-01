@@ -216,10 +216,17 @@ function deleteWorkflow(rowId,rowIndex, tableId) {
             }
         },
         //on error, show fail modal
-        error: function (data, jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
             let deleteFailedModal = $("#deleteFailedModal");
-            deleteFailedModal.find('.modal-body').html(
-                '<p>Deleting the workflow failed, page will reload</p>');
+            //a running workflow is protected: guide the user to cancel it first
+            if (jqXHR && jqXHR.status === 403) {
+                deleteFailedModal.find('.modal-body').html(
+                    '<p>This workflow is still running, so it cannot be deleted.<br>' +
+                    'Cancel it first (the yellow <i class="fas fa-ban"></i> button), then delete it.</p>');
+            } else {
+                deleteFailedModal.find('.modal-body').html(
+                    '<p>Deleting the workflow failed, page will reload</p>');
+            }
             deleteFailedModal.modal('show');
         }
     });
