@@ -165,6 +165,51 @@ def test_progress_completion_flips_status_to_done(client):
     assert workflow["completed_at"] is not None
 
 
+def _post_job(client, wf_id, jobid, name="step"):
+    _post_event(client, wf_id, {
+        "level": "job_info", "jobid": jobid, "name": name,
+        "input": [], "output": [], "log": [], "wildcards": {},
+        "is_checkpoint": False,
+    })
+    _post_event(client, wf_id, {"level": "job_finished", "jobid": jobid})
+
+
+def test_workflow_success_completes_until_run(client):
+    # `snakemake --until` reports the full DAG total (say 14) but only runs a
+    # subset, so done never reaches total and the workflow stays Running. The
+    # plugin's end-of-run workflow_success event reconciles it to Done using the
+    # jobs actually recorded. See issue #154.
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _post_job(client, wf_id, 1)
+    _post_job(client, wf_id, 2)
+    # Snakemake's progress carries the full-DAG total -> stuck Running.
+    _post_event(client, wf_id, {"level": "progress", "done": 2, "total": 14})
+    assert client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]["status"] == "Running"
+
+    assert _post_event(client, wf_id, {"level": "workflow_success"}).status_code == 200
+
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Done"
+    assert workflow["completed_at"] is not None
+    # total reflects the jobs that actually ran, not the full DAG.
+    assert workflow["jobs_done"] == 2
+    assert workflow["jobs_total"] == 2
+
+
+def test_workflow_success_does_not_override_error(client):
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _post_event(client, wf_id, {
+        "level": "job_info", "jobid": 1, "name": "step",
+        "input": [], "output": [], "log": [], "wildcards": {}, "is_checkpoint": False,
+    })
+    _post_event(client, wf_id, {"level": "job_error", "jobid": 1})
+    assert client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]["status"] == "Error"
+
+    # A late success event must not resurrect a failed workflow to Done.
+    _post_event(client, wf_id, {"level": "workflow_success"})
+    assert client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]["status"] == "Error"
+
+
 def test_job_error_flips_workflow_to_error(client):
     wf_id = client.get("/create_workflow").get_json()["id"]
     _post_event(

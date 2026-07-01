@@ -58,6 +58,18 @@ class Workflows(Base):
     def set_error(self):
         self.status = 'Error'
 
+    def mark_finished(self, done, total):
+        # Force a workflow to the Done state, reconciling the job counts. Used
+        # when a run finished successfully but never reached done == total, e.g.
+        # `snakemake --until` (which reports the full DAG total while only a
+        # subset runs). `total` of 0 is ignored so the progress bar can't divide
+        # by zero.
+        self.status = 'Done'
+        self.completed_at = datetime.now()
+        if total > 0:
+            self.done = done
+            self.total = total
+
     def set_cancelled(self):
         self.status = 'Cancelled'
         self.completed_at = datetime.now()

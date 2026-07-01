@@ -186,7 +186,10 @@ It registers a workflow with panoptes via `GET /create_workflow` on the first
 event and then translates Snakemake's `LogEvent` records (`JOB_INFO`,
 `JOB_STARTED`, `JOB_FINISHED`, `JOB_ERROR`, `SHELLCMD`, `PROGRESS`, `ERROR`,
 `RUN_INFO`) into the JSON payloads that panoptes' `/update_workflow_status`
-endpoint already understands.
+endpoint already understands. When a run ends without error, the plugin also
+emits a `workflow_success` event so panoptes can mark the workflow `Done` even
+when Snakemake never reported `done == total` — e.g. with `--until`, where the
+reported total is the whole DAG but only a subset actually runs.
 
 Workflows orchestrated by Snakemake &lt; 9 continue to work unchanged via the
 legacy `--wms-monitor http://<host>:<port>` flag.

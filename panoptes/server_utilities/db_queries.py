@@ -15,6 +15,7 @@ _KNOWN_LEVELS = {
     "info",
     "progress",
     "error",
+    "workflow_success",
     "shellcmd",
     "",
 }
@@ -129,6 +130,21 @@ def maintain_jobs(msg, wf_id):
         wf = Workflows.query.filter(Workflows.id == wf_id).first()
         if wf is not None:
             wf.set_error()
+            db_session.commit()
+        return True
+
+    if level == 'workflow_success':
+        # The plugin sends this when a run finishes without error. Only reconcile
+        # workflows still stuck as "Running": that is the `snakemake --until`
+        # case, where Snakemake reports the full DAG total so done never reaches
+        # total. Use the jobs we actually recorded as the real counts. Workflows
+        # already marked Done/Error/etc. are left untouched.
+        wf = Workflows.query.filter(Workflows.id == wf_id).first()
+        if wf is not None and wf.status == 'Running':
+            total = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id).count()
+            done = WorkflowJobs.query.filter(WorkflowJobs.wf_id == wf_id)\
+                .filter(WorkflowJobs.status == 'Done').count()
+            wf.mark_finished(done, total)
             db_session.commit()
         return True
 
