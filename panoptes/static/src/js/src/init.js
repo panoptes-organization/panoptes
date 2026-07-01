@@ -29,6 +29,23 @@ $( document ).ready(function() {
          deleteWorkflow(rowId,rowIndex,tableId);
     });
 
+    //listener for every cancel table button (delegated: rows are re-drawn by DataTables)
+    $(document).on('click', '.cancel', function(event) {
+        let id = event.target.closest('tr').firstElementChild.innerText.trim();
+        let modal = $('#cancelConfirmationModal');
+        modal.attr('rowId', id);
+        modal.find('.modal-body').html(
+            '<p>Cancel workflow with ID: ' + id + '? This marks it as "Cancelled" so it can be deleted.</p>');
+        modal.modal('show');
+    });
+
+    //listener for cancelConfirmationModal's OK button
+    $('.confirmCancel').click(function() {
+        let cancelConfirmationModal = $('#cancelConfirmationModal');
+        cancelConfirmationModal.modal('hide');
+        cancelWorkflow(cancelConfirmationModal.attr('rowId'));
+    });
+
         //listener for deleteConfirmationModal's OK button
     $('.confirmDeleteAll').click(function() {
          deleteAllWorkflows();
@@ -199,10 +216,38 @@ function deleteWorkflow(rowId,rowIndex, tableId) {
             }
         },
         //on error, show fail modal
+        error: function (jqXHR, textStatus, errorThrown) {
+            let deleteFailedModal = $("#deleteFailedModal");
+            //a running workflow is protected: guide the user to cancel it first
+            if (jqXHR && jqXHR.status === 403) {
+                deleteFailedModal.find('.modal-body').html(
+                    '<p>This workflow is still running, so it cannot be deleted.<br>' +
+                    'Cancel it first (the yellow <i class="fas fa-ban"></i> button), then delete it.</p>');
+            } else {
+                deleteFailedModal.find('.modal-body').html(
+                    '<p>Deleting the workflow failed, page will reload</p>');
+            }
+            deleteFailedModal.modal('show');
+        }
+    });
+}
+
+function cancelWorkflow(rowId) {
+    //call backend to mark the workflow as Cancelled, then reload so the new
+    //state is reflected and the workflow becomes deletable
+    $.ajax({
+        url: "/api/workflow/" + rowId + "/cancel",
+        method: "POST",
+        async: true,
+        timeout: 2000,
+        success: function (data, textStatus, jqXHR) {
+            location.reload();
+        },
+        //on error, show fail modal
         error: function (data, jqXHR, textStatus, errorThrown) {
             let deleteFailedModal = $("#deleteFailedModal");
             deleteFailedModal.find('.modal-body').html(
-                '<p>Deleting the workflow failed, page will reload</p>');
+                '<p>Cancelling the workflow failed, page will reload</p>');
             deleteFailedModal.modal('show');
         }
     });

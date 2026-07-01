@@ -81,6 +81,8 @@ pip install .
 ### Run the server
 By default, server should run on `127.0.0.1:5000`, and generate the sqlite database `.panoptes.db`.
 
+The running version is shown in the web UI under **About** (and is available programmatically as `panoptes.__version__`).
+
 #### Using the development server
 ```bash
 panoptes
@@ -98,9 +100,9 @@ gunicorn --access-logfile logs/access.log --error-logfile logs/error.log --timeo
 Requirements:
 - docker
 
-Pull image that is automatically built from bioconda. You can find the latest tag in the following url: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags. For example:
+Pull the image that is automatically built from bioconda. Replace `<tag>` with a release from the list of available tags: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags
 ```
-docker pull quay.io/biocontainers/panoptes-ui:1.0.0--pyhdfd78af_0
+docker pull quay.io/biocontainers/panoptes-ui:<tag>
 ```
 
 Then run the container with:
@@ -136,15 +138,15 @@ docker-compose down
 
 ### Singularity
 
-You can also deploy the server with singularity. To do so pull the image with singularity. For example:
+You can also deploy the server with singularity. To do so pull the image with singularity. Replace `<tag>` with a release from the list of available tags: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags
 
 ```bash
-singularity pull docker://quay.io/biocontainers/panoptes-ui:1.0.0--pyhdfd78af_0
+singularity pull docker://quay.io/biocontainers/panoptes-ui:<tag>
 ```
 
 And then we can start the server by running:
 ```bash
-singularity exec panoptes-ui:1.0.0--pyhdfd78af_0
+singularity exec panoptes-ui:<tag>
 ```
 
 # Run an example workflow
@@ -205,8 +207,9 @@ Endpoint | Method | Description
 `/api/workflow/<workflow-id>/jobs` | `GET` | Get all jobs of a workflow
 `/api/workflow/<workflow-id>/job/<job-id>` | `GET` | Get job status
 `/api/workflow/<workflow-id>` | `PUT` | Rename a workflow  <br>  Expects a dictionary with new name <br> (e.g. `{'name': 'my new workflow name'}`)
-`/api/workflow/<workflow-id>` | `DELETE` | Delete a workflow
-`/api/workflows/all` | `DELETE` | Clean up database
+`/api/workflow/<workflow-id>/cancel` | `POST` | Cancel a workflow (sets its status to `Cancelled`). Use this to move a workflow that is stuck as `Running` (e.g. a dry run, or a process killed with `kill -9`) into a deletable state.
+`/api/workflow/<workflow-id>` | `DELETE` | Delete a workflow. A workflow that is still `Running` is protected and returns `403`; cancel it first via the endpoint above.
+`/api/workflows/all` | `DELETE` | Clean up database (deletes all workflows, including running ones)
 
 To communicate with panoptes the following endpoints are used by snakemake:
 

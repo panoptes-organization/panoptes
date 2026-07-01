@@ -29,7 +29,7 @@
           <a href='/workflow/{{ wf.id }}'> {{ wf.name }} </a>
         </td>
         <td>
-          <span class="badge badge-{{ 'success' if wf.status=='Done' else ('danger' if wf.status=='Error' else ('info' if wf.status=='Running' else 'light text-dark'))}}"> {{ wf.status }} </span>
+          <span class="badge badge-{{ 'success' if wf.status=='Done' else ('danger' if wf.status=='Error' else ('info' if wf.status=='Running' else ('warning' if wf.status=='Cancelled' else 'light text-dark')))}}"> {{ wf.status }} </span>
         </td>
         <td>
           <a> {{ wf.started_at|formatdatetime }} </a>
@@ -40,6 +40,7 @@
         <td class="dt-nowrap">
             <button id="addBtn" title="Add workflow" class="btn btn-success add"><i class="fas fa-check fa-xs"></i></button>
             <button id="editBtn" title="Edit workflow"class="btn btn-success edit"><i class="fas fa-edit fa-xs"></i></button>
+            <button id="cancelBtn" title="Cancel workflow" class="btn btn-warning cancel"><i class="fas fa-ban fa-xs"></i></button>
             <button id="deleteBtn" title="Delete workflow" class="btn btn-danger delete"><i class="far fa-trash-alt fa-xs"></i></button>
         </td>
       {% endfor %}
