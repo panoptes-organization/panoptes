@@ -4,6 +4,20 @@
 * */
 
 $( document ).ready(function() {
+    //Sidebar (hamburger) toggle. The CoreUI template expects @coreui/coreui's
+    //JS to handle these data-toggle buttons, but that bundle isn't loaded here,
+    //so wire the minimal behaviour ourselves: toggle the body class the CSS
+    //keys off to slide the sidebar in/out. "sidebar-lg-show" is the desktop
+    //toggler, "sidebar-show" the mobile one.
+    $('[data-toggle="sidebar-lg-show"]').on('click', function(event) {
+        event.preventDefault();
+        $('body').toggleClass('sidebar-lg-show');
+    });
+    $('[data-toggle="sidebar-show"]').on('click', function(event) {
+        event.preventDefault();
+        $('body').toggleClass('sidebar-show');
+    });
+
     //listener for every delete table button
     $('.delete').click(function(event) {
         let button = $(event.target);
