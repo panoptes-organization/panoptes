@@ -100,9 +100,9 @@ gunicorn --access-logfile logs/access.log --error-logfile logs/error.log --timeo
 Requirements:
 - docker
 
-Pull image that is automatically built from bioconda. You can find the latest tag in the following url: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags. For example:
+Pull the image that is automatically built from bioconda. Replace `<tag>` with a release from the list of available tags: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags
 ```
-docker pull quay.io/biocontainers/panoptes-ui:1.0.0--pyhdfd78af_0
+docker pull quay.io/biocontainers/panoptes-ui:<tag>
 ```
 
 Then run the container with:
@@ -138,15 +138,15 @@ docker-compose down
 
 ### Singularity
 
-You can also deploy the server with singularity. To do so pull the image with singularity. For example:
+You can also deploy the server with singularity. To do so pull the image with singularity. Replace `<tag>` with a release from the list of available tags: https://quay.io/repository/biocontainers/panoptes-ui?tab=tags
 
 ```bash
-singularity pull docker://quay.io/biocontainers/panoptes-ui:1.0.0--pyhdfd78af_0
+singularity pull docker://quay.io/biocontainers/panoptes-ui:<tag>
 ```
 
 And then we can start the server by running:
 ```bash
-singularity exec panoptes-ui:1.0.0--pyhdfd78af_0
+singularity exec panoptes-ui:<tag>
 ```
 
 # Run an example workflow
