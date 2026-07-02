@@ -40,7 +40,7 @@ Because event semantics are split across two repos, **changes to how events are 
 **Layers:**
 - `panoptes/models.py` — SQLAlchemy models `Workflows`, `WorkflowJobs`, `WorkflowMessages`, plus their state-transition methods (`edit_workflow`, `mark_finished`, `set_error`, `set_cancelled`, `job_done`, `restart`, …). State changes live on the models; query/orchestration lives in `db_queries.py`.
 - `panoptes/database.py` — binds the SQLAlchemy engine to `PANOPTES_DB_URL` **at import time**. Anything that needs an isolated DB (tests, scripts) must set the env var *before* importing `panoptes` — see `panoptes/tests/conftest.py`. There is no Alembic: columns added to existing tables must be bolted on in `_migrate()` (`create_all` only creates missing tables).
-- `panoptes/routes/api.py` — the read/JSON + mutation API under `/api/...`, registered as a Flask blueprint.
+- `panoptes/routes/api.py` — the read/JSON + mutation API under `/api/...`, registered as a Flask blueprint. Also holds the template helpers registered as Jinja globals in `app.py` (`get_jobs`, `get_job`, `get_rule_progress`).
 - `panoptes/app.py` — page routes (Jinja) and the two plugin-facing ingestion endpoints (`/create_workflow`, `/update_workflow_status`).
 - `panoptes/static/src/*.html` — server-rendered templates extending `index.html` (a CoreUI/Bootstrap admin template). Frontend interactivity (delete/cancel/rename via AJAX to the API, sidebar toggle, per-table status filters, live updates that poll the JSON API and reload on change) lives in `panoptes/static/src/js/src/init.js`. Note CoreUI's own JS is **not** bundled, so behaviors like the sidebar hamburger are wired manually in `init.js`.
 

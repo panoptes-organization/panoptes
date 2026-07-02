@@ -71,8 +71,13 @@ def build_parser():
 
 def main():
     args = build_parser().parse_args()
+    # threaded=True so the dev server can ingest plugin events and serve the
+    # (now auto-refreshing) UI at the same time; otherwise a browser polling the
+    # API blocks Snakemake's event POSTs and they time out. Production still uses
+    # a real WSGI server (see the gunicorn command in the README).
     app.run(host=args.ip,
-            port=args.port)
+            port=args.port,
+            threaded=True)
 
 
 if __name__ == '__main__':

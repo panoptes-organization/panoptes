@@ -222,7 +222,7 @@ legacy `--wms-monitor http://<host>:<port>` flag.
 | `Stale` | No events for more than `PANOPTES_STALE_HOURS` (default 48h) — the snakemake process was probably killed. Reverts to `Running` if events resume. |
 | `No Execution` | Snakemake reported there was nothing to be done. |
 
-The web pages poll the JSON API every few seconds and refresh automatically when the data changes, so a dashboard left open tracks running workflows without manual reloads.
+The web pages poll the JSON API every few seconds and refresh automatically when the data changes, so a dashboard left open tracks running workflows without manual reloads. A workflow page also shows a **per-rule progress breakdown** below the overall progress bar, so a run with hundreds of jobs but few rules stays legible at a glance.
 
 ## panoptes API
 

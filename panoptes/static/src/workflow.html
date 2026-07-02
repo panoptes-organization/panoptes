@@ -51,6 +51,39 @@
   </div>
 </div>
 
+{% set rules = get_rule_progress(workflow.id) %}
+{% if rules %}
+<div class="card">
+  <div class="card-header">
+    progress per rule
+    <span class="float-right small text-muted">
+      <span class="badge badge-success">&nbsp;</span> Done
+      <span class="badge badge-info">&nbsp;</span> Running
+      <span class="badge badge-danger">&nbsp;</span> Error
+      <span class="badge badge-light border">&nbsp;</span> Pending
+    </span>
+  </div>
+  <div class="card-body">
+    {% for rule in rules %}
+    <div class="{{ 'mb-3' if not loop.last else '' }}">
+      <div class="d-flex justify-content-between">
+        <span class="font-weight-bold">{{ rule.name }}</span>
+        <span class="text-muted small">{{ rule.done }}/{{ rule.total }}{% if rule.running %} &middot; {{ rule.running }} running{% endif %}{% if rule.error %} &middot; {{ rule.error }} error{% endif %}</span>
+      </div>
+      <div class="progress" style="height: 12px;">
+        <div class="progress-bar bg-success" role="progressbar" style="width: {{ rule.done_pct }}%;"
+             title="{{ rule.done }} done" aria-valuenow="{{ rule.done }}" aria-valuemin="0" aria-valuemax="{{ rule.total }}"></div>
+        <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar"
+             style="width: {{ rule.running_pct }}%;" title="{{ rule.running }} running"></div>
+        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ rule.error_pct }}%;"
+             title="{{ rule.error }} error"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <div class="card">
   <div class="card-header"> workflow Jobs</div>
   <div class="card-body">
