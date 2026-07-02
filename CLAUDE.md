@@ -35,13 +35,14 @@ Because event semantics are split across two repos, **changes to how events are 
 - A workflow is marked `Done` when a `progress` event reports `done == total`.
 - With `snakemake --until`, Snakemake reports the *full-DAG* total while only a subset runs, so `done` never reaches `total`. The plugin therefore emits a `workflow_success` event at end-of-run; the server reconciles a still-`Running` workflow to `Done` using the actually-recorded job rows. Terminal states (`Done`/`Error`/`Cancelled`) are left untouched so a failed run is never resurrected.
 - A `Running` workflow can't be deleted directly (`DELETE` returns 403); it must be cancelled first (`POST /api/workflow/<id>/cancel` → `Cancelled`).
+- Every ingested event touches `workflows.updated_at`; the read paths flip `Running` workflows silent for more than `PANOPTES_STALE_HOURS` (default 48, `0` disables) to `Stale` — reversible: the next event revives them to `Running`. `Stale` (unlike `Running`) is deletable.
 
 **Layers:**
 - `panoptes/models.py` — SQLAlchemy models `Workflows`, `WorkflowJobs`, `WorkflowMessages`, plus their state-transition methods (`edit_workflow`, `mark_finished`, `set_error`, `set_cancelled`, `job_done`, `restart`, …). State changes live on the models; query/orchestration lives in `db_queries.py`.
-- `panoptes/database.py` — binds the SQLAlchemy engine to `PANOPTES_DB_URL` **at import time**. Anything that needs an isolated DB (tests, scripts) must set the env var *before* importing `panoptes` — see `panoptes/tests/conftest.py`.
+- `panoptes/database.py` — binds the SQLAlchemy engine to `PANOPTES_DB_URL` **at import time**. Anything that needs an isolated DB (tests, scripts) must set the env var *before* importing `panoptes` — see `panoptes/tests/conftest.py`. There is no Alembic: columns added to existing tables must be bolted on in `_migrate()` (`create_all` only creates missing tables).
 - `panoptes/routes/api.py` — the read/JSON + mutation API under `/api/...`, registered as a Flask blueprint.
 - `panoptes/app.py` — page routes (Jinja) and the two plugin-facing ingestion endpoints (`/create_workflow`, `/update_workflow_status`).
-- `panoptes/static/src/*.html` — server-rendered templates extending `index.html` (a CoreUI/Bootstrap admin template). Frontend interactivity (delete/cancel/rename via AJAX to the API, sidebar toggle) lives in `panoptes/static/src/js/src/init.js`. Note CoreUI's own JS is **not** bundled, so behaviors like the sidebar hamburger are wired manually in `init.js`.
+- `panoptes/static/src/*.html` — server-rendered templates extending `index.html` (a CoreUI/Bootstrap admin template). Frontend interactivity (delete/cancel/rename via AJAX to the API, sidebar toggle, per-table status filters, live updates that poll the JSON API and reload on change) lives in `panoptes/static/src/js/src/init.js`. Note CoreUI's own JS is **not** bundled, so behaviors like the sidebar hamburger are wired manually in `init.js`.
 
 ## Sibling repos
 

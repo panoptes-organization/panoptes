@@ -89,6 +89,13 @@ By default, server should run on `127.0.0.1:5000`, and generate the sqlite datab
 
 The running version is shown in the web UI under **About** (and is available programmatically as `panoptes.__version__`).
 
+Environment variables:
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PANOPTES_DB_URL` | `sqlite:///.panoptes.db` | Database URL. |
+| `PANOPTES_STALE_HOURS` | `48` | Hours without any event before a `Running` workflow is marked `Stale` (e.g. its snakemake process was killed and never reported back). Set to `0` to disable. A `Stale` workflow flips back to `Running` if events resume, and can be deleted directly. |
+
 #### Using the development server
 ```bash
 panoptes
@@ -203,6 +210,19 @@ legacy `--wms-monitor http://<host>:<port>` flag.
 ## panoptes in action
 
 [![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
+
+## Workflow statuses
+
+| Status | Meaning |
+| --- | --- |
+| `Running` | The workflow is registered and events are arriving. |
+| `Done` | All jobs finished (`done == total`), or the plugin reported end-of-run success (e.g. `--until` runs). |
+| `Error` | A job or the workflow reported an error. |
+| `Cancelled` | Explicitly cancelled via `POST /api/workflow/<id>/cancel`. |
+| `Stale` | No events for more than `PANOPTES_STALE_HOURS` (default 48h) — the snakemake process was probably killed. Reverts to `Running` if events resume. |
+| `No Execution` | Snakemake reported there was nothing to be done. |
+
+The web pages poll the JSON API every few seconds and refresh automatically when the data changes, so a dashboard left open tracks running workflows without manual reloads.
 
 ## panoptes API
 
