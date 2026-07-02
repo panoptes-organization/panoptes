@@ -19,6 +19,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(routes)
 app.jinja_env.globals.update(get_jobs=get_jobs)
 app.jinja_env.globals.update(get_job=get_job)
+app.jinja_env.globals.update(get_rule_progress=get_rule_progress)
 app.jinja_env.globals.update(version=__version__)
 
 init_db()

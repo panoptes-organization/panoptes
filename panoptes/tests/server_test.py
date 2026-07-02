@@ -354,6 +354,41 @@ def test_cancel_unknown_workflow_is_404(client):
     assert client.post("/api/workflow/999/cancel").status_code == 404
 
 
+def test_rule_progress_breakdown(client):
+    # Per-rule progress powering the workflow-page swimlanes (issue #178).
+    from panoptes.routes.api import get_rule_progress
+
+    wf = client.get("/create_workflow").get_json()
+    wf_id = wf["id"]
+
+    def job(jobid, name):
+        _post_event(client, wf_id, {
+            "level": "job_info", "jobid": jobid, "name": name,
+            "input": [], "output": [], "log": [], "wildcards": {}, "is_checkpoint": False,
+        })
+
+    # rule "map": 3 jobs -> 2 done, 1 error; rule "sort": 1 job still running
+    for jid in (1, 2, 3):
+        job(jid, "map")
+    job(4, "sort")
+    _post_event(client, wf_id, {"level": "job_finished", "jobid": 1})
+    _post_event(client, wf_id, {"level": "job_finished", "jobid": 2})
+    _post_event(client, wf_id, {"level": "job_error", "jobid": 3})
+
+    from panoptes.database import db_session  # queries run in the app context
+    with client.application.app_context():
+        rules = {r["name"]: r for r in get_rule_progress(wf_id)}
+
+    assert [r for r in rules] == ["map", "sort"]  # sorted by name
+    assert rules["map"]["total"] == 3
+    assert rules["map"]["done"] == 2
+    assert rules["map"]["error"] == 1
+    assert rules["map"]["running"] == 0
+    assert rules["map"]["done_pct"] == round(200.0 / 3, 2)
+    assert rules["sort"]["running"] == 1
+    assert rules["sort"]["running_pct"] == 100.0
+
+
 def test_cli_help_lists_api_endpoints():
     from panoptes._version import __version__
     from panoptes.panoptes import build_parser

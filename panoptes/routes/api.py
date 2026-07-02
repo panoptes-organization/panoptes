@@ -54,6 +54,36 @@ def get_job(wf_id, job_id):
     return get_db_job_by_id(wf_id, job_id).get_job_json()
 
 
+def get_rule_progress(wf_id):
+    """Per-rule progress breakdown for a workflow: one entry per distinct rule
+    name with its job counts by status and the corresponding bar widths. Powers
+    the per-rule progress bars ("swimlanes") on the workflow page, so a run with
+    hundreds of jobs but few rules is legible at a glance. Sorted by rule name.
+    """
+    rules = {}
+    for job in get_db_jobs(wf_id):
+        name = job.name or '(unnamed)'
+        rule = rules.setdefault(
+            name, {'name': name, 'total': 0, 'done': 0, 'running': 0, 'error': 0})
+        rule['total'] += 1
+        if job.status == 'Done':
+            rule['done'] += 1
+        elif job.status == 'Error':
+            rule['error'] += 1
+        else:
+            rule['running'] += 1
+
+    breakdown = []
+    for rule in rules.values():
+        total = rule['total'] or 1
+        rule['done_pct'] = round(100.0 * rule['done'] / total, 2)
+        rule['running_pct'] = round(100.0 * rule['running'] / total, 2)
+        rule['error_pct'] = round(100.0 * rule['error'] / total, 2)
+        breakdown.append(rule)
+    breakdown.sort(key=lambda r: r['name'])
+    return breakdown
+
+
 @routes.route('/api/workflow/<workflow_id>/job/<job_id>', methods=['GET'])
 def get_job_of_workflow(workflow_id, job_id):
     workflows = get_db_workflows_by_id(workflow_id)
