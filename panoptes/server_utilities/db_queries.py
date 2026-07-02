@@ -2,6 +2,14 @@ from panoptes.database import db_session
 from panoptes.models import Workflows, WorkflowMessages, WorkflowJobs
 
 import json
+import os
+from datetime import datetime, timedelta
+
+# After how many hours without any event a Running workflow is considered
+# Stale (its snakemake process was probably killed without a chance to report,
+# e.g. kill -9). Overridable via the PANOPTES_STALE_HOURS env var; 0 disables
+# the check entirely.
+_DEFAULT_STALE_HOURS = 48.0
 
 
 # Events emitted by the Snakemake 9 logger plugin
@@ -21,11 +29,46 @@ _KNOWN_LEVELS = {
 }
 
 
+def _stale_hours():
+    raw = os.environ.get("PANOPTES_STALE_HOURS")
+    if raw is None or raw.strip() == "":
+        return _DEFAULT_STALE_HOURS
+    try:
+        return float(raw)
+    except ValueError:
+        return _DEFAULT_STALE_HOURS
+
+
+def reconcile_stale_workflows():
+    """Mark Running workflows that have been silent for too long as Stale.
+
+    A snakemake process killed hard (kill -9) never gets to report anything, so
+    its workflow would sit "Running" forever. This is called from the read
+    paths, so the state self-corrects whenever somebody looks. It is also
+    reversible: maintain_jobs() flips a Stale workflow back to Running the
+    moment a new event arrives (see Workflows.touch()).
+    """
+    hours = _stale_hours()
+    if hours <= 0:
+        return
+    cutoff = datetime.now() - timedelta(hours=hours)
+    changed = False
+    for wf in Workflows.query.filter(Workflows.status == 'Running'):
+        last_seen = wf.updated_at or wf.started_at
+        if last_seen is not None and last_seen < cutoff:
+            wf.set_stale()
+            changed = True
+    if changed:
+        db_session.commit()
+
+
 def get_db_workflows():
+    reconcile_stale_workflows()
     return Workflows.query.all()
 
 
 def get_db_workflows_by_id(workflow_id):
+    reconcile_stale_workflows()
     return Workflows.query.filter(Workflows.id == workflow_id).first()
 
 
@@ -58,6 +101,13 @@ def maintain_jobs(msg, wf_id):
     # The message should be a json dump
     msg_json = json.loads(msg)
     level = msg_json.get("level", "")
+
+    # Every event is a sign of life: record it so the staleness check knows the
+    # run is active, reviving a wrongly-Stale workflow if needed.
+    wf = Workflows.query.filter(Workflows.id == wf_id).first()
+    if wf is not None:
+        wf.touch()
+        db_session.commit()
 
     if "jobid" in msg_json and msg_json.get("jobid") is not None:
         if level == 'job_info':
