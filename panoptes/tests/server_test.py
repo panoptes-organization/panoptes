@@ -354,6 +354,119 @@ def test_cancel_unknown_workflow_is_404(client):
     assert client.post("/api/workflow/999/cancel").status_code == 404
 
 
+def test_cli_help_lists_api_endpoints():
+    from panoptes._version import __version__
+    from panoptes.panoptes import build_parser
+
+    help_text = build_parser().format_help()
+    for endpoint in (
+        "/api/workflows",
+        "/api/workflow/<id>/cancel",
+        "/create_workflow",
+        "/update_workflow_status",
+        "PANOPTES_STALE_HOURS",
+    ):
+        assert endpoint in help_text
+
+
+# --------------------------------------------------------------------------- #
+# Stale detection (issue #99: kill -9'd runs stuck as Running)
+# --------------------------------------------------------------------------- #
+
+
+def _age_workflow(wf_id, hours):
+    """Backdate a workflow's last-seen timestamp, as if it went silent."""
+    from datetime import datetime, timedelta
+
+    from panoptes.database import db_session
+    from panoptes.models import Workflows
+
+    wf = db_session.query(Workflows).filter(Workflows.id == wf_id).first()
+    wf.updated_at = datetime.now() - timedelta(hours=hours)
+    db_session.commit()
+
+
+def test_silent_running_workflow_is_marked_stale(client):
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _age_workflow(wf_id, hours=72)  # default threshold is 48h
+
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Stale"
+    # Stale (unlike Running) workflows can be deleted directly.
+    assert client.delete(f"/api/workflow/{wf_id}").status_code == 204
+
+
+def test_recently_active_workflow_is_not_marked_stale(client):
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _age_workflow(wf_id, hours=1)
+
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Running"
+
+
+def test_done_workflow_is_never_marked_stale(client):
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _post_event(client, wf_id, {"level": "progress", "done": 1, "total": 1})
+    _age_workflow(wf_id, hours=72)
+
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Done"
+
+
+def test_stale_workflow_revives_on_new_event(client):
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _age_workflow(wf_id, hours=72)
+    assert client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]["status"] == "Stale"
+
+    # The run was alive after all: any event flips it back to Running...
+    _post_event(client, wf_id, {"level": "progress", "done": 1, "total": 5})
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Running"
+    # ...and it can still complete normally.
+    _post_event(client, wf_id, {"level": "progress", "done": 5, "total": 5})
+    assert client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]["status"] == "Done"
+
+
+def test_stale_check_can_be_disabled(client, monkeypatch):
+    monkeypatch.setenv("PANOPTES_STALE_HOURS", "0")
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _age_workflow(wf_id, hours=1000)
+
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Running"
+
+
+def test_stale_threshold_is_configurable(client, monkeypatch):
+    monkeypatch.setenv("PANOPTES_STALE_HOURS", "2")
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    _age_workflow(wf_id, hours=3)
+
+    workflow = client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]
+    assert workflow["status"] == "Stale"
+
+
+def test_migration_adds_updated_at_to_legacy_db(tmp_path):
+    # Databases created before 1.2.0 lack workflows.updated_at; init_db's
+    # migration must add it (and stay idempotent) so upgrades don't crash.
+    from sqlalchemy import create_engine, inspect, text
+
+    from panoptes.database import _migrate
+
+    legacy = create_engine(f"sqlite:///{tmp_path / 'legacy.db'}")
+    with legacy.begin() as conn:
+        conn.execute(text(
+            "CREATE TABLE workflows (id INTEGER PRIMARY KEY, name VARCHAR(50), "
+            "status VARCHAR(30), done INTEGER, total INTEGER, "
+            "started_at DATETIME, completed_at DATETIME)"
+        ))
+
+    _migrate(legacy)
+    columns = {c["name"] for c in inspect(legacy).get_columns("workflows")}
+    assert "updated_at" in columns
+
+    _migrate(legacy)  # running it again must be a no-op, not an error
+
+
 def test_clean_up_whole_db(client):
     wf_id = client.get("/create_workflow").get_json()["id"]
     _post_event(client, wf_id, {"level": "progress", "done": 1, "total": 1})

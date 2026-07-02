@@ -76,6 +76,9 @@ $( document ).ready(function() {
         let table = $(t).DataTable({
             "ordering": true, // false to disable sorting (or any other option)
             "paging":true,
+            //keep search/pagination across the live-update reloads (10 min)
+            "stateSave": true,
+            "stateDuration": 600,
               columnDefs: [
                   {
                       targets: "_all",
@@ -94,6 +97,7 @@ $( document ).ready(function() {
             }
         });
         $('.dataTables_length').addClass('bs-select');
+        addStatusFilter(table, t);
 
     }
 
@@ -186,7 +190,127 @@ $( document ).ready(function() {
 	    $(this).parents("tr").find(".edit").hide();
 		$(this).parents("tr").find(".add").css("display","inline-block");
     });
+
+    startLiveUpdates();
 });
+
+/* ------------------------------------------------------------------------- *
+ * Status filter: a dropdown next to the search box of any table that has a
+ * "Status" column, filtering rows to one status. Backed by DataTables' column
+ * search, so the selection is kept in the saved table state (stateSave) and
+ * survives the live-update reloads.
+ * ------------------------------------------------------------------------- */
+
+function addStatusFilter(table, tableElement) {
+    let statusIdx = -1;
+    $(tableElement).find('thead th').each(function (i) {
+        if ($(this).text().trim() === 'Status') {
+            statusIdx = i;
+        }
+    });
+    if (statusIdx < 0) {
+        return;
+    }
+    //collect the statuses that actually occur in this table
+    let values = [];
+    table.column(statusIdx).nodes().each(function (cell) {
+        let value = $(cell).text().trim();
+        if (value && values.indexOf(value) < 0) {
+            values.push(value);
+        }
+    });
+    if (!values.length) {
+        return;
+    }
+    values.sort();
+    let select = $('<select class="form-control form-control-sm d-inline-block w-auto mr-3"></select>')
+        .append($('<option>').val('').text('All statuses'));
+    for (let value of values) {
+        select.append($('<option>').val(value).text(value));
+    }
+    //restore a filter persisted in the saved table state
+    let current = table.column(statusIdx).search();
+    if (current) {
+        select.val(current);
+    }
+    select.on('change', function () {
+        table.column(statusIdx).search(this.value).draw();
+    });
+    $(tableElement).closest('.dataTables_wrapper').find('.dataTables_filter').prepend(select);
+}
+
+/* ------------------------------------------------------------------------- *
+ * Live updates: poll the JSON API behind the current page and reload it when
+ * the monitored data changes, so running workflows update without a manual
+ * refresh. DataTables state (search/pagination) survives via stateSave.
+ * ------------------------------------------------------------------------- */
+
+function liveUpdateUrls() {
+    let path = location.pathname;
+    let m = path.match(/^\/workflow\/([^\/]+)\/job\/([^\/]+)\/?$/);
+    if (m) {
+        return ['/api/workflow/' + m[1] + '/job/' + m[2]];
+    }
+    m = path.match(/^\/workflow\/([^\/]+)\/?$/);
+    if (m) {
+        return ['/api/workflow/' + m[1], '/api/workflow/' + m[1] + '/jobs'];
+    }
+    if (path === '/' || path.startsWith('/workflows') || path.startsWith('/searchResults')) {
+        return ['/api/workflows'];
+    }
+    return null;
+}
+
+//reduce API payloads to the fields whose change should refresh the page
+function liveUpdateFingerprint(payloads) {
+    let parts = [];
+    for (let p of payloads) {
+        if (p.workflows) {
+            for (let w of p.workflows) {
+                parts.push([w.id, w.name, w.status, w.jobs_done, w.jobs_total].join(':'));
+            }
+        } else if (p.workflow) {
+            let w = p.workflow;
+            parts.push([w.id, w.name, w.status, w.jobs_done, w.jobs_total].join(':'));
+        } else if (p.jobs) {
+            //the single-job endpoint returns an object, the list one an array
+            let jobs = Array.isArray(p.jobs) ? p.jobs : [p.jobs];
+            for (let j of jobs) {
+                parts.push([j.jobid, j.name, j.status].join(':'));
+            }
+        }
+    }
+    return parts.sort().join('|');
+}
+
+function startLiveUpdates() {
+    let urls = liveUpdateUrls();
+    if (!urls) {
+        return;
+    }
+    let lastFingerprint = null;
+    let poll = function () {
+        //don't interrupt the user or poll pointlessly
+        if (document.hidden) return;
+        if ($('input:focus').length) return;
+        if ($('.modal:visible').length) return;
+        Promise.all(urls.map(function (u) {
+            return fetch(u).then(function (r) { return r.ok ? r.json() : null; });
+        })).then(function (payloads) {
+            if (payloads.some(function (p) { return p === null; })) return;
+            let fp = liveUpdateFingerprint(payloads);
+            if (lastFingerprint === null) {
+                lastFingerprint = fp;
+            } else if (fp !== lastFingerprint) {
+                location.reload();
+            }
+        }).catch(function () {
+            //server briefly unreachable; try again on the next tick
+        });
+    };
+    poll(); //take the baseline right away, not after the first interval
+    setInterval(poll, 5000);
+}
 
 window.onload = function(){
     document.getElementById("search").addEventListener("keyup", event => {

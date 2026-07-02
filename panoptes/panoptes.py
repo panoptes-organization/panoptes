@@ -1,15 +1,37 @@
 #!/usr/bin/env python
 
 from panoptes.app import app
+from panoptes._version import __version__
 from argparse import ArgumentParser, RawTextHelpFormatter
 import sys
 
+_API_EPILOG = """\
+API endpoints:
+  GET    /api/service-info                        server status
+  GET    /api/workflows                           all workflows
+  GET    /api/workflow/<id>                       one workflow
+  GET    /api/workflow/<id>/jobs                  all jobs of a workflow
+  GET    /api/workflow/<id>/job/<job-id>          one job
+  PUT    /api/workflow/<id>                       rename a workflow ({"name": ...})
+  POST   /api/workflow/<id>/cancel                cancel a workflow (-> Cancelled)
+  DELETE /api/workflow/<id>                       delete a workflow (403 while Running)
+  DELETE /api/workflows/all                       clean up the database
 
-def main():
-    __doc__ = "panoptes: monitor computational workflows in real-time"
+Used by the snakemake-logger-plugin-panoptes plugin:
+  GET    /create_workflow                         register a workflow
+  POST   /update_workflow_status                  ingest a workflow event
 
+Environment variables:
+  PANOPTES_DB_URL          database URL [Default: sqlite:///.panoptes.db]
+  PANOPTES_STALE_HOURS     hours of silence before a Running workflow is
+                           marked Stale; 0 disables [Default: 48]
+"""
+
+
+def build_parser():
     parser = ArgumentParser(
-        description=__doc__,
+        description="panoptes: monitor computational workflows in real-time",
+        epilog=_API_EPILOG,
         formatter_class=RawTextHelpFormatter
     )
 
@@ -38,7 +60,17 @@ def main():
         help="Be Verbose"
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"panoptes {__version__}"
+    )
+
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
     app.run(host=args.ip,
             port=args.port)
 

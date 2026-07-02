@@ -1,5 +1,11 @@
 # ![alt text](panoptes/static/src/img/brand/panoptes.png "panoptes")
 
+[![CI](https://github.com/panoptes-organization/panoptes/actions/workflows/python-package-conda-pip.yml/badge.svg)](https://github.com/panoptes-organization/panoptes/actions/workflows/python-package-conda-pip.yml)
+[![PyPI](https://img.shields.io/pypi/v/panoptes-ui.svg)](https://pypi.org/project/panoptes-ui/)
+[![Bioconda](https://img.shields.io/conda/vn/bioconda/panoptes-ui.svg)](https://anaconda.org/bioconda/panoptes-ui)
+[![Python versions](https://img.shields.io/pypi/pyversions/panoptes-ui.svg)](https://pypi.org/project/panoptes-ui/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
+
 
 Bioinformaticians and data scientists, rely on computational frameworks (e.g. [snakemake](https://snakemake.readthedocs.io/en/stable/), [nextflow](https://www.nextflow.io/), [CWL](https://www.commonwl.org/), [WDL](https://software.broadinstitute.org/wdl/)) to process, analyze and integrate data of various types. Such frameworks allow scientists to combine software and custom tools of different origin in a unified way, which lets them reproduce the results of others, or reuse the same pipeline on different datasets. One of the fundamental issues is that the majority of the users execute multiple pipelines at the same time, or execute a multistep pipeline for a big number of datasets, or both, making it hard to track the execution of the individual steps or monitor which of the processed datasets are complete. panoptes is a tool that monitors the execution of such workflows.
 
@@ -82,6 +88,13 @@ pip install .
 By default, server should run on `127.0.0.1:5000`, and generate the sqlite database `.panoptes.db`.
 
 The running version is shown in the web UI under **About** (and is available programmatically as `panoptes.__version__`).
+
+Environment variables:
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PANOPTES_DB_URL` | `sqlite:///.panoptes.db` | Database URL. |
+| `PANOPTES_STALE_HOURS` | `48` | Hours without any event before a `Running` workflow is marked `Stale` (e.g. its snakemake process was killed and never reported back). Set to `0` to disable. A `Stale` workflow flips back to `Running` if events resume, and can be deleted directly. |
 
 #### Using the development server
 ```bash
@@ -197,6 +210,19 @@ legacy `--wms-monitor http://<host>:<port>` flag.
 ## panoptes in action
 
 [![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
+
+## Workflow statuses
+
+| Status | Meaning |
+| --- | --- |
+| `Running` | The workflow is registered and events are arriving. |
+| `Done` | All jobs finished (`done == total`), or the plugin reported end-of-run success (e.g. `--until` runs). |
+| `Error` | A job or the workflow reported an error. |
+| `Cancelled` | Explicitly cancelled via `POST /api/workflow/<id>/cancel`. |
+| `Stale` | No events for more than `PANOPTES_STALE_HOURS` (default 48h) — the snakemake process was probably killed. Reverts to `Running` if events resume. |
+| `No Execution` | Snakemake reported there was nothing to be done. |
+
+The web pages poll the JSON API every few seconds and refresh automatically when the data changes, so a dashboard left open tracks running workflows without manual reloads.
 
 ## panoptes API
 

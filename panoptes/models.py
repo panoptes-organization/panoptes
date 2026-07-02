@@ -27,6 +27,7 @@ class Workflows(Base):
     total = Column(Integer, unique=False)
     started_at = Column(DateTime)
     completed_at = Column(DateTime)
+    updated_at = Column(DateTime)
 
     def __init__(self, name=None, status=None):
         self.name = name
@@ -34,6 +35,7 @@ class Workflows(Base):
         self.done = 0
         self.total = 1
         self.started_at = datetime.now()
+        self.updated_at = self.started_at
 
     def __repr__(self):
         return self
@@ -46,6 +48,7 @@ class Workflows(Base):
                 "status": self.status,
                 "started_at": self.started_at,
                 "completed_at": self.completed_at,
+                "updated_at": self.updated_at,
                 }
 
     def edit_workflow(self, done, total):
@@ -74,6 +77,19 @@ class Workflows(Base):
         self.status = 'Cancelled'
         self.completed_at = datetime.now()
 
+    def set_stale(self):
+        # A Running workflow that has not sent any event for a long time, e.g.
+        # because the snakemake process was killed (kill -9) and could not say
+        # goodbye. Unlike Cancelled this is not a user action, and it is
+        # reversible: a new event flips the workflow back to Running.
+        self.status = 'Stale'
+
+    def touch(self):
+        self.updated_at = datetime.now()
+        if self.status == 'Stale':
+            # The run turned out to be alive after all.
+            self.status = 'Running'
+
     def set_not_executed(self):
         self.done = 1
         self.status = 'No Execution'
@@ -84,6 +100,7 @@ class Workflows(Base):
         self.total = 1
         self.started_at = datetime.now()
         self.completed_at = None
+        self.updated_at = self.started_at
 
 
 class WorkflowMessages(Base):
