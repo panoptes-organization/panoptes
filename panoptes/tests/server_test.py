@@ -354,6 +354,21 @@ def test_cancel_unknown_workflow_is_404(client):
     assert client.post("/api/workflow/999/cancel").status_code == 404
 
 
+def test_cli_help_lists_api_endpoints():
+    from panoptes._version import __version__
+    from panoptes.panoptes import build_parser
+
+    help_text = build_parser().format_help()
+    for endpoint in (
+        "/api/workflows",
+        "/api/workflow/<id>/cancel",
+        "/create_workflow",
+        "/update_workflow_status",
+        "PANOPTES_STALE_HOURS",
+    ):
+        assert endpoint in help_text
+
+
 # --------------------------------------------------------------------------- #
 # Stale detection (issue #99: kill -9'd runs stuck as Running)
 # --------------------------------------------------------------------------- #
