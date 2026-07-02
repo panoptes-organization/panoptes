@@ -97,6 +97,7 @@ $( document ).ready(function() {
             }
         });
         $('.dataTables_length').addClass('bs-select');
+        addStatusFilter(table, t);
 
     }
 
@@ -192,6 +193,51 @@ $( document ).ready(function() {
 
     startLiveUpdates();
 });
+
+/* ------------------------------------------------------------------------- *
+ * Status filter: a dropdown next to the search box of any table that has a
+ * "Status" column, filtering rows to one status. Backed by DataTables' column
+ * search, so the selection is kept in the saved table state (stateSave) and
+ * survives the live-update reloads.
+ * ------------------------------------------------------------------------- */
+
+function addStatusFilter(table, tableElement) {
+    let statusIdx = -1;
+    $(tableElement).find('thead th').each(function (i) {
+        if ($(this).text().trim() === 'Status') {
+            statusIdx = i;
+        }
+    });
+    if (statusIdx < 0) {
+        return;
+    }
+    //collect the statuses that actually occur in this table
+    let values = [];
+    table.column(statusIdx).nodes().each(function (cell) {
+        let value = $(cell).text().trim();
+        if (value && values.indexOf(value) < 0) {
+            values.push(value);
+        }
+    });
+    if (!values.length) {
+        return;
+    }
+    values.sort();
+    let select = $('<select class="form-control form-control-sm d-inline-block w-auto mr-3"></select>')
+        .append($('<option>').val('').text('All statuses'));
+    for (let value of values) {
+        select.append($('<option>').val(value).text(value));
+    }
+    //restore a filter persisted in the saved table state
+    let current = table.column(statusIdx).search();
+    if (current) {
+        select.val(current);
+    }
+    select.on('change', function () {
+        table.column(statusIdx).search(this.value).draw();
+    });
+    $(tableElement).closest('.dataTables_wrapper').find('.dataTables_filter').prepend(select);
+}
 
 /* ------------------------------------------------------------------------- *
  * Live updates: poll the JSON API behind the current page and reload it when
