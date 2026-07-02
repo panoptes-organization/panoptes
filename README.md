@@ -1,5 +1,11 @@
 # ![alt text](panoptes/static/src/img/brand/panoptes.png "panoptes")
 
+[![CI](https://github.com/panoptes-organization/panoptes/actions/workflows/python-package-conda-pip.yml/badge.svg)](https://github.com/panoptes-organization/panoptes/actions/workflows/python-package-conda-pip.yml)
+[![PyPI](https://img.shields.io/pypi/v/panoptes-ui.svg)](https://pypi.org/project/panoptes-ui/)
+[![Bioconda](https://img.shields.io/conda/vn/bioconda/panoptes-ui.svg)](https://anaconda.org/bioconda/panoptes-ui)
+[![Python versions](https://img.shields.io/pypi/pyversions/panoptes-ui.svg)](https://pypi.org/project/panoptes-ui/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
+
 
 Bioinformaticians and data scientists, rely on computational frameworks (e.g. [snakemake](https://snakemake.readthedocs.io/en/stable/), [nextflow](https://www.nextflow.io/), [CWL](https://www.commonwl.org/), [WDL](https://software.broadinstitute.org/wdl/)) to process, analyze and integrate data of various types. Such frameworks allow scientists to combine software and custom tools of different origin in a unified way, which lets them reproduce the results of others, or reuse the same pipeline on different datasets. One of the fundamental issues is that the majority of the users execute multiple pipelines at the same time, or execute a multistep pipeline for a big number of datasets, or both, making it hard to track the execution of the individual steps or monitor which of the processed datasets are complete. panoptes is a tool that monitors the execution of such workflows.
 
