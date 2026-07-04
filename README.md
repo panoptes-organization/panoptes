@@ -85,7 +85,12 @@ pip install .
 ```
 
 ### Run the server
-By default, server should run on `127.0.0.1:5000`, and generate the sqlite database `.panoptes.db`.
+By default the server binds to `0.0.0.0:5000` — i.e. it listens on **all** network interfaces (open http://127.0.0.1:5000 in your browser) — and generates the sqlite database `.panoptes.db`.
+
+Because `0.0.0.0` means every interface, the server is reachable from other machines on your network (and, on Linux, on any `127.x.x.x` loopback address — the whole `127.0.0.0/8` block is loopback by standard). If you only need local access, restrict it with:
+```bash
+panoptes --ip 127.0.0.1
+```
 
 The running version is shown in the web UI under **About** (and is available programmatically as `panoptes.__version__`).
 
@@ -193,6 +198,24 @@ snakemake \
     --logger-panoptes-address http://127.0.0.1:5000
 ```
 
+### Re-runs under a stable id
+
+By default every invocation registers a **new** workflow in panoptes. If you
+want re-runs of the same pipeline to show up as the *same* workflow — e.g. a
+run fails halfway, you fix the problem and resume — give it a stable id:
+
+```bash
+snakemake \
+    --cores 1 \
+    --logger panoptes \
+    --logger-panoptes-address http://127.0.0.1:5000 \
+    --logger-panoptes-workflow-id my-pipeline
+```
+
+When a run starts with an id panoptes already knows, the existing workflow
+entry is reset and reused instead of a second entry being created, so the
+dashboard tracks the latest state of that pipeline under one entry.
+
 The plugin lives in its own repository:
 [panoptes-organization/snakemake-logger-plugin-panoptes](https://github.com/panoptes-organization/snakemake-logger-plugin-panoptes).
 It registers a workflow with panoptes via `GET /create_workflow` on the first
@@ -206,6 +229,43 @@ reported total is the whole DAG but only a subset actually runs.
 
 Workflows orchestrated by Snakemake &lt; 9 continue to work unchanged via the
 legacy `--wms-monitor http://<host>:<port>` flag.
+
+## Using panoptes via the Snakemake Python API
+
+If you drive Snakemake programmatically instead of via the CLI, enable the
+panoptes logger by passing the plugin's settings in
+`OutputSettings.log_handler_settings` — the API equivalent of
+`--logger panoptes --logger-panoptes-address ...`:
+
+```python
+from pathlib import Path
+
+from snakemake.api import SnakemakeApi
+from snakemake.settings.types import OutputSettings, ResourceSettings
+from snakemake_logger_plugin_panoptes import LogHandlerSettings
+
+panoptes_settings = LogHandlerSettings(
+    address="http://127.0.0.1:5000",  # where the panoptes server runs
+    workflow_id="my-workflow",        # optional: stable id, so re-runs reuse
+                                      # the same workflow entry in panoptes
+)
+
+with SnakemakeApi(
+    OutputSettings(
+        log_handler_settings={"panoptes": panoptes_settings},
+    )
+) as snakemake_api:
+    workflow_api = snakemake_api.workflow(
+        resource_settings=ResourceSettings(cores=2),
+        snakefile=Path("Snakefile"),
+    )
+    dag_api = workflow_api.dag()
+    dag_api.execute_workflow()
+```
+
+Requires `snakemake>=9` and `snakemake-logger-plugin-panoptes` (see above) in
+the same environment. Everything else (workflow registration, per-job events,
+end-of-run success reporting) behaves exactly as with the CLI flags.
 
 ## panoptes in action
 

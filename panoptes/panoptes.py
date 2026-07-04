@@ -38,7 +38,10 @@ def build_parser():
     parser.add_argument(
         "--ip",
         dest="ip",
-        help="Set the IP of the panoptes server [Default: 0.0.0.0]",
+        help="The IP the server binds to. The default listens on ALL\n"
+             "interfaces (so on Linux every 127.x.x.x loopback address and\n"
+             "every network interface reach it). Use e.g. --ip 127.0.0.1 to\n"
+             "restrict the server to local access only. [Default: 0.0.0.0]",
         default="0.0.0.0",
         required=False
     )
