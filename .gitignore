@@ -35,3 +35,7 @@ server/.DS_Store
 build/
 dist/
 panoptes-ui.egg-info/
+panoptes_ui.egg-info/
+
+# Virtual environments
+.venv/
