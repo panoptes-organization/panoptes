@@ -556,6 +556,41 @@ def test_migration_adds_updated_at_to_legacy_db(tmp_path):
     _migrate(legacy)  # running it again must be a no-op, not an error
 
 
+def test_init_db_survives_losing_the_create_all_race(client, monkeypatch):
+    # Two gunicorn workers booting on a fresh DB race in create_all(); the
+    # loser gets "table ... already exists" but must boot anyway, because the
+    # tables it wanted are there - a sibling worker created them (#201).
+    from sqlalchemy.exc import OperationalError
+
+    from panoptes import database
+
+    def losing_create_all(bind=None):
+        raise OperationalError(
+            "CREATE TABLE users (...)", {}, Exception("table users already exists"))
+
+    monkeypatch.setattr(database.Base.metadata, "create_all", losing_create_all)
+    database.init_db()  # tables exist (created by conftest): must not raise
+
+
+def test_init_db_reraises_when_tables_are_truly_missing(monkeypatch):
+    # The race recovery must not swallow real failures (locked file, bad
+    # permissions): if the tables are genuinely absent, the error is fatal.
+    import pytest
+    from sqlalchemy import create_engine
+    from sqlalchemy.exc import OperationalError
+
+    from panoptes import database
+
+    monkeypatch.setattr(database, "engine", create_engine("sqlite://"))
+
+    def failing_create_all(bind=None):
+        raise OperationalError("CREATE TABLE users (...)", {}, Exception("disk I/O error"))
+
+    monkeypatch.setattr(database.Base.metadata, "create_all", failing_create_all)
+    with pytest.raises(OperationalError):
+        database.init_db()
+
+
 def test_clean_up_whole_db(client):
     wf_id = client.get("/create_workflow").get_json()["id"]
     _post_event(client, wf_id, {"level": "progress", "done": 1, "total": 1})
