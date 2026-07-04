@@ -77,22 +77,26 @@ def test_create_workflow_with_workflow_id_uses_it(client):
     assert payload["status"] == "Running"
 
 
-def test_create_workflow_same_workflow_id_reuses_the_workflow(client):
+def test_create_workflow_same_workflow_id_reuses_a_finished_workflow(client):
     first = client.get("/create_workflow?workflow_id=nightly").get_json()
+    _post_event(client, first["id"], {"level": "progress", "done": 3, "total": 3})
     second = client.get("/create_workflow?workflow_id=nightly").get_json()
     assert first["id"] == second["id"]
     # Only one workflow row should exist for that id.
     assert client.get("/api/workflows").get_json()["count"] == 1
 
 
-def test_create_workflow_workflow_id_reuse_resets_previous_run(client):
+def test_create_workflow_workflow_id_reuse_resets_previous_failed_run(client):
+    # The restart-after-failure flow (#153/#100): a run fails, the user fixes
+    # the problem and re-runs under the same id -> same entry, started fresh.
     wf_id = client.get("/create_workflow?workflow_id=cohort").get_json()["id"]
     _post_event(client, wf_id, {
         "level": "job_info", "jobid": 1, "name": "step",
         "input": [], "output": [],
     })
-    _post_event(client, wf_id, {"level": "progress", "done": 2, "total": 5})
+    _post_event(client, wf_id, {"level": "error"})
     assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 1
+    assert client.get(f"/api/workflow/{wf_id}").get_json()["workflow"]["status"] == "Error"
 
     # Re-running with the same workflow_id reuses the id but clears the prior run.
     reused = client.get("/create_workflow?workflow_id=cohort").get_json()
@@ -102,9 +106,59 @@ def test_create_workflow_workflow_id_reuse_resets_previous_run(client):
     assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 0
 
 
+def test_create_workflow_does_not_wipe_a_running_workflow(client):
+    # Restart protection (#153): reusing the id of a workflow that still looks
+    # live must not reset it -- the new run gets its own suffixed entry, and
+    # the (possibly live) original keeps its history.
+    original = client.get("/create_workflow?workflow_id=live-run").get_json()
+    _post_event(client, original["id"], {
+        "level": "job_info", "jobid": 1, "name": "step",
+        "input": [], "output": [],
+    })
+
+    second = client.get("/create_workflow?workflow_id=live-run").get_json()
+    assert second["id"] != original["id"]
+    assert second["name"].startswith("live-run-")
+
+    kept = client.get(f"/api/workflow/{original['id']}").get_json()["workflow"]
+    assert kept["status"] == "Running"
+    assert client.get(f"/api/workflow/{original['id']}/jobs").get_json()["count"] == 1
+    assert client.get("/api/workflows").get_json()["count"] == 2
+
+
+def test_create_workflow_reuses_a_stale_workflow(client):
+    # A crashed run sits "Running" until the staleness check flips it; a
+    # restart after that reuses the entry instead of piling up suffixed ones.
+    wf_id = client.get("/create_workflow?workflow_id=crashed").get_json()["id"]
+    _post_event(client, wf_id, {
+        "level": "job_info", "jobid": 1, "name": "step",
+        "input": [], "output": [],
+    })
+    _age_workflow(wf_id, hours=72)  # default threshold is 48h
+
+    reused = client.get("/create_workflow?workflow_id=crashed").get_json()
+    assert reused["id"] == wf_id
+    assert reused["status"] == "Running"
+    assert client.get(f"/api/workflow/{wf_id}/jobs").get_json()["count"] == 0
+    assert client.get("/api/workflows").get_json()["count"] == 1
+
+
+def test_create_workflow_reuses_a_cancelled_workflow(client):
+    # Cancel-then-restart is the documented way to restart a run that still
+    # shows Running (e.g. one interrupted with Ctrl+C).
+    wf_id = client.get("/create_workflow?workflow_id=stopped").get_json()["id"]
+    client.post(f"/api/workflow/{wf_id}/cancel")
+
+    reused = client.get("/create_workflow?workflow_id=stopped").get_json()
+    assert reused["id"] == wf_id
+    assert reused["status"] == "Running"
+    assert client.get("/api/workflows").get_json()["count"] == 1
+
+
 def test_create_workflow_legacy_name_param_is_still_accepted(client):
     # Plugins <= 0.2.1 send ?name=; it must map to the same workflow as ?workflow_id=.
     first = client.get("/create_workflow?name=legacy").get_json()
+    _post_event(client, first["id"], {"level": "progress", "done": 1, "total": 1})
     second = client.get("/create_workflow?workflow_id=legacy").get_json()
     assert first["name"] == "legacy"
     assert first["id"] == second["id"]

@@ -35,6 +35,7 @@ Because event semantics are split across two repos, **changes to how events are 
 - A workflow is marked `Done` when a `progress` event reports `done == total`.
 - With `snakemake --until`, Snakemake reports the *full-DAG* total while only a subset runs, so `done` never reaches `total`. The plugin therefore emits a `workflow_success` event at end-of-run; the server reconciles a still-`Running` workflow to `Done` using the actually-recorded job rows. Terminal states (`Done`/`Error`/`Cancelled`) are left untouched so a failed run is never resurrected.
 - A `Running` workflow can't be deleted directly (`DELETE` returns 403); it must be cancelled first (`POST /api/workflow/<id>/cancel` → `Cancelled`).
+- Re-registering a known `workflow_id` (`GET /create_workflow?workflow_id=...`) resets and reuses the entry **only if the previous run is in a finished state** (incl. `Stale`). A still-`Running` entry is protected the same way as for delete: the new run gets a fresh suffixed entry (`<id>-<8 hex chars>`) instead of wiping a possibly-live run's history. Ctrl+C/failed runs end as `Error` (terminal), so normal restarts reuse the id without extra steps.
 - Every ingested event touches `workflows.updated_at`; the read paths flip `Running` workflows silent for more than `PANOPTES_STALE_HOURS` (default 48, `0` disables) to `Stale` — reversible: the next event revives them to `Running`. `Stale` (unlike `Running`) is deletable.
 
 **Layers:**

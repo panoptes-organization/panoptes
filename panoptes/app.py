@@ -12,7 +12,7 @@ from panoptes.database import init_db, db_session
 from panoptes.models import Workflows
 from panoptes.routes import *
 from panoptes.schema_forms import SnakemakeUpdateForm
-from panoptes.server_utilities.db_queries import maintain_jobs, get_db_workflow_by_name, reset_db_workflow
+from panoptes.server_utilities.db_queries import maintain_jobs, get_db_workflow_by_name, reset_db_workflow, reconcile_stale_workflows
 
 app = Flask(__name__, template_folder="static/src/")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -110,12 +110,29 @@ def create_workflow():
         # snakemake-logger-plugin-panoptes <= 0.2.1) as the stable identifier.
         workflow_id = request.args.get('workflow_id') or request.args.get('name')
         if workflow_id:
-            # Reuse an existing workflow with this id (a re-run), resetting it
-            # so the new run starts from a clean state under the same id.
+            # Give a long-silent "Running" workflow the chance to become Stale
+            # first, so restarting after a crash can still reuse its entry
+            # (Stale, unlike Running, is not protected below).
+            reconcile_stale_workflows()
             existing = get_db_workflow_by_name(workflow_id)
             if existing is not None:
-                reset_db_workflow(existing.id)
-                return existing.get_workflow()
+                if existing.status == 'Running':
+                    # Restart protection (#153): never wipe a workflow that
+                    # still looks live — reusing its id here would silently
+                    # delete the run's history, and if it *is* live (an id
+                    # collision or a double start) both runs' events would
+                    # interleave into one row. Track the new run under its own
+                    # suffixed entry instead. To restart under the original
+                    # id, cancel the old run first
+                    # (POST /api/workflow/<id>/cancel), mirroring the
+                    # cancel-before-delete rule.
+                    workflow_id = f"{workflow_id}-{uuid.uuid4().hex[:8]}"
+                else:
+                    # Terminal (Done/Error/Cancelled/No Execution) or Stale:
+                    # reset the entry so the re-run starts from a clean state
+                    # under the same id.
+                    reset_db_workflow(existing.id)
+                    return existing.get_workflow()
         w = Workflows(workflow_id or str(uuid.uuid4()), "Running")
         db_session.add(w)
         db_session.commit()

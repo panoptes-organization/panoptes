@@ -216,6 +216,18 @@ When a run starts with an id panoptes already knows, the existing workflow
 entry is reset and reused instead of a second entry being created, so the
 dashboard tracks the latest state of that pipeline under one entry.
 
+**Restart protection:** the entry is only reset when the previous run is in a
+finished state (`Done`, `Error`, `Cancelled`, `Stale`, …). A run interrupted
+with Ctrl+C or failed mid-way ends up as `Error`, so the normal
+fail-fix-restart cycle just works. But if the previous run still shows
+`Running` — either it is genuinely alive, or its process was killed hard
+(`kill -9`) and never got to report — panoptes will not wipe its history:
+the new run is tracked under a fresh entry with a random suffix (e.g.
+`my-pipeline-1a2b3c4d`) instead. To restart under the original id in that
+case, first cancel the stuck entry (the ban button in the UI, or
+`POST /api/workflow/<id>/cancel`) and then re-run — mirroring the
+cancel-before-delete rule.
+
 The plugin lives in its own repository:
 [panoptes-organization/snakemake-logger-plugin-panoptes](https://github.com/panoptes-organization/snakemake-logger-plugin-panoptes).
 It registers a workflow with panoptes via `GET /create_workflow` on the first
