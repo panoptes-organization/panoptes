@@ -1,6 +1,7 @@
 import os
 
 from sqlalchemy import create_engine, inspect, text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
 
 # The DB URL is overridable via PANOPTES_DB_URL so tests (and deployments that
@@ -21,7 +22,19 @@ def init_db():
     # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except OperationalError:
+        # Multiple gunicorn workers booting on a fresh DB race each other
+        # here: create_all()'s existence check and the CREATE TABLE are not
+        # atomic, so a loser sees "table ... already exists" and would die on
+        # startup. The tables it wanted are there (a sibling created them), so
+        # the sane reaction is to carry on — but re-check rather than assume,
+        # in case the error was something real (locked file, bad permissions).
+        inspector = inspect(engine)
+        expected = set(Base.metadata.tables)
+        if not expected.issubset(set(inspector.get_table_names())):
+            raise
     _migrate()
 
 
