@@ -17,7 +17,7 @@ panoptes --ip 127.0.0.1 --port 5001  # override host/port
 gunicorn --bind :5000 panoptes.app:app   # production WSGI entrypoint
 ```
 
-- **Isolated DB:** set `PANOPTES_DB_URL` (e.g. `sqlite:///./scratch.db?check_same_thread=False`) before starting the server or running scripts, to avoid touching the default `.panoptes.db`.
+- **Isolated DB:** set `PANOPTES_DB_URL` (e.g. `sqlite:///./scratch.db?check_same_thread=False`) before starting the server or running scripts, to avoid touching the default `.panoptes.db`. PostgreSQL is supported too (`postgresql+psycopg2://...`, driver via `pip install '.[postgres]'`); setting `PANOPTES_TEST_DB_URL` makes the test suite run against that URL instead of its throwaway SQLite file — CI uses this to test against a real PostgreSQL.
 - **e2e tests** (`panoptes/tests/e2e_test.py`, marked `@pytest.mark.e2e`) spin up a real server subprocess and run Snakemake through the logger plugin. They auto-skip unless both `snakemake>=9` and `snakemake-logger-plugin-panoptes` are importable. Run explicitly with `pytest panoptes/tests/e2e_test.py -m e2e`.
 - On macOS, port 5000 is often taken by the AirPlay Receiver; use another port.
 

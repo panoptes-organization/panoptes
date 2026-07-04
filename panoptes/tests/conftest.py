@@ -15,7 +15,13 @@ import pytest
 
 _TMP_DIR = Path(tempfile.mkdtemp(prefix="panoptes-tests-"))
 _DB_PATH = _TMP_DIR / "test.db"
-os.environ["PANOPTES_DB_URL"] = f"sqlite:///{_DB_PATH}?check_same_thread=False"
+# PANOPTES_TEST_DB_URL lets the same suite run against another database (CI
+# runs it against a PostgreSQL service container, see #203); by default the
+# tests use an isolated throwaway SQLite file.
+os.environ["PANOPTES_DB_URL"] = (
+    os.environ.get("PANOPTES_TEST_DB_URL")
+    or f"sqlite:///{_DB_PATH}?check_same_thread=False"
+)
 
 # Imports must come after the env var is set.
 from panoptes.app import app as flask_app  # noqa: E402
