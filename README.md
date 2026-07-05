@@ -127,6 +127,12 @@ The full test suite runs against a real PostgreSQL in CI, so this stays
 supported. Other SQLAlchemy-supported databases (e.g. MySQL/MariaDB) are
 expected to work the same way but are not exercised by CI.
 
+Installing via conda or using the biocontainer instead of pip? The bioconda
+package (and therefore the container image) ships the `psycopg2` driver from
+recipe version 1.6.0 onward, so `PANOPTES_DB_URL` can point at PostgreSQL out
+of the box — which pairs naturally with running the container against an
+external database instead of mounting volumes for SQLite.
+
 #### Using the development server
 ```bash
 panoptes
