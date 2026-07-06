@@ -98,8 +98,40 @@ Environment variables:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `PANOPTES_DB_URL` | `sqlite:///.panoptes.db` | Database URL. |
+| `PANOPTES_DB_URL` | `sqlite:///.panoptes.db` | Database URL — any SQLAlchemy-supported database; see [Using PostgreSQL](#using-postgresql-or-another-sqlalchemy-supported-database). |
 | `PANOPTES_STALE_HOURS` | `48` | Hours without any event before a `Running` workflow is marked `Stale` (e.g. its snakemake process was killed and never reported back). Set to `0` to disable. A `Stale` workflow flips back to `Running` if events resume, and can be deleted directly. |
+
+#### Using PostgreSQL (or another SQLAlchemy-supported database)
+
+SQLite is the zero-setup default, but panoptes talks to its database purely
+through SQLAlchemy, so `PANOPTES_DB_URL` can point at a PostgreSQL server
+instead:
+
+```bash
+pip install 'panoptes-ui[postgres]'   # pulls the psycopg2 driver
+export PANOPTES_DB_URL='postgresql+psycopg2://user:password@dbhost:5432/panoptes'
+panoptes
+```
+
+When to prefer PostgreSQL over the default SQLite file:
+
+- **Containers** — state lives outside the container, so restarts and
+  redeployments keep the history without volume mounts.
+- **HPC / network filesystems** — SQLite relies on file locking that is
+  unreliable on NFS; if the panoptes working directory is on network storage,
+  use PostgreSQL.
+- **Several gunicorn workers or panoptes instances** — PostgreSQL handles
+  concurrent writers natively instead of serializing on a file lock.
+
+The full test suite runs against a real PostgreSQL in CI, so this stays
+supported. Other SQLAlchemy-supported databases (e.g. MySQL/MariaDB) are
+expected to work the same way but are not exercised by CI.
+
+Installing via conda or using the biocontainer instead of pip? The bioconda
+package (and therefore the container image) ships the `psycopg2` driver from
+recipe version 1.6.0 onward, so `PANOPTES_DB_URL` can point at PostgreSQL out
+of the box — which pairs naturally with running the container against an
+external database instead of mounting volumes for SQLite.
 
 #### Using the development server
 ```bash

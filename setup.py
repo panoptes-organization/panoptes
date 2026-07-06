@@ -48,6 +48,10 @@ setuptools.setup(
             "pytest >= 5.3.0",
             "requests >= 2.22.0",
         ],
+        # Driver for PANOPTES_DB_URL=postgresql+psycopg2://... (see README).
+        "postgres": [
+            "psycopg2-binary >= 2.9",
+        ],
     },
     include_package_data=True,
 )
