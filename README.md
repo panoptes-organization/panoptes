@@ -6,36 +6,36 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/panoptes-ui.svg)](https://pypi.org/project/panoptes-ui/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 
-**panoptes is a real-time dashboard for [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflows** — see every running pipeline, which jobs are done, running, or failed, and drill into any one of them, all from a browser instead of `tail -f` on a log file.
+**👁️ panoptes is a real-time dashboard for [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflows** — see every running pipeline, which jobs are done, running, or failed, and drill into any one of them, all from a browser instead of `tail -f` on a log file.
 
 panoptes is a service that can be used by:
-- Data scientists, bioinformaticians, etc. that want to have a general overview of the progress of their pipelines and the status of their jobs
-- Administrations that want to monitor their servers
-- Web developers that want to integrate the service in bigger web applications
+- 🧬 Data scientists, bioinformaticians, etc. that want to have a general overview of the progress of their pipelines and the status of their jobs
+- 🖥️ Administrations that want to monitor their servers
+- 🌐 Web developers that want to integrate the service in bigger web applications
 
 **Note:** panoptes currently supports workflows written in [snakemake](https://snakemake.readthedocs.io/en/stable/).
 
-> **Snakemake 9 users:** the legacy `--wms-monitor` flag was removed upstream.
+> ⚠️ **Snakemake 9 users:** the legacy `--wms-monitor` flag was removed upstream.
 > Monitoring is now delivered via a logger plugin — see
 > [Snakemake 9 support](#snakemake-9-support) below.
 
 ## Table of contents
 
-- [Quickstart](#quickstart)
-- [Installation](#installation)
-  - [Local](#local)
-  - [Containers](#containers)
-- [Run an example workflow](#run-an-example-workflow)
-- [Snakemake 9 support](#snakemake-9-support)
-- [Workflow statuses](#workflow-statuses)
-- [panoptes API](#panoptes-api)
-- [Contribute](#contribute)
-- [Contact](#contact)
+- ⚡ [Quickstart](#quickstart)
+- 📦 [Installation](#installation)
+  - 💻 [Local](#local)
+  - 🐳 [Containers](#containers)
+- 🧪 [Run an example workflow](#run-an-example-workflow)
+- 🐍 [Snakemake 9 support](#snakemake-9-support)
+- 🚦 [Workflow statuses](#workflow-statuses)
+- 🔌 [panoptes API](#panoptes-api)
+- 🤝 [Contribute](#contribute)
+- 💬 [Contact](#contact)
 
 ## Quickstart
 
-The fastest way to see panoptes running is the published container image — no
-Python environment to set up:
+The fastest way to see panoptes running is the published 🐳 container image —
+no Python environment to set up:
 
 ```bash
 docker run -p 5000:5000 ghcr.io/panoptes-organization/panoptes:latest
@@ -343,12 +343,12 @@ end-of-run success reporting) behaves exactly as with the CLI flags.
 
 | Status | Meaning |
 | --- | --- |
-| `Running` | The workflow is registered and events are arriving. |
-| `Done` | All jobs finished (`done == total`), or the plugin reported end-of-run success (e.g. `--until` runs). |
-| `Error` | A job or the workflow reported an error. |
-| `Cancelled` | Explicitly cancelled via `POST /api/workflow/<id>/cancel`. |
-| `Stale` | No events for more than `PANOPTES_STALE_HOURS` (default 48h) — the snakemake process was probably killed. Reverts to `Running` if events resume. |
-| `No Execution` | Snakemake reported there was nothing to be done. |
+| 🔵 `Running` | The workflow is registered and events are arriving. |
+| ✅ `Done` | All jobs finished (`done == total`), or the plugin reported end-of-run success (e.g. `--until` runs). |
+| ❌ `Error` | A job or the workflow reported an error. |
+| 🚫 `Cancelled` | Explicitly cancelled via `POST /api/workflow/<id>/cancel`. |
+| 💤 `Stale` | No events for more than `PANOPTES_STALE_HOURS` (default 48h) — the snakemake process was probably killed. Reverts to `Running` if events resume. |
+| ⚪ `No Execution` | Snakemake reported there was nothing to be done. |
 
 The web pages poll the JSON API every few seconds and refresh automatically when the data changes, so a dashboard left open tracks running workflows without manual reloads. A workflow page also shows a **per-rule progress breakdown** below the overall progress bar, so a run with hundreds of jobs but few rules stays legible at a glance.
 
