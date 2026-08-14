@@ -8,10 +8,6 @@
 
 **panoptes is a real-time dashboard for [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflows** — see every running pipeline, which jobs are done, running, or failed, and drill into any one of them, all from a browser instead of `tail -f` on a log file.
 
-## panoptes in action
-
-[![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
-
 panoptes is a service that can be used by:
 - Data scientists, bioinformaticians, etc. that want to have a general overview of the progress of their pipelines and the status of their jobs
 - Administrations that want to monitor their servers
