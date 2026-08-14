@@ -43,8 +43,10 @@ docker run -p 5000:5000 ghcr.io/panoptes-organization/panoptes:latest
 
 Then open http://127.0.0.1:5000. From here, point a Snakemake 9 workflow at it
 with `--logger panoptes` (see [Snakemake 9 support](#snakemake-9-support)) to
-watch a real run come in, or explore the other installation methods below for
-a persistent, non-throwaway setup.
+watch a real run come in.
+
+Prefer conda or pip instead? See [Installation](#installation) below for a
+persistent, non-throwaway setup.
 
 # Installation
 
