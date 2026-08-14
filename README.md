@@ -6,8 +6,11 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/panoptes-ui.svg)](https://pypi.org/project/panoptes-ui/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 
+**panoptes is a real-time dashboard for [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflows** — see every running pipeline, which jobs are done, running, or failed, and drill into any one of them, all from a browser instead of `tail -f` on a log file.
 
-Bioinformaticians and data scientists, rely on computational frameworks (e.g. [snakemake](https://snakemake.readthedocs.io/en/stable/), [nextflow](https://www.nextflow.io/), [CWL](https://www.commonwl.org/), [WDL](https://software.broadinstitute.org/wdl/)) to process, analyze and integrate data of various types. Such frameworks allow scientists to combine software and custom tools of different origin in a unified way, which lets them reproduce the results of others, or reuse the same pipeline on different datasets. One of the fundamental issues is that the majority of the users execute multiple pipelines at the same time, or execute a multistep pipeline for a big number of datasets, or both, making it hard to track the execution of the individual steps or monitor which of the processed datasets are complete. panoptes is a tool that monitors the execution of such workflows.
+## panoptes in action
+
+[![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
 
 panoptes is a service that can be used by:
 - Data scientists, bioinformaticians, etc. that want to have a general overview of the progress of their pipelines and the status of their jobs
@@ -19,6 +22,33 @@ panoptes is a service that can be used by:
 > **Snakemake 9 users:** the legacy `--wms-monitor` flag was removed upstream.
 > Monitoring is now delivered via a logger plugin — see
 > [Snakemake 9 support](#snakemake-9-support) below.
+
+## Table of contents
+
+- [Quickstart](#quickstart)
+- [Installation](#installation)
+  - [Local](#local)
+  - [Containers](#containers)
+- [Run an example workflow](#run-an-example-workflow)
+- [Snakemake 9 support](#snakemake-9-support)
+- [Workflow statuses](#workflow-statuses)
+- [panoptes API](#panoptes-api)
+- [Contribute](#contribute)
+- [Contact](#contact)
+
+## Quickstart
+
+The fastest way to see panoptes running is the published container image — no
+Python environment to set up:
+
+```bash
+docker run -p 5000:5000 ghcr.io/panoptes-organization/panoptes:latest
+```
+
+Then open http://127.0.0.1:5000. From here, point a Snakemake 9 workflow at it
+with `--logger panoptes` (see [Snakemake 9 support](#snakemake-9-support)) to
+watch a real run come in, or explore the other installation methods below for
+a persistent, non-throwaway setup.
 
 # Installation
 
@@ -311,11 +341,7 @@ Requires `snakemake>=9` and `snakemake-logger-plugin-panoptes` (see above) in
 the same environment. Everything else (workflow registration, per-job events,
 end-of-run success reporting) behaves exactly as with the CLI flags.
 
-## panoptes in action
-
-[![Watch the video](https://img.youtube.com/vi/de-YSJmq_5s/hqdefault.jpg)](https://www.youtube.com/watch?v=de-YSJmq_5s)
-
-## Workflow statuses
+# Workflow statuses
 
 | Status | Meaning |
 | --- | --- |
@@ -328,7 +354,7 @@ end-of-run success reporting) behaves exactly as with the CLI flags.
 
 The web pages poll the JSON API every few seconds and refresh automatically when the data changes, so a dashboard left open tracks running workflows without manual reloads. A workflow page also shows a **per-rule progress breakdown** below the overall progress bar, so a run with hundreds of jobs but few rules stays legible at a glance.
 
-## panoptes API
+# panoptes API
 
 Panoptes provides the following API endpoints:
 
