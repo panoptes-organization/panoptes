@@ -636,3 +636,15 @@ def test_requests_release_their_db_connection(client):
     finally:
         if gc_was_enabled:
             gc.enable()
+
+
+def test_suite_uses_its_isolated_db():
+    # conftest.py points PANOPTES_DB_URL at a throwaway DB, but that only works
+    # if nothing bound the engine before conftest ran. When `import panoptes`
+    # eagerly imported the app, the suite silently ran against (and wiped)
+    # ./.panoptes.db, and the PostgreSQL CI job actually tested SQLite.
+    import os
+
+    from panoptes.database import engine
+
+    assert engine.url.render_as_string(hide_password=False) == os.environ["PANOPTES_DB_URL"]
