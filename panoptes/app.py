@@ -25,6 +25,14 @@ app.jinja_env.globals.update(version=__version__)
 init_db()
 
 
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    # db_session is thread-local and the dev server runs each request on its
+    # own thread: without this, every finished request's session keeps its
+    # pooled connection checked out until the pool is exhausted (#209).
+    db_session.remove()
+
+
 # you can add @nocache in any endpoint to disable caching
 def nocache(view):
     @wraps(view)
