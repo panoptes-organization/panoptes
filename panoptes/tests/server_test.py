@@ -599,3 +599,40 @@ def test_clean_up_whole_db(client):
     assert resp.status_code == 200
     assert resp.get_json()["msg"] == "Database clean up is complete"
     assert client.get("/api/workflows").get_json() == {"count": 0, "workflows": []}
+
+
+def test_requests_release_their_db_connection(client):
+    # The threaded dev server runs each request on its own thread, and
+    # db_session is thread-local: unless the session is removed at the end of
+    # the request, the finished thread's session keeps its pooled connection
+    # checked out until the pool is exhausted (#209). It is only returned
+    # once the cyclic garbage collector happens to reclaim the session, so
+    # keep GC off to make the leak deterministic.
+    import gc
+    import threading
+
+    from panoptes.app import app as flask_app
+    from panoptes.database import engine
+
+    wf_id = client.get("/create_workflow").get_json()["id"]
+    baseline = engine.pool.checkedout()
+
+    def request_on_own_thread():
+        # A fresh (non-context-preserving) client, so teardown runs as it
+        # would for a real request.
+        thread_client = flask_app.test_client()
+        # Read-only, like the dashboard's polling: nothing commits, so
+        # nothing would release the connection by accident.
+        thread_client.get(f"/api/workflow/{wf_id}")
+
+    gc_was_enabled = gc.isenabled()
+    gc.disable()
+    try:
+        for _ in range(5):
+            t = threading.Thread(target=request_on_own_thread)
+            t.start()
+            t.join()
+        assert engine.pool.checkedout() == baseline
+    finally:
+        if gc_was_enabled:
+            gc.enable()
